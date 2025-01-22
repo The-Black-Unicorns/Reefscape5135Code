@@ -7,8 +7,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class SwerveCalculations {
     
     public static Translation2d calculateForwardLim(double vxi, double vyi, double vxf, double vyf, double maxForwardAccel, double maxSpeed){
-        double iAngleRad = Math.atan(vyi/vxi);
-        double fAngleRad = Math.atan(vyf/vxf);
+        Translation2d iVector = new Translation2d(vxi, vyi);
+        Translation2d fVector = new Translation2d(vxf, vyf);
+
+        double iAngleRad = iVector.getAngle().getRadians();
+        double fAngleRad = fVector.getAngle().getRadians();
 
         double iMag = Math.sqrt(vxi*vxi + vyi*vyi);
         double fMag = Math.sqrt(vxf*vxf + vyf*vyf);
@@ -21,8 +24,10 @@ public class SwerveCalculations {
             return new Translation2d(vxf, vyf);
         }
         else{
-            double targetMag = (iMag + (fMagProjection>iMag ? (-1):1) * currMaxAccel * 0.02)/Math.cos(fAngleRad - iAngleRad);
-            return new Translation2d(targetMag, new Rotation2d(fAngleRad));
+            double targetMag = iMag + (fMagProjection>iMag ? (-1):1) * currMaxAccel * 0.02;
+            if(iMag > 0.1)
+            fVector = fVector.div(iMag).times(targetMag);
+            return fVector;
         }
     }
 }
