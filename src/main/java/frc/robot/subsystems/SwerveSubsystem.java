@@ -8,9 +8,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import java.io.PrintStream;
 import java.util.function.*;
 
-
-import com.kauailabs.navx.*;
-import com.kauailabs.navx.frc.AHRS;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
@@ -55,7 +54,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   Field2d field;
     public SwerveSubsystem() {
-        gyro = new AHRS();
+        gyro = new AHRS(NavXComType.kUSB1);
         field = new Field2d();
 
         mSwerveMods = new SwerveModule[] {

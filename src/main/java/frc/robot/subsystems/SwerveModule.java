@@ -16,6 +16,7 @@ import frc.robot.Constants;
 
 
 public class SwerveModule {
+
     public int moduleNumber;
     private Rotation2d angleOffset;
     private TalonFX angleMotor;
