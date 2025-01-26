@@ -18,15 +18,12 @@ public class SwerveCalculations {
 
         double currMaxAccel = maxForwardAccel * (1-iMag/maxSpeed);
 
-        if(Math.abs(iMag - fMagProjection) < currMaxAccel * 0.02){
-            return fVector;
-        }
-        else{
+        if(Math.abs(iMag - fMagProjection) > currMaxAccel * 0.02){
             double targetMag = iMag + (fMagProjection>iMag ? (-1):1) * currMaxAccel * 0.02;
-            if(iMag > 0.1)
-            fVector = fVector.div(iMag).times(targetMag);
-            return fVector;
+            if(fMagProjection > 0.1)
+            fVector = fVector.div(fMagProjection).times(targetMag);
         }
+        return fVector;
     }
 
     public static Translation2d calculateSkidLimMps(Translation2d iVector, Translation2d fVector, double maxSkidAccel){
