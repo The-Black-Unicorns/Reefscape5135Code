@@ -32,6 +32,6 @@ public class SwerveCalculations {
         Rotation2d dVelAngle = dVel.getAngle();
 
         return (dVelMag > 0.02 * maxSkidAccel) ?
-         new Translation2d(maxSkidAccel * 0.02, dVelAngle) : fVector;
+         new Translation2d(maxSkidAccel * 0.02, dVelAngle).plus(iVector) : fVector;
     }
 }

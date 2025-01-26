@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SwerveModule;
+import frc.lib.math.SwerveCalculations;
 import frc.robot.Constants;
 import frc.robot.Constants;
 
@@ -52,8 +53,11 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
 
+    private ChassisSpeeds lastChassisSpeeds;
+
   Field2d field;
     public SwerveSubsystem() {
+        lastChassisSpeeds = new ChassisSpeeds();
         gyro = new AHRS(NavXComType.kUSB1);
         field = new Field2d();
 
@@ -81,8 +85,11 @@ public class SwerveSubsystem extends SubsystemBase {
                         translation.getY(),
                         rotation);
 
+        currChassisSpeeds = accelLimits(currChassisSpeeds);
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
-        setModuleStates(swerveModuleStates);        
+        setModuleStates(swerveModuleStates);
+        
+        lastChassisSpeeds = currChassisSpeeds;
     }
 
     public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
@@ -220,6 +227,16 @@ public class SwerveSubsystem extends SubsystemBase {
         driveForAuto(speeds);
     }
 
+    ChassisSpeeds accelLimits(ChassisSpeeds wantedSpeeds){
+        Translation2d wantedVel = new Translation2d(wantedSpeeds.vxMetersPerSecond, wantedSpeeds.vyMetersPerSecond);
+        Translation2d lastVel = new Translation2d(lastChassisSpeeds.vxMetersPerSecond, lastChassisSpeeds.vyMetersPerSecond);
+
+        Translation2d fVel = SwerveCalculations.calculateForwardLimMps(
+            lastVel, wantedVel, MAX_FORWARD_ACCEL, MAX_SPEED);
+        fVel = SwerveCalculations.calculateSkidLimMps(lastVel, fVel, MAX_SKID_ACCEL);
+
+        return new ChassisSpeeds(fVel.getX(), fVel.getY(), wantedSpeeds.omegaRadiansPerSecond);
+    }
 
     
 //       StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()

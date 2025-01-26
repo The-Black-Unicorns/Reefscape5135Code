@@ -40,7 +40,7 @@ public class GenericController implements DriverInterface {
     @Override
     public DoubleSupplier getLeftY() {
         
-        return () -> controller.getRawAxis(1);
+        return () -> (-controller.getRawAxis(1));
     }
 
     @Override
