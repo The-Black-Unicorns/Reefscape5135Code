@@ -27,7 +27,8 @@ public class Constants {
                 COTSTalonFXSwerveConstants.SDS.MK4.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4.driveRatios.L1);
 
         /* Drivetrain Constants */
-        public static final double TRACK_WIDTH = 0.555; // TODO: This must be tuned to specific robot
+        public static final double TRACK_WIDTH = 0.555;
+         // TODO: This must be tuned to specific robot
         public static final double WHEELBASE = 0.436; // TODO: This must be tuned to specific robot
         public static final double wheelCircumference = CHOOSEN_MODULE.wheelCircumference;
 
@@ -73,7 +74,7 @@ public class Constants {
         public static final double CLOSED_LOOP_RAMP = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double ANGLE_KP =  1;
+        public static final double ANGLE_KP = 40;
         public static final double ANGLE_KI = 0;
         public static final double ANGLE_KD = 0
         ;
