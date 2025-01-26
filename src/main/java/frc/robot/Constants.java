@@ -16,6 +16,17 @@ public class Constants {
         public static final double STICK_DEADBAND = 0.2;
         
     }
+
+    public static final class Gripper {
+        public static final double KP = 1;
+        public static final double KI = 1;
+        public static final double KD = 1;
+        public static final double KMAX_ACCEL = 1;
+        public static final double KMAX_SPEED = 1;
+
+        public static final int K_SPARK_ID = 1;
+        public static final int K_BEAMBREAK_ID = 1;
+    }
     
 
     public static final class Swerve {
