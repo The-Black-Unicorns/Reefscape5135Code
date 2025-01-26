@@ -4,39 +4,43 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+
+import org.w3c.dom.css.RGBColor;
+
+import com.ctre.phoenix6.signals.Led1OffColorValue;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class Robot extends TimedRobot {
-  public static final String CTREConfigs = null;
-
-public static Object ctreConfigs;
-private SwerveSubsystem swerve;
-private Command m_autonomousCommand;
+  private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private LEDSubsystem ledSubsystem;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    swerve = new SwerveSubsystem();
-    // Logger.getins
-    
+    ledSubsystem = new LEDSubsystem();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    m_robotContainer.periodic();
-    swerve.periodic();
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    ledSubsystem.setColor(Color.kRed);
+  }
 
   @Override
   public void disabledExit() {}
@@ -51,7 +55,9 @@ private Command m_autonomousCommand;
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    ledSubsystem.blinkColor(Color.kGreen, Seconds.of(0.4));
+  }
 
   @Override
   public void autonomousExit() {}
@@ -64,7 +70,10 @@ private Command m_autonomousCommand;
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // ledSubsystem.blinkColor(new Color(87, 27, 126), Seconds.of(0.1));
+    ledSubsystem.setColor(new Color(87, 27, 126));
+  }
 
   @Override
   public void teleopExit() {}
@@ -72,10 +81,13 @@ private Command m_autonomousCommand;
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    ledSubsystem.rainbowPattern();
+  }
 
   @Override
   public void testExit() {}

@@ -14,6 +14,8 @@ import com.studica.frc.AHRS.NavXComType;
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -43,6 +45,7 @@ import static frc.robot.Constants.Swerve.*;
 
 public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
+    public SwerveDrivePoseEstimator poseEstimator;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
     private PIDController aprilTagPIDController;
@@ -54,7 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   Field2d field;
     public SwerveSubsystem() {
-        gyro = new AHRS(NavXComType.kUSB1);
+        gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
 
         mSwerveMods = new SwerveModule[] {
@@ -65,6 +68,7 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+        // poseEstimator = new PoseEstimator<>(swerveKinematics, swerveOdometry, )
         
         currChassisSpeeds = new ChassisSpeeds();
         headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -111,7 +115,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
         
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics
-                .toSwerveModuleStates(chassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyroYaw()));
+                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyroYaw()));
         setModuleStates(swerveModuleStates);
     }
 
@@ -164,7 +168,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(-(double) gyro.getFusedHeading()); // changed from getyaw to fused heading
+        return Rotation2d.fromDegrees(-(double) gyro.getYaw()); // changed from getyaw to fused heading
         //why is this (double)?
     }
 
@@ -226,6 +230,7 @@ public class SwerveSubsystem extends SubsystemBase {
 // .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
 //     StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
 //     .getStructTopic("Speeds", getCurrentSpeeds().struct).publish();
+StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
 
     @Override
     public void periodic() {
@@ -235,10 +240,14 @@ public class SwerveSubsystem extends SubsystemBase {
           SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
           SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
       }
-    //   System.out.println(gyro.getYaw());
+
+    // zeroHeading();
+      System.out.println(getHeading());
         // publisher.set(getModuleStates());
         // chpublisher.set(getCurrentSpeeds());
-
+      publisher.set(getPose());
+        
+// 
       //System.out.println(getRobotOrientationForSpeaker());
       // System.out.println(mSwerveMods[4].getPosition());
       }    
