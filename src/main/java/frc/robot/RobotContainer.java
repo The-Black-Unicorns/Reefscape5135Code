@@ -8,11 +8,13 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.controllers.controllers.GenericController;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
-  
+  private SuperStructure structure;
   private Autonomous autonomous;
   private SwerveSubsystem swerve;
   private Field2d field;
@@ -25,6 +27,7 @@ public class RobotContainer {
     autonomous = new Autonomous();
     swerve = new SwerveSubsystem();
     field = new Field2d();
+    structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
     swerve.setDefaultCommand(swerve.driveCommand(
@@ -43,7 +46,7 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    // controller.getA().onTrue(new RunCommand(() -> swerve.rotateRobot(5)) );
+    controller.getA().onTrue(structure.ToggleGripper());
   }
 
   public Command getAutonomousCommand() {
@@ -51,7 +54,6 @@ public class RobotContainer {
   }
   
   public void periodic(){
-    // System.out.println(controller.getRightX().getAsDouble());
 
   }
 }
