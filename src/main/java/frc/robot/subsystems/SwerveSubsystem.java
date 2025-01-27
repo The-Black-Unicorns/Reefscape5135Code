@@ -54,7 +54,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   Field2d field;
     public SwerveSubsystem() {
-        gyro = new AHRS(NavXComType.kUSB1);
+        gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
 
         mSwerveMods = new SwerveModule[] {

@@ -18,7 +18,7 @@ public class Constants {
     }
 
     public static final class Gripper {
-        public static final double KP = 1;
+        public static final double KP = 20;
         public static final double KI = 1;
         public static final double KD = 1;
         public static final double KMAX_ACCEL = 1;
