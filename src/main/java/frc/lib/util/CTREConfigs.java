@@ -32,9 +32,10 @@ public final class CTREConfigs {
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.ANGLE_CURRENT_LIMIT;
 
         /* PID Config */
-        swerveAngleFXConfig.Slot0.kP = 40;
+        swerveAngleFXConfig.Slot0.kP = Constants.Swerve.ANGLE_KP;
         swerveAngleFXConfig.Slot0.kI = Constants.Swerve.ANGLE_KI;
         swerveAngleFXConfig.Slot0.kD = Constants.Swerve.ANGLE_KD;
+        swerveAngleFXConfig.ClosedLoopGeneral.withContinuousWrap(true);
 
         /** Swerve Drive Motor Configuration */
         /* Motor Inverts and Neutral Mode */

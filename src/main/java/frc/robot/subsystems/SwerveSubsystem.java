@@ -11,6 +11,7 @@ import java.util.function.*;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import frc.lib.math.*;
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -35,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SwerveModule;
-import frc.robot.Constants;
 import frc.robot.Constants;
 
 import static frc.robot.Constants.ControllerConstants.STICK_DEADBAND;
@@ -82,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
                         rotation);
 
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
-        setModuleStates(swerveModuleStates);        
+        setModuleStates(swerveModuleStates);
     }
 
     public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
@@ -219,7 +219,6 @@ public class SwerveSubsystem extends SubsystemBase {
         // Apply the generated speeds
         driveForAuto(speeds);
     }
-
 
     
 //       StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
