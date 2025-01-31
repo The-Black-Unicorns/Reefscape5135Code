@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.ProximitySensorMeasurementRate;
+import com.revrobotics.ColorSensorV3.ProximitySensorResolution;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -21,20 +24,21 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.RobotContainer;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.Gripper.*;
 
 public class GripperSubsystem extends SubsystemBase {
 
-  DigitalInput beamBreakSensor;
+  // DigitalInput beamBreakSensor;
+  ColorSensorV3 colorSensor;
   boolean isMotorActive;
   boolean isIntaking;
 
@@ -48,7 +52,9 @@ public class GripperSubsystem extends SubsystemBase {
   SysIdRoutineLog logger;
 
   public GripperSubsystem() {
-    beamBreakSensor = new DigitalInput(K_BEAMBREAK_ID);
+    // beamBreakSensor = new DigitalInput(K_BEAMBREAK_ID);
+    colorSensor = new ColorSensorV3(Port.kOnboard);
+    colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit, ProximitySensorMeasurementRate.kProxRate12ms);
     isIntaking = false;
     isMotorActive = false;
 
@@ -71,7 +77,7 @@ public class GripperSubsystem extends SubsystemBase {
       new Mechanism(this::setMotorVoltage, log -> {
         log.motor("GripperMotor")
           .voltage(appliedVoltage.mut_replace(
-            gripperMotor.getBusVoltage() * RobotController.getBatteryVoltage(), Volts))
+            gripperMotor.get() * RobotController.getBatteryVoltage(), Volts))
             .angularPosition(m_angle.mut_replace(gripperMotor.getAbsoluteEncoder().getPosition(), Rotations))
             .angularVelocity(m_velocity.mut_replace(gripperMotor.getAbsoluteEncoder().getVelocity()*60, RotationsPerSecond));
       },
@@ -81,7 +87,8 @@ public class GripperSubsystem extends SubsystemBase {
 
 
   private void intake(){
-    if(beamBreakSensor.get()){
+    // if(beamBreakSensor.get()){
+    if(isCoral()){
       isIntaking = false;
       m_VelocityDutyCycle.Velocity = 0;
       m_PositionDutyCycle.Position = 0;
@@ -130,7 +137,8 @@ public class GripperSubsystem extends SubsystemBase {
   }
 
   public boolean isCoral(){
-    return beamBreakSensor.get();
+    // return beamBreakSensor.get();
+    return colorSensor.getProximity() > 1000;
   }
 
   public void setMotorVoltage(Voltage v){
