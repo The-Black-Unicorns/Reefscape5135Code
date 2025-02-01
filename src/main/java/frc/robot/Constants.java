@@ -18,6 +18,11 @@ public class Constants {
         
     }
 
+    public static final class VisionConstants{ //change
+        public static final double LIMELIGHT_HEIGHT = 0.25; // meters
+        public static final double LIMELIGHT_PITCH_ANGLE = 1; // rad
+    }
+
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 1;
         public static final int PIVOT_CANCODER_ID = 1;
