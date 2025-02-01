@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import com.studica.frc.AHRS;
+
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -15,9 +17,8 @@ import frc.robot.subsystems.GripperSubsystem;
 
 public class SuperStructure {
     
-
+    public static AHRS gyro;
     GripperSubsystem gripperSubsystem = new GripperSubsystem();
-
 
 
 
@@ -47,5 +48,4 @@ public class SuperStructure {
     // public Command ToggleGripper(){
     //     return gripperSubsystem.ToggleGripper();
     // }
- 
 }

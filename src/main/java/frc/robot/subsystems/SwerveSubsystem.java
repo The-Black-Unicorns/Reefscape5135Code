@@ -44,7 +44,7 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public AHRS gyro;
+    public static AHRS gyro;
     private PIDController aprilTagPIDController;
 
     private ChassisSpeeds currChassisSpeeds;
