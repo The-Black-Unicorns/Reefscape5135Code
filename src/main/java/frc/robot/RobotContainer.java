@@ -54,6 +54,5 @@ public class RobotContainer {
   }
   
   public void periodic(){
-    structure.getLimelightPose();
   }
 }
