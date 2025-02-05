@@ -15,7 +15,7 @@ public class Constants {
 
     public class ControllerConstants {
         public static final double STICK_DEADBAND = 0.2;
-        
+        public static final double BACK_BUTTONS_DEADBAND = 0.15;
     }
 
     public static final class PivotConstants{ //change everything!!!

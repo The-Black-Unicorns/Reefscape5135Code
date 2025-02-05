@@ -43,7 +43,7 @@ public class PivotSubsystem extends SubsystemBase {
     
 
     pivotMotorConfig.absoluteEncoder.zeroOffset(PIVOT_ENCODER_OFFSET);
-    pivotMotorConfig.absoluteEncoder.positionConversionFactor(360.0/4096.0);
+    pivotMotorConfig.absoluteEncoder.positionConversionFactor(360.0);
 
     pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
