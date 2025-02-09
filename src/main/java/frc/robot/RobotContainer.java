@@ -25,8 +25,8 @@ public class RobotContainer {
     controller = new GenericController(0);
     autonomous = new Autonomous();
     swerve = new SwerveSubsystem();
-    field = new Field2d();
-    SmartDashboard.putData("field", field);
+    // field = new Field2d();
+    // SmartDashboard.putData("field", field);
 
     swerve.setDefaultCommand(swerve.driveCommand(
     controller.getLeftX(),

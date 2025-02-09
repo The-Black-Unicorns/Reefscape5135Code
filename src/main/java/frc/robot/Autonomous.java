@@ -42,12 +42,12 @@ public class Autonomous {
     
 
     public AutoRoutine followPathAuto(){
-        AutoRoutine routine = autoFactory.newRoutine("testroutine");
+        AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
         AutoTrajectory follow = routine.trajectory("New Path");
 
         routine.active().onTrue(
             Commands.sequence(
-                autoFactory.resetOdometry("New Path"),
+                follow.resetOdometry(),
                 follow.cmd()
                 
             )

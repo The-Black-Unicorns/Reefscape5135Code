@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -51,14 +52,21 @@ public class SwerveSubsystem extends SubsystemBase {
     private PIDController aprilTagPIDController;
 
     private ChassisSpeeds currChassisSpeeds;
-    private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+    private final PIDController xController = new PIDController(3, 0.1, 0.0);
+    private final PIDController yController = new PIDController(3, 0.1, 0.0);
+    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
 
   Field2d field;
+  FieldObject2d wantedposObject2d;
+  StructPublisher<Pose2d> wantedpos = NetworkTableInstance.getDefault().getStructTopic("wantedpos", Pose2d.struct).publish();
+  StructPublisher<Pose2d> currpos = NetworkTableInstance.getDefault().getStructTopic("currpos", Pose2d.struct).publish();
+  
+
     public SwerveSubsystem() {
         gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
+        wantedposObject2d = field.getObject("Wanted Pos");
+        SmartDashboard.putData("field", field);
 
         mSwerveMods = new SwerveModule[] {
                 new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -220,17 +228,23 @@ public class SwerveSubsystem extends SubsystemBase {
             sample.omega + xController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
+        Pose2d wantedPos = new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading));
+        wantedpos.set(wantedPos);
+        currpos.set(pose);
+
+        // ChassisSpeeds speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
+
         // Apply the generated speeds
         driveForAuto(speeds);
     }
 
 
     
-//       StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-// .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-//     StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
-//     .getStructTopic("Speeds", getCurrentSpeeds().struct).publish();
-StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
+      StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
+.getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
+    .getStructTopic("Speeds", ChassisSpeeds.struct).publish();
+StructPublisher<Pose2d> ppublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
 
     @Override
     public void periodic() {
@@ -242,11 +256,14 @@ StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructT
       }
 
     // zeroHeading();
-      System.out.println(getHeading());
-        // publisher.set(getModuleStates());
-        // chpublisher.set(getCurrentSpeeds());
-      publisher.set(getPose());
+    //   System.out.println(getHeading());
+        publisher.set(getModuleStates());
+        chpublisher.set(getCurrentSpeeds());
+      ppublisher.set(getPose());
         
+
+
+      
 // 
       //System.out.println(getRobotOrientationForSpeaker());
       // System.out.println(mSwerveMods[4].getPosition());

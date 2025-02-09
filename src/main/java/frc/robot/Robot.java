@@ -11,22 +11,30 @@ import org.w3c.dom.css.RGBColor;
 
 import com.ctre.phoenix6.signals.Led1OffColorValue;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
   private LEDSubsystem ledSubsystem;
+  private SwerveSubsystem swerveSubsystem;
+  StructPublisher<Pose2d> ppublisher;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
     ledSubsystem = new LEDSubsystem();
+    swerveSubsystem = new SwerveSubsystem();
+    ppublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
   }
 
   @Override
@@ -71,6 +79,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    ppublisher.set(swerveSubsystem.getPose());
     // ledSubsystem.blinkColor(new Color(87, 27, 126), Seconds.of(0.1));
     ledSubsystem.setColor(new Color(87, 27, 126));
   }
