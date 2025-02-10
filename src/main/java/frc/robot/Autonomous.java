@@ -1,11 +1,9 @@
 package frc.robot;
 
-import choreo.Choreo.TrajectoryLogger;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
-import choreo.trajectory.SwerveSample;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,30 +13,25 @@ public class Autonomous {
     private final SwerveSubsystem drive;
     private final AutoFactory autoFactory;
     private final AutoChooser autoChooser;
-    // private TrajectoryLogger<SwerveSample> logger;
 
     public Autonomous(){
+
         drive = new SwerveSubsystem();
+
         autoChooser = new AutoChooser();
         
-
         autoFactory = new AutoFactory(
             drive::getPose,
             drive::setPose,
             drive::followTrajectory,
             false,
             drive
-            // logger
         );
         
-        autoChooser.addRoutine("aaa", this::followPathAuto);
-        autoChooser.select("aaa");
-        SmartDashboard.putData("Routine" ,autoChooser);
+        autoChooser.addRoutine("Test Path", this::followPathAuto);
+        autoChooser.select("Test Path");
+        SmartDashboard.putData("Selected Routine" ,autoChooser);
     }
-    
-    
-    
-
     
 
     public AutoRoutine followPathAuto(){
@@ -53,11 +46,7 @@ public class Autonomous {
             )
         );
         return routine;
-        // );
-        // return Commands.sequence(
-        //     autoFactory.resetOdometry("New Path"),
-        //     follow
-        // );
+
     }
 
 

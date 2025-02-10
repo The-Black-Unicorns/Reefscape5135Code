@@ -28,13 +28,13 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
   private LEDSubsystem ledSubsystem;
   private SwerveSubsystem swerveSubsystem;
-  StructPublisher<Pose2d> ppublisher;
+  StructPublisher<Pose2d> currentPosePublisher;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
     ledSubsystem = new LEDSubsystem();
     swerveSubsystem = new SwerveSubsystem();
-    ppublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
+    currentPosePublisher = NetworkTableInstance.getDefault().getStructTopic("Current Pose", Pose2d.struct).publish();
   }
 
   @Override
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    ppublisher.set(swerveSubsystem.getPose());
+    currentPosePublisher.set(swerveSubsystem.getPose());
     // ledSubsystem.blinkColor(new Color(87, 27, 126), Seconds.of(0.1));
     ledSubsystem.setColor(new Color(87, 27, 126));
   }

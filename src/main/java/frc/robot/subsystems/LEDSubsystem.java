@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
@@ -22,13 +21,11 @@ public class LEDSubsystem extends SubsystemBase {
     AddressableLED ledStrip;
     AddressableLEDBuffer ledBuffer;
     private final Distance ledSpacing;
-    // LEDPattern pattern;
 
     public LEDSubsystem() {
 
         ledStrip = new AddressableLED(0);
         ledBuffer = new AddressableLEDBuffer(13);
-        // pattern = LEDPattern.solid(Color.kAqua);
         ledStrip.setLength(ledBuffer.getLength());
         ledSpacing = Centimeters.of(19/13);
 
@@ -40,7 +37,6 @@ public class LEDSubsystem extends SubsystemBase {
         pattern.applyTo(ledBuffer);
         ledStrip.setData(ledBuffer);
         ledStrip.start();
-        // System.out.println("Set color");
     }
 
     public void blinkColor(Color color, Time time) {
@@ -49,7 +45,6 @@ public class LEDSubsystem extends SubsystemBase {
         pattern.applyTo(ledBuffer);
         ledStrip.setData(ledBuffer);
         ledStrip.start();
-        // System.out.println("Set Blinking color");
     }
 
     public void blinkColor(Color color, Time onTime, Time offTime) {
@@ -70,6 +65,5 @@ public class LEDSubsystem extends SubsystemBase {
 
 
     @Override
-    public void periodic() {
-    }
+    public void periodic() {}
 }

@@ -56,18 +56,35 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PIDController yController = new PIDController(3, 0.1, 0.0);
     private final PIDController headingController = new PIDController(1, 0.0, 0.0);
 
-  Field2d field;
-  FieldObject2d wantedposObject2d;
-  StructPublisher<Pose2d> wantedpos = NetworkTableInstance.getDefault().getStructTopic("wantedpos", Pose2d.struct).publish();
-  StructPublisher<Pose2d> currpos = NetworkTableInstance.getDefault().getStructTopic("currpos", Pose2d.struct).publish();
+    Field2d field;
+    FieldObject2d wantedPoseFieldObject;
+
+    StructPublisher<Pose2d> autonomousWantedPosePublisher;
+
+    StructArrayPublisher<SwerveModuleState> swerveStatesPublisher;
+    StructPublisher<ChassisSpeeds> chassisSpeedsPublisher;
+    StructPublisher<Pose2d> currentPosePublisher; 
+
+    NetworkTableInstance ntInstance;
   
 
     public SwerveSubsystem() {
         gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
-        wantedposObject2d = field.getObject("Wanted Pos");
+        wantedPoseFieldObject = field.getObject("Wanted Auto Pose");
         SmartDashboard.putData("field", field);
 
+        ntInstance = NetworkTableInstance.getDefault();
+
+        // General swerve information
+        swerveStatesPublisher = ntInstance.getStructArrayTopic("Swerve State", SwerveModuleState.struct).publish();
+        chassisSpeedsPublisher = ntInstance.getStructTopic("Current Chassis speeds", ChassisSpeeds.struct).publish();
+        currentPosePublisher = ntInstance.getStructTopic("Current Pose", Pose2d.struct).publish();
+
+        // Autonomous information
+        autonomousWantedPosePublisher = ntInstance.getStructTopic("Autonomous Wanted Pose", Pose2d.struct).publish();
+
+        
         mSwerveMods = new SwerveModule[] {
                 new SwerveModule(0, Constants.Swerve.Mod0.constants),
                 new SwerveModule(1, Constants.Swerve.Mod1.constants),
@@ -76,7 +93,6 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
-        // poseEstimator = new PoseEstimator<>(swerveKinematics, swerveOdometry, )
         
         currChassisSpeeds = new ChassisSpeeds();
         headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -127,7 +143,6 @@ public class SwerveSubsystem extends SubsystemBase {
         setModuleStates(swerveModuleStates);
     }
 
-    /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.MAX_SPEED);
 
@@ -176,8 +191,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(-(double) gyro.getYaw()); // changed from getyaw to fused heading
-        //why is this (double)?
+        return Rotation2d.fromDegrees(-(double) gyro.getYaw());
     }
 
     public void resetModulesToAbsolute() {
@@ -185,9 +199,6 @@ public class SwerveSubsystem extends SubsystemBase {
             mod.resetToAbsolute();
         }
     }
-
-
-   
 
     public ChassisSpeeds getCurrentSpeeds() {
         return currChassisSpeeds;
@@ -217,57 +228,44 @@ public class SwerveSubsystem extends SubsystemBase {
     public Command alignRobotToAprilTag(DoubleSupplier angleRelativeToAprilTag){
         return new RunCommand(() -> setPIDRotation(angleRelativeToAprilTag.getAsDouble()), this);
     }
-    public void followTrajectory(SwerveSample sample) {
-        // Get the current pose of the robot
-        Pose2d pose = getPose();
 
-        // Generate the next speeds for the robot
+
+    public void followTrajectory(SwerveSample sample) {
+        Pose2d currentRobotPose = getPose();
+
         ChassisSpeeds speeds = new ChassisSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega + xController.calculate(pose.getRotation().getRadians(), sample.heading)
+            sample.vx + xController.calculate(currentRobotPose.getX(), sample.x),
+            sample.vy + yController.calculate(currentRobotPose.getY(), sample.y),
+            sample.omega + xController.calculate(currentRobotPose.getRotation().getRadians(), sample.heading)
         );
 
-        Pose2d wantedPos = new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading));
-        wantedpos.set(wantedPos);
-        currpos.set(pose);
+        Pose2d wantedPose = new Pose2d(sample.x, sample.y, new Rotation2d(sample.heading));
 
-        // ChassisSpeeds speeds = new ChassisSpeeds(sample.vx, sample.vy, sample.omega);
+        currentPosePublisher.set(currentRobotPose);
+        autonomousWantedPosePublisher.set(wantedPose);
 
-        // Apply the generated speeds
+        field.setRobotPose(currentRobotPose);
+        wantedPoseFieldObject.setPose(wantedPose);
+
         driveForAuto(speeds);
     }
 
-
-    
-      StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-.getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-    StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
-    .getStructTopic("Speeds", ChassisSpeeds.struct).publish();
-StructPublisher<Pose2d> ppublisher = NetworkTableInstance.getDefault().getStructTopic("Pose", Pose2d.struct).publish();
-
     @Override
     public void periodic() {
-     swerveOdometry.update(getGyroYaw(), getModulePositions());
-      for (SwerveModule mod : mSwerveMods) {
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-      }
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
 
-    // zeroHeading();
-    //   System.out.println(getHeading());
-        publisher.set(getModuleStates());
-        chpublisher.set(getCurrentSpeeds());
-      ppublisher.set(getPose());
+
+        for (SwerveModule mod : mSwerveMods) {
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+        }
+
+        swerveStatesPublisher.set(getModuleStates());
+        chassisSpeedsPublisher.set(getCurrentSpeeds());
+        currentPosePublisher.set(getPose());
         
-
-
-      
-// 
-      //System.out.println(getRobotOrientationForSpeaker());
-      // System.out.println(mSwerveMods[4].getPosition());
-      }    
+    }    
     
 }
 

@@ -16,26 +16,20 @@ public class RobotContainer {
   
   private Autonomous autonomous;
   private SwerveSubsystem swerve;
-  private Field2d field;
   private GenericController controller;
-    DoublePublisher xPub;
-    DoublePublisher yPub;
-    DoublePublisher rotPub;
+
   public RobotContainer() {
     controller = new GenericController(0);
     autonomous = new Autonomous();
     swerve = new SwerveSubsystem();
-    // field = new Field2d();
-    // SmartDashboard.putData("field", field);
 
     swerve.setDefaultCommand(swerve.driveCommand(
-    controller.getLeftX(),
-    controller.getLeftY(),
-    controller.getRightX(),
-    () -> true )
-  );
+      controller.getLeftX(),
+      controller.getLeftY(),
+      controller.getRightX(),
+      () -> true )
+    );
 
-  // check if works
     
     configureBindings();
     
@@ -45,14 +39,12 @@ public class RobotContainer {
   private void configureBindings() {
 
     controller.getA().onTrue(new InstantCommand(() -> swerve.zeroHeading(), swerve));
+
   }
 
   public Command getAutonomousCommand() {
     return autonomous.getSelected();
   }
   
-  public void periodic(){
-    // System.out.println(controller.getRightX().getAsDouble());
-
-  }
+  public void periodic(){}
 }
