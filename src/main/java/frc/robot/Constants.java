@@ -41,9 +41,9 @@ public class Constants {
         public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 90;
     }
     public static final class Gripper {
-        public static final double KP = 20;
-        public static final double KI = 1;
-        public static final double KD = 1;
+        public static final double GRIPPER_KP = 20;
+        public static final double GRIPPER_KI = 0;
+        public static final double GRIPPER_KD = 0;
         public static final double KMAX_ACCEL = 1;
         public static final double KMAX_SPEED = 1;
 

@@ -17,6 +17,7 @@ import static frc.robot.Constants.PivotConstants.*;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +29,8 @@ public class PivotSubsystem extends SubsystemBase {
 
   private final ArmFeedforward pivotFeedforwardController;
   private final ProfiledPIDController pivotPIDController;
+
+  double KP, KI, KD;
 
   public PivotSubsystem() {
 
@@ -50,6 +53,10 @@ public class PivotSubsystem extends SubsystemBase {
     pivotFeedforwardController = new ArmFeedforward(PIVOT_MOTOR_KS, PIVOT_MOTOR_KG, PIVOT_MOTOR_KV, PIVOT_MOTOR_KA);
     
     pivotAbsoluteEncoder = pivotMotor.getAbsoluteEncoder();
+
+    KP = PIVOT_MOTOR_KP;
+    KI = PIVOT_MOTOR_KI;
+    KD = PIVOT_MOTOR_KD;
   }
 
   private void setPosition(double targetAngleDegrees){
@@ -59,12 +66,31 @@ public class PivotSubsystem extends SubsystemBase {
     pivotMotor.set(ffVoltage + pidVoltage);
   }
 
+  private double getPivotPosition(){
+    return pivotAbsoluteEncoder.getPosition();
+  }
+
   public Command setPivotPosition(double desiredAngleDeg){
     return new RunCommand(() -> setPosition(desiredAngleDeg), this);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Pivot/pivotAngle", getPivotPosition());
   }
+
+  public void testPeriodic(){
+    double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
+    double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
+    double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
+    if(newKP != KP || newKI != KI || newKD != KD){
+      KP = newKP;
+      KI = newKI;
+      KD = newKD;
+  
+      pivotMotorConfig.closedLoop.pid(KP, KI, KD);
+  
+      pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      }
+    }
 }
