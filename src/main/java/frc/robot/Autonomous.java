@@ -17,16 +17,17 @@ public class Autonomous {
     public Autonomous(){
         drive = new SwerveSubsystem();
         autoChooser = new AutoChooser();
+        
 
         autoFactory = new AutoFactory(
             drive::getPose,
             drive::setPose,
             drive::followTrajectory,
             false,
-            drive,
-            null
+            drive
         );
-        autoChooser.addCmd("aaa", this::followPathAuto);
+        
+        autoChooser.addRoutine("aaa", this::followPathAuto);
         autoChooser.select("aaa");
         SmartDashboard.putData("Routine" ,autoChooser);
     }
@@ -36,21 +37,19 @@ public class Autonomous {
 
     
 
-    public Command followPathAuto(){
-        // AutoRoutine routine = autoFactory.newRoutine("testroutine");
-        Command follow = autoFactory.trajectoryCmd("New Path");
+    public AutoRoutine followPathAuto(){
+        AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
+        AutoTrajectory follow = routine.trajectory("New Path");
 
-        // routine.active().onTrue(
-        //     Commands.sequence(
-        //         routine.resetOdometry(follow),
-        //         follow.cmd()
-        //     )
-            
-        // );
-        return Commands.sequence(
-            autoFactory.resetOdometry("New Path"),
-            follow
+        routine.active().onTrue(
+            Commands.sequence(
+                follow.resetOdometry(),
+                follow.cmd()
+                
+            )
         );
+        return routine;
+
     }
 
 

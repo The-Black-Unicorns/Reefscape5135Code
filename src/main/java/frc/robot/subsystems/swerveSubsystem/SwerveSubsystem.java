@@ -43,13 +43,13 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public static AHRS gyro;
+    public AHRS gyro;
     private PIDController aprilTagPIDController;
 
     private ChassisSpeeds currChassisSpeeds;
-    private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+    private final PIDController xController = new PIDController(3, 0.1, 0.0);
+    private final PIDController yController = new PIDController(3, 0.1, 0.0);
+    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
 
   Field2d field;
     public SwerveSubsystem() {
@@ -81,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
                         rotation);
 
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
-        setModuleStates(swerveModuleStates);
+        setModuleStates(swerveModuleStates);        
     }
 
     public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
@@ -110,7 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
         
         
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics
-                .toSwerveModuleStates(chassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyroYaw()));
+                .toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyroYaw()));
         setModuleStates(swerveModuleStates);
     }
 
