@@ -47,6 +47,8 @@ public class RobotContainer {
   private void configureBindings() {
 
     controller.intakeCoral().onTrue(structure.ToggleGripper());
+    controller.lowerArm().onTrue(structure.setArmAngleDown());
+    controller.raiseArm().onTrue(structure.setArmAngleUp());
   }
 
   public Command getAutonomousCommand() {

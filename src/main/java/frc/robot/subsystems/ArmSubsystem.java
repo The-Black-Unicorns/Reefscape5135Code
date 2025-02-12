@@ -11,6 +11,7 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -86,8 +87,12 @@ public class ArmSubsystem extends SubsystemBase  {
         return armEncoder.getVelocity();
     }
 
-    public ProxyCommand controlArmMotor(double angle){
+    public ProxyCommand controlArmMotorProxy(double angle){
         return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
+    }
+
+    public Command controlArmMotor(double angle) {
+        return new RunCommand(() -> setArmAngle(angle), this);
     }
 
     public void setArmAngle(double angle){

@@ -34,14 +34,7 @@ public class SuperStructure {
     public Command ToggleGripper(){
 
         
-        Command selectedMode =
-            // gripperSubsystem.isMotorRunning().getAsBoolean() ?
-            //     Commands.parallel(gripperSubsystem.stopIntakeCommand(), Commands.print("stopped intake")) :
-            //     gripperSubsystem.isCoral()
-            // ? 
-            //     Commands.parallel(gripperSubsystem.outtakeCommand(), Commands.print("Outtake")) :
-            //     Commands.parallel(gripperSubsystem.intakeCommand(), Commands.print("intaked"));
-        
+        Command selectedMode =        
                 Commands.either(
                     gripper.stopGripperCommand(),
                     Commands.either(
@@ -53,9 +46,13 @@ public class SuperStructure {
         return selectedMode;
     }
 
-    // public Command ToggleGripper(){
-    //     return gripperSubsystem.ToggleGripper();
-    // }
+    public Command setArmAngleUp(){
+        return arm.controlArmMotor(60);
+    }
+    public Command setArmAngleDown() {
+        return arm.controlArmMotor(30);
+    }
+
     public void testPeriodic(){
         gripper.testPeriodic();
         arm.testPeriodic();

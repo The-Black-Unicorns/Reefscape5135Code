@@ -70,7 +70,7 @@ public class PivotSubsystem extends SubsystemBase {
     return pivotAbsoluteEncoder.getPosition();
   }
 
-  public Command setPivotPosition(double desiredAngleDeg){
+  public Command setPivotPositionCommand(double desiredAngleDeg){
     return new RunCommand(() -> setPosition(desiredAngleDeg), this);
   }
 
