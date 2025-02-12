@@ -19,9 +19,7 @@ public class RobotContainer {
   private SwerveSubsystem swerve;
   private Field2d field;
   private DriveController controller;
-    DoublePublisher xPub;
-    DoublePublisher yPub;
-    DoublePublisher rotPub;
+  
   public RobotContainer() {
     controller = new DriveController(0);
     autonomous = new Autonomous();

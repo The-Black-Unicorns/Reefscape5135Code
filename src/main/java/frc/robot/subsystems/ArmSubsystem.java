@@ -6,7 +6,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -19,6 +19,8 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Arm;
+
+import static frc.robot.Constants.Arm.*;
 
 public class ArmSubsystem extends SubsystemBase  {
 
@@ -36,6 +38,8 @@ public class ArmSubsystem extends SubsystemBase  {
          armConfigL = new SparkMaxConfig();
          armConfigR = new SparkMaxConfig();
          
+         armMotorR = new SparkMax(RIGHT_ARM_MOTOR, MotorType.kBrushless);
+         armMotorR = new SparkMax(LEFT_ARM_MOTOR, MotorType.kBrushless);
          
          armConfigR.absoluteEncoder.positionConversionFactor(360);
          armConfigR.absoluteEncoder.velocityConversionFactor(360/60);

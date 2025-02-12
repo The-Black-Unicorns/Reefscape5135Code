@@ -19,18 +19,17 @@ public class Constants {
     }
 
     public static final class PivotConstants{ //change everything!!!
-        public static final int PIVOT_MOTOR_ID = 1;
-        public static final int PIVOT_CANCODER_ID = 1;
+        public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 1;
+        public static final double PIVOT_MOTOR_KP = 0;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
-        public static final double PIVOT_MOTOR_KF = 1;
+        public static final double PIVOT_MOTOR_KF = 0;
 
-        public static final double PIVOT_MOTOR_KS = 1;
+        public static final double PIVOT_MOTOR_KS = 0;
         public static final double PIVOT_MOTOR_KV = 0;
         public static final double PIVOT_MOTOR_KG = 0;
-        public static final double PIVOT_MOTOR_KA = 1;
+        public static final double PIVOT_MOTOR_KA = 0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
@@ -47,7 +46,7 @@ public class Constants {
         public static final double KMAX_ACCEL = 1;
         public static final double KMAX_SPEED = 1;
 
-        public static final int K_SPARK_ID = 1; // change!
+        public static final int K_SPARK_ID = 18; // change!
         public static final int K_BEAMBREAK_ID = 1;
     }
 
@@ -60,6 +59,8 @@ public class Constants {
         public static final int ARM_CURRENT_LIMIT = 0;
         public static final double ARM_ENCODER_OFFSET = 0;
         
+        public static final int RIGHT_ARM_MOTOR = 9;
+        public static final int LEFT_ARM_MOTOR = 8;
     }
 
     public static final class Swerve {
