@@ -22,20 +22,26 @@ public class RobotContainer {
   
   public RobotContainer() {
     controller = new DriveController(0);
-    autonomous = new Autonomous();
-    swerve = new SwerveSubsystem();
+    // autonomous = new Autonomous();
+    // swerve = new SwerveSubsystem();
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
-    swerve.setDefaultCommand(swerve.driveCommand(
-    controller.getXSpeed(),
-    controller.getYSpeed(),
-    controller.getRotationSpeed(),
-    () -> true )
-  );
+  //   swerve.setDefaultCommand(swerve.driveCommand(
+  //   controller.getXSpeed(),
+  //   controller.getYSpeed(),
+  //   controller.getRotationSpeed(),
+  //   () -> true )
+  // );
 
   // check if works
+
+  structure.arm.setDefaultCommand(
+    structure.arm.moveArmManulyCommand(
+      controller.getArmSpeed()
+    )
+  );
     
     configureBindings();
     
@@ -45,13 +51,14 @@ public class RobotContainer {
   private void configureBindings() {
 
     controller.intakeCoral().onTrue(structure.ToggleGripper());
-    controller.lowerArm().onTrue(structure.setArmAngleDown());
-    controller.raiseArm().onTrue(structure.setArmAngleUp());
+    // controller.shouldArmMoveTrigger().onTrue(structure.moveArmPlewse(
+    //   controller.getArmSpeed()
+    // ));
   }
 
-  public Command getAutonomousCommand() {
-    return autonomous.getSelected();
-  }
+  // public Command getAutonomousCommand() {
+  //   return autonomous.getSelected();
+  // }
   
   public void periodic(){
   }

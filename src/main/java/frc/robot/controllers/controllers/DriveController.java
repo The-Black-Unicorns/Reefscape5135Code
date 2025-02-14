@@ -2,6 +2,7 @@ package frc.robot.controllers.controllers;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.interfaces.DriverInterface;
@@ -65,5 +66,12 @@ public class DriveController implements DriverInterface {
 
     public Trigger climbMode(){
         return new Trigger(() -> (controller.getRawButton(8) && controller.getRawButton(7)));
+    }
+
+    public Trigger shouldArmMoveTrigger(){
+        return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < 0.1);
+    }
+    public DoubleSupplier getArmSpeed(){
+        return () -> MathUtil.applyDeadband(controller.getRawAxis(1), 0.1) * 0.25;
     }
 }

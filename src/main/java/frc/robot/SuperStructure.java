@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.studica.frc.AHRS;
 
@@ -20,7 +21,7 @@ import frc.robot.subsystems.PivotSubsystem;
 public class SuperStructure {
 
     private final GripperSubsystem gripper;
-    private final ArmSubsystem arm;
+    final ArmSubsystem arm;
     private final PivotSubsystem pivot;
 
     public SuperStructure(){
@@ -46,11 +47,9 @@ public class SuperStructure {
         return selectedMode;
     }
 
-    public Command setArmAngleUp(){
-        return arm.controlArmMotor(60);
-    }
-    public Command setArmAngleDown() {
-        return arm.controlArmMotor(30);
+    public Command moveArmPlewse(DoubleSupplier speed){
+        return arm.moveArmManulyCommand(speed);
+
     }
 
     public void testPeriodic(){

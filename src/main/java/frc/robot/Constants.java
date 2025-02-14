@@ -53,11 +53,11 @@ public class Constants {
         /* Arm constants */
     /* FF constants calculated from Recalc - not final */
     public class Arm{
-        public static final double ARM_MAX_VELOCITY = 0, ARM_MAX_ACCELARATION = 0;
-        public static final double ARM_KS = 0,ARM_KV = 2.94,ARM_KA = 0.02,ARM_KG = 0.57; 
+        public static final double ARM_MAX_VELOCITY = 2, ARM_MAX_ACCELARATION = 2;
+        public static final double ARM_KS = 0,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
         public static final double ARM_KP = 0 , ARM_KI = 0, ARM_KD = 0;
-        public static final int ARM_CURRENT_LIMIT = 0;
-        public static final double ARM_ENCODER_OFFSET = 0;
+        public static final int ARM_CURRENT_LIMIT = 12;
+        public static final double ARM_ENCODER_OFFSET = 260.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;

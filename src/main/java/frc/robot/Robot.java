@@ -23,10 +23,10 @@ private Command m_autonomousCommand;
   public Robot() {
     m_robotContainer = new RobotContainer();
     
-    DataLogManager.start();
-    DriverStation.startDataLog(DataLogManager.getLog());
+    // DataLogManager.start();
+    // DriverStation.startDataLog(DataLogManager.getLog());
 
-    SmartDashboard.putNumber("My Field", 3.14);
+    // SmartDashboard.putNumber("My Field", 3.14);
   }
 
   @Override
@@ -46,11 +46,11 @@ private Command m_autonomousCommand;
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
   }
 
   @Override
