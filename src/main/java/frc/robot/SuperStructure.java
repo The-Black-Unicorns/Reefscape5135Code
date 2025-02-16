@@ -20,6 +20,8 @@ public class SuperStructure {
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
         auto = new Autonomous();
+
+        arm.setDefaultCommand(arm.);
         
     }
 

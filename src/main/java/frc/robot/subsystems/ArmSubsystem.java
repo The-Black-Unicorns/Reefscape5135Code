@@ -36,6 +36,7 @@ public class ArmSubsystem extends SubsystemBase  {
     private ProfiledPIDController armPIDController;
     private ArmFeedforward armFeedforward;
     private SparkMaxConfig armConfigL,armConfigR;
+    private double currentArmTargetAngle;
     
     private double KP, KI, KD;
     private double KS, KG, KV;
@@ -68,6 +69,7 @@ public class ArmSubsystem extends SubsystemBase  {
         armPIDController = new ProfiledPIDController(ARM_KP, ARM_KI, ARM_KD, 
             new TrapezoidProfile.Constraints(ARM_MAX_VELOCITY, ARM_MAX_ACCELARATION));
         armPIDController.setTolerance(Arm.ARM_POSITION_TOLERANCE_DEG);
+        currentArmTargetAngle = armEncoder.getPosition();
 
         KP = Arm.ARM_KP;
         KI = Arm.ARM_KI;
@@ -104,12 +106,12 @@ public class ArmSubsystem extends SubsystemBase  {
     //     return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
     // }
 
-    public Command controlArmMotor(double angle) {
-        return new RunCommand(() -> setArmAngle(angle), this);
+    public Command controlToAngle() {
+        return new RunCommand(() -> setArmAngle(currentArmTargetAngle), this);
     }
 
     public void setArmAngle(double targetAngleDegrees){
-        SmartDashboard.putNumber("Arm/targetAngle", targetAngleDegrees);
+
         double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
                                                     armEncoder.getVelocity()* Math.PI / 180.0);
         double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), targetAngleDegrees);
@@ -126,6 +128,12 @@ public class ArmSubsystem extends SubsystemBase  {
     public Command moveArmManulyCommand(DoubleSupplier speed){
         return new RunCommand(() -> setArmAngle(speed.getAsDouble()), this);
     }
+
+    public void setArmTargetAngle(double angleDeg){
+        currentArmTargetAngle = angleDeg;
+    }
+    
+
     
     public void periodic(){
         // double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
