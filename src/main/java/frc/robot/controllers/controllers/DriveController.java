@@ -69,9 +69,9 @@ public class DriveController implements DriverInterface {
     }
 
     public Trigger shouldArmMoveTrigger(){
-        return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < 0.1);
+        return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < -0.1);
     }
     public DoubleSupplier getArmSpeed(){
-        return () -> MathUtil.applyDeadband(controller.getRawAxis(1), 0.1) * 0.25;
+        return () -> controller.getRawAxis(1);
     }
 }

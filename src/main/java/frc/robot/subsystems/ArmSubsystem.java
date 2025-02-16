@@ -54,9 +54,9 @@ public class ArmSubsystem extends SubsystemBase  {
          .pid(Arm.ARM_KP, Arm.ARM_KI, Arm.ARM_KD)
          .maxMotion.maxVelocity(Arm.ARM_MAX_VELOCITY);
          armConfigR.closedLoop.maxMotion.maxAcceleration(Arm.ARM_MAX_ACCELARATION);
-         armConfigL.follow(armMotorR, true);
-         armConfigL.absoluteEncoder.zeroOffset(Arm.ARM_ENCODER_OFFSET/360.0);
          armConfigL.apply(armConfigR);
+         armConfigR.follow(armMotorL, true);
+         armConfigL.absoluteEncoder.zeroOffset(Arm.ARM_ENCODER_OFFSET/360.0);
          armMotorR.configure(armConfigR, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          armController = armMotorR.getClosedLoopController();
@@ -112,8 +112,14 @@ public class ArmSubsystem extends SubsystemBase  {
 
     }
 
+    public void setArmManualSpeed(double speed){
+        armMotorR.set(speed);
+        armMotorL.set(speed);
+        System.out.println("snfdjksalfnjk");
+    }
+
     public Command moveArmManulyCommand(DoubleSupplier speed){
-        return new RunCommand(() -> armMotorR.set(speed.getAsDouble()), this);
+        return new RunCommand(() -> setArmAngle(speed.getAsDouble()), this);
     }
     
     public void periodic(){

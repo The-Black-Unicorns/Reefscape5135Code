@@ -4,19 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.controllers.controllers.DriveController;
-import frc.robot.subsystems.swerveSubsystem.SwerveSubsystem;
 
 public class RobotContainer {
   private SuperStructure structure;
-  private Autonomous autonomous;
-  private SwerveSubsystem swerve;
   private Field2d field;
   private DriveController controller;
   
@@ -36,12 +31,6 @@ public class RobotContainer {
   // );
 
   // check if works
-
-  structure.arm.setDefaultCommand(
-    structure.arm.moveArmManulyCommand(
-      controller.getArmSpeed()
-    )
-  );
     
     configureBindings();
     
@@ -50,15 +39,18 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    controller.intakeCoral().onTrue(structure.ToggleGripper());
-    // controller.shouldArmMoveTrigger().onTrue(structure.moveArmPlewse(
-    //   controller.getArmSpeed()
-    // ));
+    // controller.intakeCoral().onTrue(structure.ToggleGripper());
+    controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
+      () -> 0.1
+    ));
+    controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
+    controller.raiseArm().onTrue(structure.movePivotUp());
+    controller.lowerArm().onTrue(structure.movePivotDown());
   }
 
-  // public Command getAutonomousCommand() {
-  //   return autonomous.getSelected();
-  // }
+  public Command getAutonomousCommand() {
+    return structure.getAutonomousCommand();
+  }
   
   public void periodic(){
   }

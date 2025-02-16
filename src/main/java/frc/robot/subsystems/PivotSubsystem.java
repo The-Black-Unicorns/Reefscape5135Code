@@ -17,6 +17,7 @@ import static frc.robot.Constants.PivotConstants.*;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -44,9 +45,8 @@ public class PivotSubsystem extends SubsystemBase {
     // pivotMotorConfig.closedLoop.pidf(PIVOT_MOTOR_KP, PIVOT_MOTOR_KI, PIVOT_MOTOR_KD, PIVOT_MOTOR_KF);
     pivotMotorConfig.inverted(PIVOT_MOTOR_INVERTED);
     
-
-    pivotMotorConfig.absoluteEncoder.zeroOffset(PIVOT_ENCODER_OFFSET);
     pivotMotorConfig.absoluteEncoder.positionConversionFactor(360.0);
+    pivotMotorConfig.absoluteEncoder.zeroOffset(PIVOT_ENCODER_OFFSET);
 
     pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -62,8 +62,9 @@ public class PivotSubsystem extends SubsystemBase {
   private void setPosition(double targetAngleDegrees){
     double ffVoltage = pivotFeedforwardController.calculate(targetAngleDegrees* Math.PI / 180.0, 0);
     double pidVoltage = pivotPIDController.calculate(pivotAbsoluteEncoder.getPosition(), targetAngleDegrees);
-
-    pivotMotor.set(ffVoltage + pidVoltage);
+    
+    pivotMotor.setVoltage(ffVoltage + pidVoltage);
+    
   }
 
   private double getPivotPosition(){
@@ -80,9 +81,9 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void testPeriodic(){
-    double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
-    double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
-    double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
+    double newKP = SmartDashboard.getNumber("Pivot/pivotKp", KP);
+    double newKI = SmartDashboard.getNumber("Pivot/pivotKi", KI);
+    double newKD = SmartDashboard.getNumber("Pivot/pivotKd", KD);
     if(newKP != KP || newKI != KI || newKD != KD){
       KP = newKP;
       KI = newKI;

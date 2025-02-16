@@ -21,19 +21,19 @@ public class Constants {
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 0;
+        public static final double PIVOT_MOTOR_KP = 1;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
         public static final double PIVOT_MOTOR_KF = 0;
 
-        public static final double PIVOT_MOTOR_KS = 0;
-        public static final double PIVOT_MOTOR_KV = 0;
+        public static final double PIVOT_MOTOR_KS = 1;
+        public static final double PIVOT_MOTOR_KV = 1;
         public static final double PIVOT_MOTOR_KG = 0;
         public static final double PIVOT_MOTOR_KA = 0;
 
-        public static final boolean PIVOT_MOTOR_INVERTED = false;
+        public static final boolean PIVOT_MOTOR_INVERTED = true;
 
-        public static final double PIVOT_ENCODER_OFFSET = 0;
+        public static final double PIVOT_ENCODER_OFFSET = 0.667;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
         public static final double MAX_PIVOT_DEGREES_PER_SECOND = 180;
@@ -54,10 +54,10 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
         public static final double ARM_MAX_VELOCITY = 2, ARM_MAX_ACCELARATION = 2;
-        public static final double ARM_KS = 0,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
-        public static final double ARM_KP = 0 , ARM_KI = 0, ARM_KD = 0;
+        public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
+        public static final double ARM_KP = 1 , ARM_KI = 0, ARM_KD = 0;
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 260.0;
+        public static final double ARM_ENCODER_OFFSET = 240.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
@@ -69,12 +69,12 @@ public class Constants {
         public static final double MAX_SKID_ACCEL = 5; //MPS^2
 
         public static final COTSTalonFXSwerveConstants CHOOSEN_MODULE = // TODO: This must be tuned to specific robot
-                COTSTalonFXSwerveConstants.SDS.MK4.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4.driveRatios.L1);
+                COTSTalonFXSwerveConstants.SDS.MK4N.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4N.driveRatios.L2PLUS);
 
         /* Drivetrain Constants */
-        public static final double TRACK_WIDTH = 0.555;
+        public static final double TRACK_WIDTH = 0.55;
          // TODO: This must be tuned to specific robot
-        public static final double WHEELBASE = 0.436; // TODO: This must be tuned to specific robot
+        public static final double WHEELBASE = 0.55; // TODO: This must be tuned to specific robot
         public static final double wheelCircumference = CHOOSEN_MODULE.wheelCircumference;
 
         /*
