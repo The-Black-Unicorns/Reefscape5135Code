@@ -44,8 +44,8 @@ public class RobotContainer {
       () -> 0.1
     ));
     controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
-    controller.raiseArm().onTrue(structure.movePivotUp());
-    controller.lowerArm().onTrue(structure.movePivotDown());
+    controller.raiseArm().onTrue(structure.moveArmUp());
+    controller.lowerArm().onTrue(structure.moveArmDown());
   }
 
   public Command getAutonomousCommand() {

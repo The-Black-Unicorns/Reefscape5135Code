@@ -10,13 +10,18 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Arm;
@@ -74,6 +79,10 @@ public class ArmSubsystem extends SubsystemBase  {
 
     }
 
+    public TrapezoidProfile.State getCurrentState(){
+        return new TrapezoidProfile.State(armEncoder.getPosition(), armEncoder.getVelocity());
+    }
+
     public void setIdleModeBreak(){
         armConfigR.idleMode(IdleMode.kBrake);
         armConfigL.idleMode(IdleMode.kBrake);
@@ -99,9 +108,9 @@ public class ArmSubsystem extends SubsystemBase  {
         return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
     }
 
-    public Command controlArmMotor(double angle) {
-        return new RunCommand(() -> setArmAngle(angle), this);
-    }
+    // public Command controlArmMotor(double angle) {
+    //     return new RunCommand(() -> setArmAngle(angle), this);
+    // }
 
     public void setArmAngle(double angle){
         armController.setReference(
@@ -115,13 +124,32 @@ public class ArmSubsystem extends SubsystemBase  {
     public void setArmManualSpeed(double speed){
         armMotorR.set(speed);
         armMotorL.set(speed);
-        System.out.println("snfdjksalfnjk");
     }
 
     public Command moveArmManulyCommand(DoubleSupplier speed){
         return new RunCommand(() -> setArmAngle(speed.getAsDouble()), this);
     }
+    public Command moveToAngle(double angle) {
+        
+        return new ProxyCommand(() -> new TrapezoidProfileCommand(
+            new TrapezoidProfile(ANGLE_CONSTRAINTS),
+            state -> controlAngleMotor(state),
+            () -> new TrapezoidProfile.State(angle, 0),
+            () -> getCurrentState(),
+            this));
+    }
+    private void controlAngleMotor(State state) {
+
+        System.out.println("worked!!! " + state.position + " " + state.velocity);
+        double feedForward = armFeedforward.calculate(armEncoder.getPosition() * Math.PI/180.0, 
+                                                        armEncoder.getVelocity()* Math.PI/180.0);
+        armController.setReference(state.position, ControlType.kPosition,
+            ClosedLoopSlot.kSlot0,
+            feedForward, ArbFFUnits.kVoltage);
     
+      }
+    
+
     public void periodic(){
         SmartDashboard.putNumber("Arm/ArmAngle", getArmAngle());
     }

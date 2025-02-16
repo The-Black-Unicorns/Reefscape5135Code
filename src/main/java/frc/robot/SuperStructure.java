@@ -44,11 +44,11 @@ public class SuperStructure {
     }
 
     public Command moveArmDown(){
-        return arm.controlArmMotor(45/360.0);
+        return arm.moveToAngle(45);
     }
 
     public Command moveArmUp(){
-        return arm.controlArmMotor(60/360.0);
+        return arm.moveToAngle(60);
     }
 
     public Command movePivotDown(){
