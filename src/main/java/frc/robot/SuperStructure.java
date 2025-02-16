@@ -38,17 +38,21 @@ public class SuperStructure {
     //     return selectedMode;
     // }
 
+    // public Command setIdleModeBreak(){
+    //     return new 
+    // }
+
     public Command moveArmPlewse(DoubleSupplier speed){
         return arm.moveArmManulyCommand(speed);
 
     }
 
     public Command moveArmDown(){
-        return arm.controlArmMotor(45/360.0);
+        return arm.controlArmMotor(45);
     }
 
     public Command moveArmUp(){
-        return arm.controlArmMotor(60/360.0);
+        return arm.controlArmMotor(60);
     }
 
     public Command movePivotDown(){

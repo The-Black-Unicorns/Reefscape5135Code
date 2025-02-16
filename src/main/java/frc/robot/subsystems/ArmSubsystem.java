@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Arm;
@@ -28,9 +30,10 @@ import java.util.function.DoubleSupplier;
 public class ArmSubsystem extends SubsystemBase  {
 
     
-    private SparkMax armMotorR,armMotorL;
+    private final SparkMax armMotorR,armMotorL;
     private AbsoluteEncoder armEncoder; 
-    private SparkClosedLoopController armController;
+    // private SparkClosedLoopController armController;
+    private ProfiledPIDController armPIDController;
     private ArmFeedforward armFeedforward;
     private SparkMaxConfig armConfigL,armConfigR;
     
@@ -45,24 +48,26 @@ public class ArmSubsystem extends SubsystemBase  {
          armMotorL = new SparkMax(LEFT_ARM_MOTOR, MotorType.kBrushless);
          
          armConfigR.absoluteEncoder.positionConversionFactor(360);
-         armConfigR.absoluteEncoder.velocityConversionFactor(360/60);
+         armConfigR.absoluteEncoder.velocityConversionFactor(6);
 
          armConfigR.inverted(false);
          armConfigR.idleMode(IdleMode.kBrake);
-         armConfigR.closedLoop.
-         feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-         .pid(Arm.ARM_KP, Arm.ARM_KI, Arm.ARM_KD)
-         .maxMotion.maxVelocity(Arm.ARM_MAX_VELOCITY);
-         armConfigR.closedLoop.maxMotion.maxAcceleration(Arm.ARM_MAX_ACCELARATION);
+        //  armConfigR.closedLoop.
+        //  feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        //  .pid(Arm.ARM_KP, Arm.ARM_KI, Arm.ARM_KD)
+        //  .maxMotion.maxVelocity(Arm.ARM_MAX_VELOCITY);
+        //  armConfigR.closedLoop.maxMotion.maxAcceleration(Arm.ARM_MAX_ACCELARATION);
          armConfigL.apply(armConfigR);
          armConfigR.follow(armMotorL, true);
          armConfigL.absoluteEncoder.zeroOffset(Arm.ARM_ENCODER_OFFSET/360.0);
          armMotorR.configure(armConfigR, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-         armController = armMotorR.getClosedLoopController();
+        //  armController = armMotorR.getClosedLoopController();
          armFeedforward = new ArmFeedforward(Arm.ARM_KS,Arm.ARM_KG,Arm.ARM_KV);
          armEncoder = armMotorL.getAbsoluteEncoder();
-
+        armPIDController = new ProfiledPIDController(ARM_KP, ARM_KI, ARM_KD, 
+            new TrapezoidProfile.Constraints(ARM_MAX_VELOCITY, ARM_MAX_ACCELARATION));
+        armPIDController.setTolerance(Arm.ARM_POSITION_TOLERANCE_DEG);
 
         KP = Arm.ARM_KP;
         KI = Arm.ARM_KI;
@@ -95,27 +100,27 @@ public class ArmSubsystem extends SubsystemBase  {
         return armEncoder.getVelocity();
     }
 
-    public ProxyCommand controlArmMotorProxy(double angle){
-        return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
-    }
+    // public ProxyCommand controlArmMotorProxy(double angle){
+    //     return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
+    // }
 
     public Command controlArmMotor(double angle) {
         return new RunCommand(() -> setArmAngle(angle), this);
     }
 
-    public void setArmAngle(double angle){
-        armController.setReference(
-            angle,
-            ControlType.kMAXMotionPositionControl,
-            ClosedLoopSlot.kSlot0,
-            armFeedforward.calculate(Units.degreesToRadians(angle),Units.degreesToRadians(armEncoder.getVelocity())));
+    public void setArmAngle(double targetAngleDegrees){
+        SmartDashboard.putNumber("Arm/targetAngle", targetAngleDegrees);
+        double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
+                                                    armEncoder.getVelocity()* Math.PI / 180.0);
+        double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), targetAngleDegrees);
+        
+        armMotorL.setVoltage(ffVoltage + pidVoltage);
 
     }
 
     public void setArmManualSpeed(double speed){
-        armMotorR.set(speed);
+        // armMotorR.set(speed);
         armMotorL.set(speed);
-        System.out.println("snfdjksalfnjk");
     }
 
     public Command moveArmManulyCommand(DoubleSupplier speed){
@@ -123,7 +128,18 @@ public class ArmSubsystem extends SubsystemBase  {
     }
     
     public void periodic(){
+        // double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
+        // armEncoder.getVelocity()* Math.PI / 180.0);
+        // double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), 20.6);
+        SmartDashboard.putNumber("Arm/pidVoltage", armPIDController.calculate(armEncoder.getPosition(), 60));
         SmartDashboard.putNumber("Arm/ArmAngle", getArmAngle());
+        SmartDashboard.putNumber("Arm/armSpeed", getArmVelocity());
+        SmartDashboard.putNumber("Arm/armVoltageR", armMotorR.getBusVoltage());
+        SmartDashboard.putNumber("Arm/armVoltageL", armMotorL.getBusVoltage());
+
+        // SmartDashboard.putNumber("Arm/ffVoltage", ffVoltage);
+        // SmartDashboard.putNumber("Arm/pidVoltage", pidVoltage);
+
     }
     public void testPeriodic(){
         double newKP = SmartDashboard.getNumber("Arm/armKp", KP);
@@ -146,5 +162,18 @@ public class ArmSubsystem extends SubsystemBase  {
             armMotorR.configure(armConfigR, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         }
+        double newKS = SmartDashboard.getNumber("Arm/armKs", KS);
+        double newKG = SmartDashboard.getNumber("Arm/armKg", KG);
+        double newKV = SmartDashboard.getNumber("Arm/armKv", KV);
+
+        if(newKS != KS || newKG != KG || newKV != KV){
+            KS = newKS;
+            KG = newKG;
+            KV = newKV;
+
+            armFeedforward = new ArmFeedforward(KS, KG, KV);
+        }
     }
+
+    
 }

@@ -38,6 +38,8 @@ public class Constants {
 
         public static final double MAX_PIVOT_DEGREES_PER_SECOND = 180;
         public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 90;
+
+        public static final double PIVOT_POSITION_TOLERANCE_DEG = 5;
     }
     public static final class Gripper {
         public static final double GRIPPER_KP = 20;
@@ -53,11 +55,13 @@ public class Constants {
         /* Arm constants */
     /* FF constants calculated from Recalc - not final */
     public class Arm{
-        public static final double ARM_MAX_VELOCITY = 2, ARM_MAX_ACCELARATION = 2;
-        public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
-        public static final double ARM_KP = 1 , ARM_KI = 0, ARM_KD = 0;
+        public static final double ARM_MAX_VELOCITY = 0.5, ARM_MAX_ACCELARATION = 0.2; // deg/s
+        // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
+        public static final double ARM_KS = 0.0,ARM_KV = 0,ARM_KA = 0.0, ARM_KG = 0; 
+        public static final double ARM_KP = 0.1 , ARM_KI = 0, ARM_KD = 0;
         public static final int ARM_CURRENT_LIMIT = 12;
         public static final double ARM_ENCODER_OFFSET = 240.0;
+        public static final double ARM_POSITION_TOLERANCE_DEG = 5.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;

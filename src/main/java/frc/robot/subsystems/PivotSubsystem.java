@@ -60,7 +60,9 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   private void setPosition(double targetAngleDegrees){
-    double ffVoltage = pivotFeedforwardController.calculate(targetAngleDegrees* Math.PI / 180.0, 0);
+    double ffVoltage = pivotFeedforwardController.calculate(pivotAbsoluteEncoder.getPosition()* Math.PI / 180.0, 
+                                                            pivotAbsoluteEncoder.getVelocity()* Math.PI / 180.0);
+                                                            
     double pidVoltage = pivotPIDController.calculate(pivotAbsoluteEncoder.getPosition(), targetAngleDegrees);
     
     pivotMotor.setVoltage(ffVoltage + pidVoltage);
@@ -94,4 +96,17 @@ public class PivotSubsystem extends SubsystemBase {
       pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       }
     }
+
+    public void setIdleModeBreak(){
+      pivotMotorConfig.idleMode(IdleMode.kBrake);
+
+      pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+  }
+  public void setIdleModeCoast(){
+      pivotMotorConfig.idleMode(IdleMode.kCoast);
+
+      pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+  }
 }
