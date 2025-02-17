@@ -21,34 +21,35 @@ public class Constants {
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 1;
+        public static final double PIVOT_MOTOR_KP = 0.1;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
         public static final double PIVOT_MOTOR_KF = 0;
 
-        public static final double PIVOT_MOTOR_KS = 1;
-        public static final double PIVOT_MOTOR_KV = 1;
-        public static final double PIVOT_MOTOR_KG = 0;
+        public static final double PIVOT_MOTOR_KS = 0;
+        public static final double PIVOT_MOTOR_KV = 2;
+        public static final double PIVOT_MOTOR_KG = 0.2;
         public static final double PIVOT_MOTOR_KA = 0;
 
-        public static final boolean PIVOT_MOTOR_INVERTED = true;
+        public static final boolean PIVOT_MOTOR_INVERTED = false;
 
         public static final double PIVOT_ENCODER_OFFSET = 0.667;
+        public static final double PIVOT_NORMALIZE_OFFSET = 22.8;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 180;
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 90;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 30;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 15;
 
         public static final double PIVOT_POSITION_TOLERANCE_DEG = 5;
     }
     public static final class Gripper {
-        public static final double GRIPPER_KP = 20;
+        public static final double GRIPPER_KP = 0.1;
         public static final double GRIPPER_KI = 0;
         public static final double GRIPPER_KD = 0;
-        public static final double KMAX_ACCEL = 1;
+        public static final double KMAX_ACCEL = 0.5;
         public static final double KMAX_SPEED = 1;
 
-        public static final int K_SPARK_ID = 18; // change!
+        public static final int K_SPARK_ID = 18; 
         public static final int K_BEAMBREAK_ID = 1;
     }
 

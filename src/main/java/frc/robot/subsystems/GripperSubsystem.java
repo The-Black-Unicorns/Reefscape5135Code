@@ -62,6 +62,7 @@ public class GripperSubsystem extends SubsystemBase {
     gripperMotor = new SparkMax(K_SPARK_ID, MotorType.kBrushless);
     configs = new SparkMaxConfig();
     configs.closedLoop.pid(GRIPPER_KP, GRIPPER_KI, GRIPPER_KD);
+    configs.inverted(true);
 
     gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     closedLoopController = gripperMotor.getClosedLoopController();
@@ -88,17 +89,18 @@ public class GripperSubsystem extends SubsystemBase {
 
 
   private void intake(){
-    if(beamBreakSensor.get()){
+    if(isCoral()){
       isIntaking = false;
       m_VelocityDutyCycle.Velocity = 0;
       m_PositionDutyCycle.Position = 0;
-      closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+      gripperMotor.set(0);
       isMotorActive = false;
     }
     else{
       isIntaking = true;
-      m_VelocityDutyCycle.Velocity = 0.5;
-      closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+      m_VelocityDutyCycle.Velocity = 0.1;
+      
+      gripperMotor.set(0.3);
       isMotorActive = true;
     }
   }
@@ -107,15 +109,15 @@ public class GripperSubsystem extends SubsystemBase {
     isIntaking = false;
     m_PositionDutyCycle.Position = -2;
     m_PositionDutyCycle.Velocity = 1;
-      closedLoopController.setReference(m_PositionDutyCycle.Position, ControlType.kPosition);
+    gripperMotor.set(-0.2);
       isMotorActive = true;
   }
 
-  private void stopGripper(){
+  public void stopGripper(){
     isIntaking = false;
     m_VelocityDutyCycle.Velocity = 0;
     m_PositionDutyCycle.Position = 0;
-    closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+    gripperMotor.set(0);
     isMotorActive = false;
   }
 
@@ -137,7 +139,7 @@ public class GripperSubsystem extends SubsystemBase {
   }
 
   public boolean isCoral(){
-    return beamBreakSensor.get();
+    return SmartDashboard.getBoolean("Gripper/isCoral", false);
   }
 
   private void setMotorVoltage(Voltage v){
@@ -159,10 +161,13 @@ public class GripperSubsystem extends SubsystemBase {
       intakeCommand().cancel();
       stopGripper();
     }
-    SmartDashboard.putBoolean("Gripper/isCoral", isCoral());
+    SmartDashboard.putBoolean("Gripper/isCoral", SmartDashboard.getBoolean("Gripper/isCoral", false));
   }
 
 public void testPeriodic(){
+  SmartDashboard.putNumber("Gripper/gripperKp", SmartDashboard.getNumber("Gripper/gripperKp", 0));
+  SmartDashboard.putNumber("Gripper/gripperKi", SmartDashboard.getNumber("Gripper/gripperKi", 0));
+  SmartDashboard.putNumber("Gripper/gripperKd", SmartDashboard.getNumber("Gripper/gripperKd", 0));
   double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
   double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
   double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
@@ -176,4 +181,6 @@ public void testPeriodic(){
     gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
   }
+
+
 }

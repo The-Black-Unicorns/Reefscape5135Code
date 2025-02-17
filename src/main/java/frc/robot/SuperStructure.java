@@ -30,22 +30,24 @@ public class SuperStructure {
         //                     .schedule();
 
         arm.setDefaultCommand(arm.setDesiredAngle());
+        pivot.setDefaultCommand(pivot.setDesiredAngle());
     }
 
-    // public Command ToggleGripper(){
+    public Command ToggleGripper(){
 
         
-    //     Command selectedMode =        
-    //             Commands.either(
-    //                 gripper.stopGripperCommand(),
-    //                 Commands.either(
-    //                     gripper.outtakeCommand(),
-    //                     gripper.intakeCommand(),
-    //                     gripper::isCoral),
-    //             gripper::isMotorRunning);
-    //     System.out.println(selectedMode.getName());
-    //     return selectedMode;
-    // }
+        Command selectedMode =        
+            Commands.either(
+                gripper.stopGripperCommand(),
+                Commands.either(
+                    gripper.outtakeCommand(),
+                    gripper.intakeCommand(),
+                gripper::isCoral),
+            gripper::isMotorRunning);
+        
+        System.out.println(selectedMode.getName());
+        return selectedMode;
+    }
 
     // public Command setIdleModeBreak(){
     //     return new 
@@ -57,7 +59,7 @@ public class SuperStructure {
 
     public Command moveArmDown(){
 
-        return arm.setDesiredAngleDeg(15);
+        return arm.setDesiredAngleDeg(10);
     }
 
     public Command moveArmUp(){
@@ -67,11 +69,11 @@ public class SuperStructure {
     }
 
     public Command movePivotDown(){
-        return pivot.setPivotPositionCommand(190);
+        return pivot.setDesiredAngleDeg(110);
     }
 
     public Command movePivotUp(){
-        return pivot.setPivotPositionCommand(190);
+        return pivot.setDesiredAngleDeg(100);
     }
 
     public Command getAutonomousCommand() {
@@ -80,11 +82,20 @@ public class SuperStructure {
 
     public void enabledInit(){
         arm.armEnabledInit();
+        pivot.pivotEnabledInit();
+        gripper.stopGripper();
     }
 
     public void testPeriodic(){
         gripper.testPeriodic();
         arm.testPeriodic();
         pivot.testPeriodic();
+    }
+
+    public void setIdleModeBreak(){
+        arm.setIdleModeBreak();
+    }
+    public void setIdleModeCoast(){
+        arm.setIdleModeCoast();
     }
 }

@@ -100,8 +100,9 @@ public class ArmSubsystem extends SubsystemBase  {
     public void setIdleModeCoast(){
         armConfigR.idleMode(IdleMode.kCoast);
         armConfigL.idleMode(IdleMode.kCoast);
-        armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         armMotorR.configure(armConfigR, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        System.out.println("set coast");
     }
     public double getArmAngle(){
         return armEncoder.getPosition();
@@ -123,7 +124,7 @@ public class ArmSubsystem extends SubsystemBase  {
 
     public void setArmAngle(DoubleSupplier targetAngleDegrees){
 
-        System.out.println("angle: " + targetAngleDegrees.getAsDouble());
+
         double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0 - ARM_NORMALIZE_OFFSET* Math.PI / 180.0,
                                                     armEncoder.getVelocity()* Math.PI / 180.0);
         double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), targetAngleDegrees.getAsDouble()
@@ -168,7 +169,7 @@ public class ArmSubsystem extends SubsystemBase  {
         return currentArmTargetAngle;
     }
     
-      }
+    
     
 
     public void periodic(){
