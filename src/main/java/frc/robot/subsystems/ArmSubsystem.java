@@ -70,6 +70,7 @@ public class ArmSubsystem extends SubsystemBase  {
             new TrapezoidProfile.Constraints(ARM_MAX_VELOCITY, ARM_MAX_ACCELARATION));
         armPIDController.setTolerance(Arm.ARM_POSITION_TOLERANCE_DEG);
         currentArmTargetAngle = armEncoder.getPosition();
+        armPIDController.enableContinuousInput(0, 360);
 
         KP = Arm.ARM_KP;
         KI = Arm.ARM_KI;
@@ -106,15 +107,17 @@ public class ArmSubsystem extends SubsystemBase  {
     //     return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
     // }
 
-    public Command controlToAngle() {
-        return new RunCommand(() -> setArmAngle(currentArmTargetAngle), this);
+    public Command setDesiredAngle() {
+        return new RunCommand(() -> setArmAngle(this::getDesiredArmAngle), this);
     }
 
-    public void setArmAngle(double targetAngleDegrees){
+    public void setArmAngle(DoubleSupplier targetAngleDegrees){
 
-        double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
+        System.out.println("angle: " + targetAngleDegrees.getAsDouble());
+        double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0 - ARM_NORMALIZE_OFFSET* Math.PI / 180.0,
                                                     armEncoder.getVelocity()* Math.PI / 180.0);
-        double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), targetAngleDegrees);
+        double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), targetAngleDegrees.getAsDouble()
+        );
         
         armMotorL.setVoltage(ffVoltage + pidVoltage);
 
@@ -122,30 +125,50 @@ public class ArmSubsystem extends SubsystemBase  {
 
     public void setArmManualSpeed(double speed){
         // armMotorR.set(speed);
-        armMotorL.set(speed);
+        double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
+        armEncoder.getVelocity()* Math.PI / 180.0);
+
+        armMotorL.setVoltage(speed+ffVoltage);
     }
 
     public Command moveArmManulyCommand(DoubleSupplier speed){
-        return new RunCommand(() -> setArmAngle(speed.getAsDouble()), this);
+        return new RunCommand(() -> setArmAngle(speed), this);
     }
 
     public void setArmTargetAngle(double angleDeg){
         currentArmTargetAngle = angleDeg;
     }
-    
+
+    public Command setDesiredAngleDeg(double desiredAngleDeg){
+        return runOnce(()->setArmTargetAngle(desiredAngleDeg));
+    }
+
+    public void armEnabledInit(){
+        setArmTargetAngle(armEncoder.getPosition());
+        armPIDController.reset(armEncoder.getPosition());
+    }
+
+    public Command armEnabledInitCommand(){
+        return runOnce(()->armEnabledInit());
+    }
+
+    private double getDesiredArmAngle(){
+        return currentArmTargetAngle;
+    }
 
     
     public void periodic(){
-        // double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
-        // armEncoder.getVelocity()* Math.PI / 180.0);
+        double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
+        armEncoder.getVelocity()* Math.PI / 180.0);
         // double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), 20.6);
-        SmartDashboard.putNumber("Arm/pidVoltage", armPIDController.calculate(armEncoder.getPosition(), 60));
+        // SmartDashboard.putNumber("Arm/pidVoltage", armPIDController.calculate(armEncoder.getPosition(), 60));
         SmartDashboard.putNumber("Arm/ArmAngle", getArmAngle());
         SmartDashboard.putNumber("Arm/armSpeed", getArmVelocity());
         SmartDashboard.putNumber("Arm/armVoltageR", armMotorR.getBusVoltage());
         SmartDashboard.putNumber("Arm/armVoltageL", armMotorL.getBusVoltage());
+        SmartDashboard.putNumber("Arm/desiredAngle", currentArmTargetAngle);
 
-        // SmartDashboard.putNumber("Arm/ffVoltage", ffVoltage);
+        SmartDashboard.putNumber("Arm/ffVoltage", ffVoltage);
         // SmartDashboard.putNumber("Arm/pidVoltage", pidVoltage);
 
     }

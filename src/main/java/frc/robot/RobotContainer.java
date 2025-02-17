@@ -33,16 +33,14 @@ public class RobotContainer {
   // check if works
     
     configureBindings();
-    
-
   }
 
   private void configureBindings() {
 
     // controller.intakeCoral().onTrue(structure.ToggleGripper());
-    controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
-      () -> 0.1
-    ));
+    // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
+    //   () -> 0.5
+    // ));
     controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
     controller.raiseArm().onTrue(structure.moveArmUp());
     controller.lowerArm().onTrue(structure.moveArmDown());
@@ -57,5 +55,8 @@ public class RobotContainer {
 
   public void testPeriodic(){
     structure.testPeriodic();
+  }
+  public void enabledInit(){
+    structure.enabledInit();
   }
 }
