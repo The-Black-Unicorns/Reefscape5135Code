@@ -10,15 +10,19 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Arm;
@@ -82,6 +86,10 @@ public class ArmSubsystem extends SubsystemBase  {
 
     }
 
+    public TrapezoidProfile.State getCurrentState(){
+        return new TrapezoidProfile.State(armEncoder.getPosition(), armEncoder.getVelocity());
+    }
+
     public void setIdleModeBreak(){
         armConfigR.idleMode(IdleMode.kBrake);
         armConfigL.idleMode(IdleMode.kBrake);
@@ -107,9 +115,11 @@ public class ArmSubsystem extends SubsystemBase  {
     //     return new ProxyCommand(new RunCommand(() -> setArmAngle(angle),this));
     // }
 
+
     public Command setDesiredAngle() {
         return new RunCommand(() -> setArmAngle(this::getDesiredArmAngle), this);
     }
+
 
     public void setArmAngle(DoubleSupplier targetAngleDegrees){
 
@@ -124,11 +134,13 @@ public class ArmSubsystem extends SubsystemBase  {
     }
 
     public void setArmManualSpeed(double speed){
+
         // armMotorR.set(speed);
         double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
         armEncoder.getVelocity()* Math.PI / 180.0);
 
         armMotorL.setVoltage(speed+ffVoltage);
+
     }
 
     public Command moveArmManulyCommand(DoubleSupplier speed){
@@ -155,8 +167,10 @@ public class ArmSubsystem extends SubsystemBase  {
     private double getDesiredArmAngle(){
         return currentArmTargetAngle;
     }
-
     
+      }
+    
+
     public void periodic(){
         double ffVoltage = armFeedforward.calculate(armEncoder.getPosition()* Math.PI / 180.0,
         armEncoder.getVelocity()* Math.PI / 180.0);

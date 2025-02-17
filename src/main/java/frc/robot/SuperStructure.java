@@ -56,12 +56,14 @@ public class SuperStructure {
     }
 
     public Command moveArmDown(){
+
         return arm.setDesiredAngleDeg(15);
     }
 
     public Command moveArmUp(){
         return arm.setDesiredAngleDeg(95);
          
+      
     }
 
     public Command movePivotDown(){
