@@ -81,6 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // currChassisSpeeds = new ChassisSpeeds();
         // swerveDrive.setModuleEncoderAutoSynchronize(true, 3);
         swerveDrive.synchronizeModuleEncoders();
+        swerveDrive.pushOffsetsToEncoders();
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -245,6 +246,7 @@ public class SwerveSubsystem extends SubsystemBase {
     //  swerveOdometry.update(getGyroYaw(), getModulePositions());
     swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
       for (swervelib.SwerveModule mod : mSwerveMods) {
+
           SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getAbsolutePosition());
           SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
           SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
