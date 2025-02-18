@@ -15,6 +15,7 @@ public class Robot extends TimedRobot {
 public static Object ctreConfigs;
 private Command m_autonomousCommand;
 
+
   private final RobotContainer m_robotContainer;
 
   public Robot() {
@@ -36,18 +37,24 @@ private Command m_autonomousCommand;
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.enabledInit();
+
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    
+  }
 
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
+    m_robotContainer.enabledInit();
   }
 
   @Override
@@ -61,6 +68,7 @@ private Command m_autonomousCommand;
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.enabledInit();
   }
 
   @Override
@@ -72,6 +80,7 @@ private Command m_autonomousCommand;
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.enabledInit();
   }
 
   @Override
