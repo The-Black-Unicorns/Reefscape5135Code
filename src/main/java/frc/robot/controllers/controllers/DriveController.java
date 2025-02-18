@@ -33,12 +33,12 @@ public class DriveController implements DriverInterface {
 
     @Override
     public DoubleSupplier getXSpeed(){
-        return () -> controller.getRawAxis(4);
+        return () -> controller.getRawAxis(5);
     }
 
     @Override
     public DoubleSupplier getYSpeed(){
-        return () -> controller.getRawAxis(5);
+        return () -> controller.getRawAxis(4);
     }
 
     @Override
