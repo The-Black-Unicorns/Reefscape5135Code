@@ -140,7 +140,7 @@ public class ArmSubsystem extends SubsystemBase  {
     }
     private void controlAngleMotor(State state) {
 
-        System.out.println("worked!!! " + state.position + " " + state.velocity);
+        // System.out.println("worked!!! " + state.position + " " + state.velocity);
         double feedForward = armFeedforward.calculate(armEncoder.getPosition() * Math.PI/180.0, 
                                                         armEncoder.getVelocity()* Math.PI/180.0);
         armController.setReference(state.position, ControlType.kPosition,
