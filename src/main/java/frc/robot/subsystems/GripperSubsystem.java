@@ -66,6 +66,7 @@ public class GripperSubsystem extends SubsystemBase {
 
     gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     closedLoopController = gripperMotor.getClosedLoopController();
+    
 
     MutVoltage appliedVoltage = Volts.mutable(0);
     MutAngle m_angle = Radians.mutable(0);
