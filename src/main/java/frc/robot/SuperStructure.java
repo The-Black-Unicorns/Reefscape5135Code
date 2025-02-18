@@ -1,25 +1,30 @@
 package frc.robot;
 
+import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.swerveSubsystem.SwerveSubsystem;
 
 public class SuperStructure {
 
     private final GripperSubsystem gripper;
     private final ArmSubsystem arm;
     private final PivotSubsystem pivot;
-    private final Autonomous auto;
+    // private final Autonomous auto;
+    public final SwerveSubsystem swerve;
 
     public SuperStructure(){
 
         gripper = new GripperSubsystem();
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
-        auto = new Autonomous();
+        // auto = new Autonomous();
+        swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
     }
 
@@ -60,7 +65,8 @@ public class SuperStructure {
     }
 
     public Command getAutonomousCommand() {
-        return auto.getSelected();
+        // return auto.getSelected();
+        return null;
     }
 
     public void testPeriodic(){

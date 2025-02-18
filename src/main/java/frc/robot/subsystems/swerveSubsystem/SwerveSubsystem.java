@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.io.File;
 import java.util.function.*;
 
 import com.studica.frc.AHRS;
@@ -24,6 +25,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import swervelib.SwerveDrive;
+import swervelib.parser.SwerveControllerConfiguration;
+import swervelib.parser.SwerveDriveConfiguration;
+import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 import static frc.robot.Constants.ControllerConstants.STICK_DEADBAND;
 import static frc.robot.Constants.Swerve.*;
@@ -31,8 +38,9 @@ import static frc.robot.Constants.Swerve.*;
 public class SwerveSubsystem extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public AHRS gyro;
+    // public AHRS gyro;
     private PIDController aprilTagPIDController;
+    private final SwerveDrive swerveDrive;
 
     private ChassisSpeeds currChassisSpeeds;
     private final PIDController xController = new PIDController(3, 0.1, 0.0);
@@ -40,9 +48,26 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PIDController headingController = new PIDController(1, 0.0, 0.0);
 
   Field2d field;
-    public SwerveSubsystem() {
-        gyro = new AHRS(NavXComType.kMXP_SPI);
+    public SwerveSubsystem(File directory) {
+        // gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    try
+    {
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED,
+                                                                  new Pose2d(new Translation2d(1, 4),
+                                                                             Rotation2d.fromDegrees(0)));
+    } catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setAngularVelocityCompensation(true,
+                                               true,
+                                               0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+    swerveDrive.setModuleEncoderAutoSynchronize(false,
+                                                1);
 
         mSwerveMods = new SwerveModule[] {
                 new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -58,18 +83,19 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        currChassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                translation.getX(),
-                translation.getY(),
-                rotation,
-                getHeading())
-                : new ChassisSpeeds(
-                        translation.getX(),
-                        translation.getY(),
-                        rotation);
+        // currChassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+        //         translation.getX(),
+        //         translation.getY(),
+        //         rotation,
+        //         getHeading())
+        //         : new ChassisSpeeds(
+        //                 translation.getX(),
+        //                 translation.getY(),
+        //                 rotation);
 
-        SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
-        setModuleStates(swerveModuleStates);        
+        // SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
+        // setModuleStates(swerveModuleStates);        
+        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
     }
 
     public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
@@ -151,7 +177,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(-(double) gyro.getFusedHeading()); // changed from getyaw to fused heading
+        return swerveDrive.getYaw(); // changed from getyaw to fused heading
         //why is this (double)?
     }
 
