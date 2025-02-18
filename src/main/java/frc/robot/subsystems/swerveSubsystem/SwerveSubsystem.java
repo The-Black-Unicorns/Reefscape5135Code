@@ -98,7 +98,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         // SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
         // setModuleStates(swerveModuleStates);    
-        System.out.println("translation: " + translation + " rotation: " + rotation);    
+        // System.out.println("translation: " + translation + " rotation: " + rotation);    
         swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
 
     }
