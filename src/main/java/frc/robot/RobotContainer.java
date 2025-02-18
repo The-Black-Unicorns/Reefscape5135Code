@@ -19,14 +19,14 @@ public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
   private DriveController controller;
-  private SwerveSubsystem swerve;
+  // private SwerveSubsystem swerve;
   
   private DigitalInput unlockMotorsDIO;
   private Trigger unlockMotorsTrigger;
   public RobotContainer() {
     controller = new DriveController(0);
     // autonomous = new Autonomous();
-    swerve = new SwerveSubsystem();
+    // swerve = new SwerveSubsystem();
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
@@ -34,7 +34,7 @@ public class RobotContainer {
     unlockMotorsDIO = new DigitalInput(0);
     unlockMotorsTrigger = new Trigger(() -> !unlockMotorsDIO.get());
 
-    swerve.setDefaultCommand(swerve.driveCommand(
+    structure.swerve.setDefaultCommand(structure.swerve.driveCommand(
     controller.getXSpeed(),
     controller.getYSpeed(),
     controller.getRotationSpeed(),
@@ -58,6 +58,8 @@ public class RobotContainer {
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
     // controller.raiseArm().onTrue(structure.movePivotUp().alongWith(structure.moveArmUp()));
     // controller.lowerArm().onTrue(structure.movePivotDown().alongWith(structure.moveArmDown()));
+    controller.raiseArm().onTrue(structure.moveArmUp());
+    controller.lowerArm().onTrue(structure.moveArmDown());
     
   }
 

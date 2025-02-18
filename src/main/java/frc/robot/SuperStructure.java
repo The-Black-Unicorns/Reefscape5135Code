@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.swerveSubsystem.SwerveSubsystem;
 
 public class SuperStructure {
 
@@ -15,7 +16,7 @@ public class SuperStructure {
     private final ArmSubsystem arm;
     private final PivotSubsystem pivot;
     private final Autonomous auto;
-    private double wantedArmAngle;
+    public final SwerveSubsystem swerve;
 
     public SuperStructure(){
 
@@ -23,8 +24,8 @@ public class SuperStructure {
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
         auto = new Autonomous();
+        swerve = new SwerveSubsystem();
 
-        wantedArmAngle = arm.getArmAngle();
         // new WaitCommand(0.1).andThen(() -> arm.setDefaultCommand(
         //     arm.setDesiredAngle()))
         //                     .schedule();
