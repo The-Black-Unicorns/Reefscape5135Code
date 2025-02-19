@@ -1,7 +1,9 @@
 package frc.robot;
 
+import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -15,6 +17,9 @@ public class SuperStructure {
     private final GripperSubsystem gripper;
     private final ArmSubsystem arm;
     private final PivotSubsystem pivot;
+
+    // private final Autonomous auto;
+
     private final Autonomous auto;
     public final SwerveSubsystem swerve;
 
@@ -23,8 +28,11 @@ public class SuperStructure {
         gripper = new GripperSubsystem();
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
+        // auto = new Autonomous();
+        swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+        
         auto = new Autonomous();
-        swerve = new SwerveSubsystem();
+
 
         // new WaitCommand(0.1).andThen(() -> arm.setDefaultCommand(
         //     arm.setDesiredAngle()))
@@ -78,7 +86,8 @@ public class SuperStructure {
     }
 
     public Command getAutonomousCommand() {
-        return auto.getSelected();
+        // return auto.getSelected();
+        return null;
     }
 
     public void enabledInit(){

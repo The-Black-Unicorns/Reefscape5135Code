@@ -31,6 +31,7 @@ public class RobotContainer {
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
+
     unlockMotorsDIO = new DigitalInput(0);
     unlockMotorsTrigger = new Trigger(() -> !unlockMotorsDIO.get());
 
@@ -53,6 +54,13 @@ public class RobotContainer {
     
     // controller.intakeCoral().onTrue(structure.ToggleGripper());
     // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
+    //   () -> 0.1
+    // ));
+    // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
+    // controller.raiseArm().onTrue(structure.moveArmUp());
+    // controller.lowerArm().onTrue(structure.moveArmDown());
+    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroHeading()));
+
     //   () -> 0.5
     // ));
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
@@ -60,7 +68,6 @@ public class RobotContainer {
     // controller.lowerArm().onTrue(structure.movePivotDown().alongWith(structure.moveArmDown()));
     controller.raiseArm().onTrue(structure.moveArmUp());
     controller.lowerArm().onTrue(structure.moveArmDown());
-    
   }
 
   public Command getAutonomousCommand() {
