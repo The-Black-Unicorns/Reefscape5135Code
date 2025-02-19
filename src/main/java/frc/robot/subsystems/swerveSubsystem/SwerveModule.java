@@ -68,10 +68,12 @@ public class SwerveModule {
 
     public void resetToAbsolute(){
         double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations();
-        System.out.println(angleOffset.getRotations() + " and " + getCANcoder().getRotations());
-        System.out.println(absolutePosition);
-        System.out.println(angleMotor.setPosition(absolutePosition));
-        System.out.println(angleMotor.getPosition());
+
+        System.out.println("module number !!! " + moduleNumber);
+        System.out.println(angleOffset.getRotations() * 360 + " and " + getCANcoder().getRotations() * 360);
+        System.out.println(absolutePosition * 360);
+        angleMotor.setPosition(absolutePosition);
+        System.out.println(angleMotor.getPosition().getValueAsDouble() * 360.0);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
