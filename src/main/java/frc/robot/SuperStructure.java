@@ -20,7 +20,7 @@ public class SuperStructure {
 
     // private final Autonomous auto;
 
-    private final Autonomous auto;
+    // private final Autonomous auto;
     public final SwerveSubsystem swerve;
 
     public SuperStructure(){
@@ -31,7 +31,7 @@ public class SuperStructure {
         // auto = new Autonomous();
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
-        auto = new Autonomous(this);
+        // auto = new Autonomous(this);
 
 
         // new WaitCommand(0.1).andThen(() -> arm.setDefaultCommand(
@@ -86,8 +86,9 @@ public class SuperStructure {
     }
 
     public Command getAutonomousCommand() {
-        return auto.getSelected();
-        // return null;
+        // return auto.getSelected();
+        
+        return null;
     }
 
     public void enabledInit(){
