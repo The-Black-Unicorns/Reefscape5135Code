@@ -352,7 +352,7 @@ public class PivotSubsystem extends SubsystemBase  {
         pivotEncoder.getVelocity()* Math.PI / 180.0);
         // double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), 20.6);
         // SmartDashboard.putNumber("Arm/pidVoltage", armPIDController.calculate(armEncoder.getPosition(), 60));
-        // SmartDashboard.putNumber("Arm/ArmAngle", getArmAngle());
+        SmartDashboard.putNumber("Pivot/pivotAngle", getPivotAngle());
         // SmartDashboard.putNumber("Arm/armSpeed", getArmVelocity());
         // SmartDashboard.putNumber("Arm/armVoltageR", armMotorR.getBusVoltage());
         // SmartDashboard.putNumber("Arm/armVoltageL", armMotorL.getBusVoltage());

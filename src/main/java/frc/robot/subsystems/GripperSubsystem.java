@@ -110,7 +110,7 @@ public class GripperSubsystem extends SubsystemBase {
     isIntaking = false;
     m_PositionDutyCycle.Position = -2;
     m_PositionDutyCycle.Velocity = 1;
-    gripperMotor.set(-0.2);
+    gripperMotor.set(-0.27);
       isMotorActive = true;
   }
 
@@ -123,7 +123,7 @@ public class GripperSubsystem extends SubsystemBase {
   }
 
   public Command intakeCommand(){
-    return this.runOnce(() -> intake());
+    return this.run(() -> intake());
   }
 
   public Command stopGripperCommand(){
@@ -132,7 +132,7 @@ public class GripperSubsystem extends SubsystemBase {
 
   public Command outtakeCommand() {
     
-    return this.runOnce(() -> outtake());
+    return this.run(() -> outtake());
   }
   
   public boolean isMotorRunning(){

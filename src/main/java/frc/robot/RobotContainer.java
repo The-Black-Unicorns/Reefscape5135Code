@@ -48,17 +48,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // unlockMotorsTrigger.whileTrue(new InstantCommand(() -> structure.setIdleModeCoast()).ignoringDisable(true));
-    // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
-    // unlockMotorsTrigger.whileFalse(Commands.print("ahr"));
+
+
     
-    // controller.intakeCoral().onTrue(structure.ToggleGripper());
+    controller.intakeCoral().whileTrue(structure.IntakeCoral());
+    controller.outtakeCoral().whileTrue(structure.OuttakeCoral());
+    
     // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
     //   () -> 0.1
     // ));
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
-    // controller.raiseArm().onTrue(structure.moveArmUp());
-    // controller.lowerArm().onTrue(structure.moveArmDown());
+    controller.raiseArm().onTrue(structure.moveArmUp().alongWith(structure.movePivotUp()));
+    controller.lowerArm().onTrue(structure.moveArmDown().alongWith(structure.movePivotDown()));
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroHeading()));
 
     //   () -> 0.5

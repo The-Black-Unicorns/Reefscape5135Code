@@ -189,6 +189,9 @@ public class ArmSubsystem extends SubsystemBase  {
 
     }
     public void testPeriodic(){
+        SmartDashboard.putNumber("Arm/armKp", SmartDashboard.getNumber("Arm/armKp", 0.15));
+        SmartDashboard.putNumber("Arm/armKi", SmartDashboard.getNumber("Arm/armKi", 0.01));
+        SmartDashboard.putNumber("Arm/armKd", SmartDashboard.getNumber("Arm/armKd", 0.04));
         double newKP = SmartDashboard.getNumber("Arm/armKp", KP);
         double newKI = SmartDashboard.getNumber("Arm/armKi", KI);
         double newKD = SmartDashboard.getNumber("Arm/armKd", KD);

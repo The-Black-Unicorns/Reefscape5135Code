@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.GripperSubsystem;
@@ -42,22 +43,29 @@ public class SuperStructure {
         pivot.setDefaultCommand(pivot.setDesiredAngle());
     }
 
-    public Command ToggleGripper(){
+    // public Command ToggleGripper(){
 
         
-        Command selectedMode =        
-            Commands.either(
-                gripper.stopGripperCommand(),
-                Commands.either(
-                    gripper.outtakeCommand(),
-                    gripper.intakeCommand(),
-                gripper::isCoral),
-            gripper::isMotorRunning);
+    //     Command selectedMode =        
+    //         Commands.either(
+    //             gripper.stopGripperCommand(),
+    //             Commands.either(
+    //                 gripper.outtakeCommand(),
+    //                 gripper.intakeCommand(),
+    //             gripper::isCoral),
+    //         gripper::isMotorRunning);
         
-        System.out.println(selectedMode.getName());
-        return selectedMode;
+    //     System.out.println(selectedMode.getName());
+    //     return selectedMode;
+    // }
+
+    public Command IntakeCoral(){
+        return gripper.intakeCommand();
     }
 
+    public Command OuttakeCoral(){
+        return gripper.outtakeCommand();
+    }
     // public Command setIdleModeBreak(){
     //     return new 
     // }
@@ -68,21 +76,21 @@ public class SuperStructure {
 
     public Command moveArmDown(){
 
-        return arm.setDesiredAngleDeg(10);
+        return arm.setDesiredAngleDeg(5);
     }
 
     public Command moveArmUp(){
-        return arm.setDesiredAngleDeg(95);
+        return arm.setDesiredAngleDeg(92);
          
       
     }
 
     public Command movePivotDown(){
-        return pivot.setDesiredAngleDeg(110);
+        return pivot.setDesiredAngleDeg(147);
     }
 
     public Command movePivotUp(){
-        return pivot.setDesiredAngleDeg(100);
+        return pivot.setDesiredAngleDeg(110);
     }
 
     public Command getAutonomousCommand() {
