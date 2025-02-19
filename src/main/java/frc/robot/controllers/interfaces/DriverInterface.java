@@ -25,5 +25,7 @@ public interface DriverInterface {
 
     public Trigger intakeCoral();
 
+    public Trigger isGripperActive();
+
     public Trigger climbMode();
 }

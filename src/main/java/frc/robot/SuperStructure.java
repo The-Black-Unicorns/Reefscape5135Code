@@ -66,6 +66,10 @@ public class SuperStructure {
     public Command OuttakeCoral(){
         return gripper.outtakeCommand();
     }
+
+    public Command StopGripper() {
+        return gripper.stopGripperCommand();
+    }
     // public Command setIdleModeBreak(){
     //     return new 
     // }

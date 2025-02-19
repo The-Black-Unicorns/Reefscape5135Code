@@ -17,6 +17,16 @@ public class DriveController implements DriverInterface {
     } //add stick deadband
 
     @Override
+    public Trigger isGripperActive() {
+        
+        if (intakeCoral().getAsBoolean() || outtakeCoral().getAsBoolean()){
+            return new Trigger(() -> true);
+        } else {
+            return new Trigger(() -> false);
+        }
+    }
+
+    @Override
     public Trigger isDriving() {
         if (getXSpeed().getAsDouble() != 0 ||
         getYSpeed().getAsDouble() != 0 ||   
