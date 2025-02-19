@@ -50,8 +50,10 @@ public class RobotContainer {
     controller.isGripperActive().whileFalse(structure.StopGripper());
     
   
-    controller.raiseArm().onTrue(structure.moveArmUp().alongWith(structure.movePivotUp()));
-    controller.lowerArm().onTrue(structure.moveArmDown().alongWith(structure.movePivotDown()));
+    // controller.raiseArm().onTrue(structure.moveArmUp().alongWith(structure.movePivotUp()));
+    // controller.lowerArm().onTrue(structure.moveArmDown().alongWith(structure.movePivotDown()));
+    controller.raiseArm().onTrue(structure.movePivotUp());
+    controller.lowerArm().onTrue(structure.movePivotDown());
 
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroHeading()));

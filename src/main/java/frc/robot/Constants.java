@@ -23,24 +23,24 @@ public class Constants {
 
         public static final double PIVOT_MOTOR_KP = 0.1;
         public static final double PIVOT_MOTOR_KI = 0;
-        public static final double PIVOT_MOTOR_KD = 0;
-        public static final double PIVOT_MOTOR_KF = 0;
+        public static final double PIVOT_MOTOR_KD = 0.02;
+        public static final double PIVOT_MOTOR_KF = 1;
 
-        public static final double PIVOT_MOTOR_KS = 0;
-        public static final double PIVOT_MOTOR_KV = 2;
-        public static final double PIVOT_MOTOR_KG = 0.2;
+        public static final double PIVOT_MOTOR_KS = 0.01;
+        public static final double PIVOT_MOTOR_KV = 0.1;
+        public static final double PIVOT_MOTOR_KG = 0.5;
         public static final double PIVOT_MOTOR_KA = 0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 0.667;
-        public static final double PIVOT_NORMALIZE_OFFSET = 22.8;
+        public static final double PIVOT_ENCODER_OFFSET = 27;
+        public static final double PIVOT_NORMALIZE_OFFSET = 90;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 30;
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 15;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 60;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 30;
 
-        public static final double PIVOT_POSITION_TOLERANCE_DEG = 5;
+        public static final double PIVOT_POSITION_TOLERANCE_DEG = 3;
     }
     public static final class Gripper {
         public static final double GRIPPER_KP = 0.1;
@@ -57,11 +57,11 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
 
-        public static final double ARM_MAX_VELOCITY = 220, ARM_MAX_ACCELARATION = 325; // deg/s, deg/s2
+        public static final double ARM_MAX_VELOCITY = 270, ARM_MAX_ACCELARATION = 335; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
         public static final double ARM_KS = 0.01, ARM_KV = 0.1, ARM_KA = 0.0, ARM_KG = 0.113; //0.32
-        public static final double ARM_KP = 0.08
-         , ARM_KI = 0.0, ARM_KD = 0.0;
+        public static final double ARM_KP = 0.075
+         , ARM_KI = 0.0, ARM_KD = 0.02;
 
         public static final int ARM_CURRENT_LIMIT = 12;
         public static final double ARM_ENCODER_OFFSET = 240.0;

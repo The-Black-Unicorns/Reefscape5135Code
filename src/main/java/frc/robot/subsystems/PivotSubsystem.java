@@ -198,17 +198,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.Arm;
+import frc.robot.Constants.PivotConstants;
 
-import static frc.robot.Constants.Arm.*;
-import static frc.robot.Constants.PivotConstants.MAX_PIVOT_DEGREES_PER_SECOND;
-import static frc.robot.Constants.PivotConstants.MAX_PIVOT_DEGREES_PER_SECOND_SQUARED;
-import static frc.robot.Constants.PivotConstants.PIVOT_ENCODER_OFFSET;
-import static frc.robot.Constants.PivotConstants.PIVOT_MOTOR_ID;
-import static frc.robot.Constants.PivotConstants.PIVOT_MOTOR_KD;
-import static frc.robot.Constants.PivotConstants.PIVOT_MOTOR_KI;
-import static frc.robot.Constants.PivotConstants.PIVOT_MOTOR_KP;
-import static frc.robot.Constants.PivotConstants.PIVOT_POSITION_TOLERANCE_DEG;
+import static frc.robot.Constants.PivotConstants.*;
 
 import java.util.function.DoubleSupplier;
 
@@ -234,7 +226,7 @@ public class PivotSubsystem extends SubsystemBase  {
          pivotConfig.absoluteEncoder.positionConversionFactor(360);
          pivotConfig.absoluteEncoder.velocityConversionFactor(6);
 
-         pivotConfig.inverted(false);
+         pivotConfig.inverted(PIVOT_MOTOR_INVERTED);
          pivotConfig.idleMode(IdleMode.kBrake);
         //  armConfigR.closedLoop.
         //  feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
@@ -246,21 +238,21 @@ public class PivotSubsystem extends SubsystemBase  {
          pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          
         //  armController = armMotorR.getClosedLoopController();
-         pivotFeedforward = new ArmFeedforward(Arm.ARM_KS,Arm.ARM_KG,Arm.ARM_KV);
+         pivotFeedforward = new ArmFeedforward(PivotConstants.PIVOT_MOTOR_KS,PivotConstants.PIVOT_MOTOR_KG,PivotConstants.PIVOT_MOTOR_KV);
          pivotEncoder = pivotMotor.getAbsoluteEncoder();
         pivotPIDController = new ProfiledPIDController(PIVOT_MOTOR_KP, PIVOT_MOTOR_KI, PIVOT_MOTOR_KD, 
             new TrapezoidProfile.Constraints(MAX_PIVOT_DEGREES_PER_SECOND, MAX_PIVOT_DEGREES_PER_SECOND_SQUARED));
         pivotPIDController.setTolerance(PIVOT_POSITION_TOLERANCE_DEG);
         currentPivotTargetAngle = pivotEncoder.getPosition();
-        pivotPIDController.enableContinuousInput(0, 360);
+        // pivotPIDController.enableContinuousInput(0, 360);
 
-        KP = Arm.ARM_KP;
-        KI = Arm.ARM_KI;
-        KD = Arm.ARM_KD;
+        KP = PIVOT_MOTOR_KP;
+        KI = PIVOT_MOTOR_KI;
+        KD = PIVOT_MOTOR_KD;
 
-        KS = Arm.ARM_KS;
-        KG = Arm.ARM_KG;
-        KV = Arm.ARM_KV;
+        KS = PIVOT_MOTOR_KS;
+        KG = PIVOT_MOTOR_KG;
+        KV = PIVOT_MOTOR_KV;
 
     }
 
@@ -300,7 +292,7 @@ public class PivotSubsystem extends SubsystemBase  {
     public void setPivotAngle(DoubleSupplier targetAngleDegrees){
 
 
-        double ffVoltage = pivotFeedforward.calculate(pivotEncoder.getPosition()* Math.PI / 180.0 - ARM_NORMALIZE_OFFSET* Math.PI / 180.0,
+        double ffVoltage = pivotFeedforward.calculate(pivotEncoder.getPosition()* Math.PI / 180.0 - PIVOT_NORMALIZE_OFFSET* Math.PI / 180.0,
                                                     pivotEncoder.getVelocity()* Math.PI / 180.0);
         double pidVoltage = pivotPIDController.calculate(pivotEncoder.getPosition(), targetAngleDegrees.getAsDouble()
         );
@@ -312,7 +304,7 @@ public class PivotSubsystem extends SubsystemBase  {
     public void setPivotManualSpeed(double speed){
 
         // armMotorR.set(speed);
-        double ffVoltage = pivotFeedforward.calculate(pivotEncoder.getPosition()* Math.PI / 180.0,
+        double ffVoltage = pivotFeedforward.calculate((pivotEncoder.getPosition() - PIVOT_NORMALIZE_OFFSET)* Math.PI / 180.0,
         pivotEncoder.getVelocity()* Math.PI / 180.0);
 
         pivotMotor.setVoltage(speed+ffVoltage);
@@ -351,51 +343,49 @@ public class PivotSubsystem extends SubsystemBase  {
         double ffVoltage = pivotFeedforward.calculate(pivotEncoder.getPosition()* Math.PI / 180.0,
         pivotEncoder.getVelocity()* Math.PI / 180.0);
         // double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), 20.6);
-        // SmartDashboard.putNumber("Arm/pidVoltage", armPIDController.calculate(armEncoder.getPosition(), 60));
+        SmartDashboard.putNumber("Pivot/pidVoltage", pivotPIDController.calculate(pivotEncoder.getPosition(),90));
         SmartDashboard.putNumber("Pivot/pivotAngle", getPivotAngle());
         // SmartDashboard.putNumber("Arm/armSpeed", getArmVelocity());
         // SmartDashboard.putNumber("Arm/armVoltageR", armMotorR.getBusVoltage());
         // SmartDashboard.putNumber("Arm/armVoltageL", armMotorL.getBusVoltage());
-        // SmartDashboard.putNumber("Arm/desiredAngle", currentArmTargetAngle);
+        SmartDashboard.putNumber("Pivot/desiredPivot", currentPivotTargetAngle);
 
         // SmartDashboard.putNumber("Arm/ffVoltage", ffVoltage);
         // SmartDashboard.putNumber("Arm/pidVoltage", pidVoltage);
 
     }
     public void testPeriodic(){
-        double newKP = SmartDashboard.getNumber("Arm/armKp", KP);
-        double newKI = SmartDashboard.getNumber("Arm/armKi", KI);
-        double newKD = SmartDashboard.getNumber("Arm/armKd", KD);
+        // double newKP = SmartDashboard.getNumber("Arm/armKp", KP);
+        // double newKI = SmartDashboard.getNumber("Arm/armKi", KI);
+        // double newKD = SmartDashboard.getNumber("Arm/armKd", KD);
 
-        if(newKP != KP || newKI != KI || newKD != KD){
-            KP = newKP;
-            KI = newKI;
-            KD = newKD;
+        // if(newKP != KP || newKI != KI || newKD != KD){
+        //     KP = newKP;
+        //     KI = newKI;
+        //     KD = newKD;
 
-            pivotConfig.closedLoop.
-            feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pid(newKP, newKI, newKD);
+        //     pivotConfig.closedLoop.
+        //     feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        //     .pid(newKP, newKI, newKD);
 
-            pivotConfig.closedLoop.
-            feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pid(newKP, newKI, newKD);
+        //     pivotConfig.closedLoop.
+        //     feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        //     .pid(newKP, newKI, newKD);
 
-            pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //     pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             
-        }
-        double newKS = SmartDashboard.getNumber("Arm/armKs", KS);
-        double newKG = SmartDashboard.getNumber("Arm/armKg", KG);
-        double newKV = SmartDashboard.getNumber("Arm/armKv", KV);
+        // }
+        // double newKS = SmartDashboard.getNumber("Arm/armKs", KS);
+        // double newKG = SmartDashboard.getNumber("Arm/armKg", KG);
+        // double newKV = SmartDashboard.getNumber("Arm/armKv", KV);
 
-        if(newKS != KS || newKG != KG || newKV != KV){
-            KS = newKS;
-            KG = newKG;
-            KV = newKV;
+        // if(newKS != KS || newKG != KG || newKV != KV){
+        //     KS = newKS;
+        //     KG = newKG;
+        //     KV = newKV;
 
-            pivotFeedforward = new ArmFeedforward(KS, KG, KV);
-        }
+        //     pivotFeedforward = new ArmFeedforward(KS, KG, KV);
+        // }
     }
-
-    
 }
 

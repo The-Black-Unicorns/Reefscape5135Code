@@ -90,11 +90,11 @@ public class SuperStructure {
     }
 
     public Command movePivotDown(){
-        return pivot.setDesiredAngleDeg(147);
+        return pivot.setDesiredAngleDeg(50);
     }
 
     public Command movePivotUp(){
-        return pivot.setDesiredAngleDeg(110);
+        return pivot.setDesiredAngleDeg(200);
     }
 
     public Command getAutonomousCommand() {
