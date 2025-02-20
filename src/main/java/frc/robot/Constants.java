@@ -13,7 +13,14 @@ import frc.lib.util.SwerveModuleConstants;
 
 public class Constants {
 
-    public class ControllerConstants {
+    public static final class swerveMathConstants {
+        public static final double MAX_SKID_ACCEL = 100; // mps2
+        public static final double MAX_FORWARD_ACCEL = 5; // mps2
+        public static final double MAX_ROBOT_SIDES_ACCEL = 100; // mps2
+
+        public static final double ROBOT_CYCLE = 0.02; // s
+    }
+    public static final class ControllerConstants {
         public static final double STICK_DEADBAND = 0.2;
         public static final double BACK_BUTTONS_DEADBAND = 0.15;
     }
@@ -77,8 +84,8 @@ public class Constants {
     public static final class Swerve {
 
         public static final String LIMELIGHT_NAME = "limelight-bulime";
-        public static final double MAX_FORWARD_ACCEL = 5; // MPS^2 
-        public static final double MAX_SKID_ACCEL = 5; //MPS^2
+        // public static final double MAX_FORWARD_ACCEL = 5; // MPS^2 
+        // public static final double MAX_SKID_ACCEL = 5; //MPS^2
 
         public static final COTSTalonFXSwerveConstants CHOOSEN_MODULE = // TODO: This must be tuned to specific robot
                 COTSTalonFXSwerveConstants.SDS.MK4N.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4N.driveRatios.L2PLUS);
