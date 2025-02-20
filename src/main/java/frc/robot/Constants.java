@@ -76,6 +76,7 @@ public class Constants {
 
     public static final class Swerve {
 
+        public static final String LIMELIGHT_NAME = "limelight-bulime";
         public static final double MAX_FORWARD_ACCEL = 5; // MPS^2 
         public static final double MAX_SKID_ACCEL = 5; //MPS^2
 

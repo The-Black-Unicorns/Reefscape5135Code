@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.controllers.DriveController;
-import frc.robot.subsystems.swerveSubsystem.SwerveSubsystem;
 
 public class RobotContainer {
   private SuperStructure structure;
@@ -33,7 +32,7 @@ public class RobotContainer {
     // unlockMotorsDIO = new DigitalInput(0);
     // unlockMotorsTrigger = new Trigger(() -> !unlockMotorsDIO.get());
 
-    structure.swerve.setDefaultCommand(structure.swerve.driveCommand(
+    structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
     controller.getXSpeed(),
     controller.getYSpeed(),
     controller.getRotationSpeed(),

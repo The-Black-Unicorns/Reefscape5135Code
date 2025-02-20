@@ -1,4 +1,4 @@
-package frc.robot.subsystems.swerveSubsystem;
+package frc.robot.subsystems;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -6,6 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.function.*;
 
 import com.studica.frc.AHRS;
@@ -13,18 +14,22 @@ import com.studica.frc.AHRS.NavXComType;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -46,6 +51,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PIDController xController = new PIDController(3, 0.1, 0.0);
     private final PIDController yController = new PIDController(3, 0.1, 0.0);
     private final PIDController headingController = new PIDController(1, 0.0, 0.0);
+    private boolean doRejectUpdate;
 
   Field2d field;
     public SwerveSubsystem(File directory) {
@@ -61,13 +67,14 @@ public class SwerveSubsystem extends SubsystemBase {
     {
       throw new RuntimeException(e);
     }
+
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setCosineCompensator(true);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,
                                                true,
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
-                                                1);
+                                                3); //try to use this today
 
         // mSwerveMods = new SwerveModule[] {
         //         new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -83,7 +90,28 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.synchronizeModuleEncoders();
         swerveDrive.pushOffsetsToEncoders();
         headingController.enableContinuousInput(-Math.PI, Math.PI);
+        doRejectUpdate = false;
     }
+
+    @Override
+    public void periodic() {
+    //  swerveOdometry.update(getGyroYaw(), getModulePositions());
+    // swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
+    //   for (swervelib.SwerveModule mod : mSwerveMods) {
+
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getAbsolutePosition());
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
+    //   }
+    swerveDrive.updateOdometry();
+      updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
+    //   System.out.println(gyro.getYaw());
+        // publisher.set(getModuleStates());
+        // chpublisher.set(getCurrentSpeeds());
+
+      //System.out.println(getRobotOrientationForSpeaker());
+      // System.out.println(mSwerveMods[4].getPosition());
+      }    
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         // currChassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -103,8 +131,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     }
 
-    public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
+    public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
+        // int invertInputs = isRedAlliance() ? -1 : 1;
         return new RunCommand(() ->
 
         drive(
@@ -114,7 +143,7 @@ public class SwerveSubsystem extends SubsystemBase {
             MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
-            true),
+            false),//check if closed loop is better then open loop
 
         this);
     }
@@ -160,27 +189,46 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.resetOdometry(pose);
     }
 
+    //Gets the current yaw angle of the robot, as reported by the swerve pose estimator in the underlying drivebase.
+    //Note, this is not the raw gyro reading, this may be corrected from calls to resetOdometry().
     public Rotation2d getHeading() {
         return getPose().getRotation();
     }
 
+    // doesnt set the gyro yaw only the heading!!!
     public void setHeading(Rotation2d heading) {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
         //         new Pose2d(getPose().getTranslation(), heading));
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), heading));
     }
 
-
-    public void zeroHeading() {
+    // makes robot face towards 0, red alliance wall
+    public void zeroGyro() {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
         //         new Pose2d(getPose().getTranslation(), new Rotation2d()));
-        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        swerveDrive.zeroGyro();
+    }
+
+    public void zeroGyroWithAlliance()
+    {
+      if (isRedAlliance())
+      {
+        zeroGyro();
+        //Set the pose 180 degrees
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      } else
+      {
+        zeroGyro();
+      }
     }
 
     public Rotation2d getGyroYaw() {
         return swerveDrive.getYaw(); // changed from getyaw to fused heading
         //why is this (double)?
     }
+
+    
 
     // public void resetModulesToAbsolute() {
     //     // for (SwerveModule mod : mSwerveMods) {
@@ -193,7 +241,7 @@ public class SwerveSubsystem extends SubsystemBase {
    
 
     public ChassisSpeeds getCurrentSpeeds() {
-        return currChassisSpeeds;
+        return swerveDrive.getFieldVelocity();
     }
 
     public double getRobotOrientationForSpeaker(){
@@ -235,30 +283,52 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.drive(speeds);
     }
 
+    // public double getLimelightMegatag1AngleDeg(){
+        
+    // }
+
+    public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
+        LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
+        doRejectUpdate = false;
+        if(Math.abs(robotYawRate.getAsDouble()) > 720) doRejectUpdate = true;
+        else if(mt2 == null) doRejectUpdate = true;
+        else if(mt2.tagCount == 0){ 
+            doRejectUpdate = true;
+            System.out.println("found 0 tags");
+        }
+        if(mt2 == null) System.out.println("bad");
+
+        if(!doRejectUpdate){
+            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.05,0.05,9999999));
+            // add here putting vision measurement on dashboard
+            System.out.println("good");
+        }
+    }
+
+    // returns true if red alliance, false if blue alliance and if no alliance
+    private boolean isRedAlliance(){
+        var alliance = DriverStation.getAlliance();
+        return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    }
+
+    // posts the current trajectory the robot is following on dashboard
+    public void postTrajectory(Trajectory trajectory)
+    {
+      swerveDrive.postTrajectory(trajectory);
+    }
+
+    // sets the motors to coast/brake
+    public void setMotorsBrake(boolean isBrake){
+        swerveDrive.setMotorIdleMode(isBrake);
+    }
+
+    public ChassisSpeeds getFieldVelocity(){
+        return swerveDrive.getFieldVelocity();
+    }
     
-//       StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-// .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-//     StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
-//     .getStructTopic("Speeds", getCurrentSpeeds().struct).publish();
-
-    @Override
-    public void periodic() {
-    //  swerveOdometry.update(getGyroYaw(), getModulePositions());
-    swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
-      for (swervelib.SwerveModule mod : mSwerveMods) {
-
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getAbsolutePosition());
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
-          SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
-      }
-      swerveDrive.updateOdometry();
-    //   System.out.println(gyro.getYaw());
-        // publisher.set(getModuleStates());
-        // chpublisher.set(getCurrentSpeeds());
-
-      //System.out.println(getRobotOrientationForSpeaker());
-      // System.out.println(mSwerveMods[4].getPosition());
-      }    
-    
+    public SwerveDrive getSwerveDriveObject(){
+        return swerveDrive;
+    }
 }
 
