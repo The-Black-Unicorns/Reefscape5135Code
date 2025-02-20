@@ -18,6 +18,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -47,7 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // private PIDController aprilTagPIDController;
     private final SwerveDrive swerveDrive;
 
-    private ChassisSpeeds currChassisSpeeds;
+    // private ChassisSpeeds currChassisSpeeds;
     private final PIDController xController = new PIDController(3, 0.1, 0.0);
     private final PIDController yController = new PIDController(3, 0.1, 0.0);
     private final PIDController headingController = new PIDController(1, 0.0, 0.0);
@@ -133,13 +134,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
-        // int invertInputs = isRedAlliance() ? -1 : 1;
+        int invertInputs = isRedAlliance() ? -1 : 1;
         return new RunCommand(() ->
 
         drive(
             new Translation2d(
                 MathUtil.applyDeadband(xSpeed.getAsDouble(), STICK_DEADBAND),
-                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED),
+                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED * invertInputs),
             MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
@@ -208,6 +209,13 @@ public class SwerveSubsystem extends SubsystemBase {
         //         new Pose2d(getPose().getTranslation(), new Rotation2d()));
         // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
         swerveDrive.zeroGyro();
+    }
+
+    public void zeroGyroForDriver(){
+        zeroGyro();
+        if(isRedAlliance()){
+            swerveDrive.setGyro(new Rotation3d(new Rotation2d(180)));
+        }
     }
 
     public void zeroGyroWithAlliance()
@@ -280,7 +288,7 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         // Apply the generated speeds
-        swerveDrive.drive(speeds);
+        swerveDrive.driveFieldOriented(speeds);
     }
 
     // public double getLimelightMegatag1AngleDeg(){
