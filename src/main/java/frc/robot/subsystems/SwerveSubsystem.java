@@ -20,6 +20,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -91,6 +93,26 @@ public class SwerveSubsystem extends SubsystemBase {
         doRejectUpdate = false;
     }
 
+    @Override
+    public void periodic() {
+    //  swerveOdometry.update(getGyroYaw(), getModulePositions());
+    // swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
+    //   for (swervelib.SwerveModule mod : mSwerveMods) {
+
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getAbsolutePosition());
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
+    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
+    //   }
+    swerveDrive.updateOdometry();
+      updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
+    //   System.out.println(gyro.getYaw());
+        // publisher.set(getModuleStates());
+        // chpublisher.set(getCurrentSpeeds());
+
+      //System.out.println(getRobotOrientationForSpeaker());
+      // System.out.println(mSwerveMods[4].getPosition());
+      }    
+
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         // currChassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
         //         translation.getX(),
@@ -109,8 +131,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     }
 
-    public Command driveCommand(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
+    public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
+        // int invertInputs = isRedAlliance() ? -1 : 1;
         return new RunCommand(() ->
 
         drive(
@@ -120,7 +143,7 @@ public class SwerveSubsystem extends SubsystemBase {
             MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
-            true),
+            false),//check if closed loop is better then open loop
 
         this);
     }
@@ -166,27 +189,46 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.resetOdometry(pose);
     }
 
+    //Gets the current yaw angle of the robot, as reported by the swerve pose estimator in the underlying drivebase.
+    //Note, this is not the raw gyro reading, this may be corrected from calls to resetOdometry().
     public Rotation2d getHeading() {
         return getPose().getRotation();
     }
 
+    // doesnt set the gyro yaw only the heading!!!
     public void setHeading(Rotation2d heading) {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
         //         new Pose2d(getPose().getTranslation(), heading));
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), heading));
     }
 
-
-    public void zeroHeading() {
+    // makes robot face towards 0, red alliance wall
+    public void zeroGyro() {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
         //         new Pose2d(getPose().getTranslation(), new Rotation2d()));
-        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        swerveDrive.zeroGyro();
+    }
+
+    public void zeroGyroWithAlliance()
+    {
+      if (isRedAlliance())
+      {
+        zeroGyro();
+        //Set the pose 180 degrees
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      } else
+      {
+        zeroGyro();
+      }
     }
 
     public Rotation2d getGyroYaw() {
         return swerveDrive.getYaw(); // changed from getyaw to fused heading
         //why is this (double)?
     }
+
+    
 
     // public void resetModulesToAbsolute() {
     //     // for (SwerveModule mod : mSwerveMods) {
@@ -264,30 +306,29 @@ public class SwerveSubsystem extends SubsystemBase {
         }
     }
 
+    // returns true if red alliance, false if blue alliance and if no alliance
+    private boolean isRedAlliance(){
+        var alliance = DriverStation.getAlliance();
+        return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
+    }
+
+    // posts the current trajectory the robot is following on dashboard
+    public void postTrajectory(Trajectory trajectory)
+    {
+      swerveDrive.postTrajectory(trajectory);
+    }
+
+    // sets the motors to coast/brake
+    public void setMotorsBrake(boolean isBrake){
+        swerveDrive.setMotorIdleMode(isBrake);
+    }
+
+    public ChassisSpeeds getFieldVelocity(){
+        return swerveDrive.getFieldVelocity();
+    }
     
-//       StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
-// .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-//     StructPublisher<ChassisSpeeds> chpublisher = NetworkTableInstance.getDefault()
-//     .getStructTopic("Speeds", getCurrentSpeeds().struct).publish();
-
-    @Override
-    public void periodic() {
-    //  swerveOdometry.update(getGyroYaw(), getModulePositions());
-    // swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
-    //   for (swervelib.SwerveModule mod : mSwerveMods) {
-
-    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getAbsolutePosition());
-    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
-    //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
-    //   }
-      updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  0);
-    //   System.out.println(gyro.getYaw());
-        // publisher.set(getModuleStates());
-        // chpublisher.set(getCurrentSpeeds());
-
-      //System.out.println(getRobotOrientationForSpeaker());
-      // System.out.println(mSwerveMods[4].getPosition());
-      }    
-    
+    public SwerveDrive getSwerveDriveObject(){
+        return swerveDrive;
+    }
 }
 

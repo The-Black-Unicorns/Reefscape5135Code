@@ -34,7 +34,7 @@ public class RobotContainer {
     unlockMotorsDIO = new DigitalInput(0);
     unlockMotorsTrigger = new Trigger(() -> !unlockMotorsDIO.get());
 
-    structure.swerve.setDefaultCommand(structure.swerve.driveCommand(
+    structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
     controller.getXSpeed(),
     controller.getYSpeed(),
     controller.getRotationSpeed(),
