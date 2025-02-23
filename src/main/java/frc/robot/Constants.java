@@ -78,7 +78,10 @@ public class Constants {
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
+        public static final double ARM_MIDDLE_ANGLE = 51.15;
+        public static final double ARM_TOP_ANGLE = 85.9;
+
+        // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }
 
     public static final class Swerve {
