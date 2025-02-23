@@ -21,7 +21,7 @@ public class Constants {
         public static final double ROBOT_CYCLE = 0.02; // s
     }
     public static final class ControllerConstants {
-        public static final double STICK_DEADBAND = 0.2;
+        public static final double STICK_DEADBAND = 0.24;
         public static final double BACK_BUTTONS_DEADBAND = 0.15;
     }
 
@@ -78,8 +78,9 @@ public class Constants {
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_MIDDLE_ANGLE = 51.15;
+        public static final double ARM_MID_ANGLE = 51.15;
         public static final double ARM_TOP_ANGLE = 85.9;
+        public static final double ARM_BOT_ANGLE = 10.0;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }
@@ -159,7 +160,7 @@ public class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double MAX_SPEED = 4.5; // TODO: This must be tuned to specific robot
+        public static final double MAX_SPEED = 5; // TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static final double MAX_ANGULAR_VELOCITY = 10.0; // TODO: This must be tuned to specific robot
 

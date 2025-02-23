@@ -156,6 +156,18 @@ public class ArmSubsystem extends SubsystemBase  {
         return runOnce(()->setArmTargetAngle(desiredAngleDeg));
     }
 
+    public Command setArmAngleUp(){
+        return runOnce(()->setArmTargetAngle(ARM_TOP_ANGLE));
+    }
+
+    public Command setArmAngleMiddle(){
+        return runOnce(()->setArmTargetAngle(ARM_MID_ANGLE));
+    }
+
+    public Command setArmAngleDown(){
+        return runOnce(()->setArmTargetAngle(ARM_TOP_ANGLE));
+    }
+
     public void armEnabledInit(){
         setArmTargetAngle(armEncoder.getPosition());
         armPIDController.reset(armEncoder.getPosition());

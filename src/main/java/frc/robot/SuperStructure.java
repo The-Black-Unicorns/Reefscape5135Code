@@ -24,6 +24,12 @@ public class SuperStructure {
     // private final Autonomous auto;
     public final SwerveSubsystem swerve;
 
+    enum armStates{
+        UP,
+        MIDDLE,
+        DOWN
+    }
+    public armStates curArmState;
     public SuperStructure(){
 
         gripper = new GripperSubsystem();
@@ -32,6 +38,7 @@ public class SuperStructure {
         // auto = new Autonomous();
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
+        curArmState = armStates.UP;
         // auto = new Autonomous(this);
 
 
@@ -74,28 +81,34 @@ public class SuperStructure {
     //     return new 
     // }
 
-    public Command moveArmPlewse(DoubleSupplier speed){
-        return arm.moveArmManulyCommand(speed);
-    }
 
     public Command moveArmDown(){
-
-        return arm.setDesiredAngleDeg(5);
+        if(curArmState == armStates.UP){
+            curArmState = armStates.MIDDLE;
+            return arm.setArmAngleMiddle();
+        } else{
+            curArmState = armStates.DOWN;
+            return arm.setArmAngleDown();
+        }
     }
 
     public Command moveArmUp(){
-        return arm.setDesiredAngleDeg(92);
-         
-      
+        if(curArmState == armStates.MIDDLE){
+            curArmState = armStates.UP;
+            return arm.setArmAngleUp();
+        } else{
+            curArmState = armStates.MIDDLE;
+            return arm.setArmAngleMiddle();
+        }
     }
 
-    public Command movePivotDown(){
-        return pivot.setDesiredAngleDeg(50);
-    }
+    // public Command movePivotDown(){
+    //     return pivot.setDesiredAngleDeg(50);
+    // }
 
-    public Command movePivotUp(){
-        return pivot.setDesiredAngleDeg(200);
-    }
+    // public Command movePivotUp(){
+    //     return pivot.setDesiredAngleDeg(200);
+    // }
 
     public Command getAutonomousCommand() {
         // return auto.getSelected();

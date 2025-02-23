@@ -18,12 +18,14 @@ public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
   private DriveController controller;
-  
+  // private SwerveSubsystem swerve;
   
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
   public RobotContainer() {
     controller = new DriveController(0);
+    // autonomous = new Autonomous();
+    // swerve = new SwerveSubsystem();
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
@@ -38,25 +40,33 @@ public class RobotContainer {
     controller.getRotationSpeed(),
     () -> true )
   );
+
+  // check if works
     
     configureBindings();
   }
 
   private void configureBindings() {
- 
-    controller.intakeCoral().whileTrue(structure.IntakeCoral());
-    controller.outtakeCoral().whileTrue(structure.OuttakeCoral());
-    controller.isGripperActive().whileFalse(structure.StopGripper());
+    // unlockMotorsTrigger.whileTrue(new InstantCommand(() -> structure.setIdleModeCoast()).ignoringDisable(true));
+    // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
+    // unlockMotorsTrigger.whileFalse(Commands.print("ahr"));
     
-  
-    // controller.raiseArm().onTrue(structure.moveArmUp().alongWith(structure.movePivotUp()));
-    // controller.lowerArm().onTrue(structure.moveArmDown().alongWith(structure.movePivotDown()));
-    controller.raiseArm().onTrue(structure.movePivotUp());
-    controller.lowerArm().onTrue(structure.movePivotDown());
+    // controller.intakeCoral().onTrue(structure.ToggleGripper());
+    // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
+    //   () -> 0.1
+    // ));
+    // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
+    controller.raiseArm().onTrue(structure.moveArmUp());
+    controller.lowerArm().onTrue(structure.moveArmDown());
+    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroForDriver()));
 
-
-    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroHeading()));
-
+    //   () -> 0.5
+    // ));
+    // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
+    // controller.raiseArm().onTrue(structure.movePivotUp().alongWith(structure.moveArmUp()));
+    // controller.lowerArm().onTrue(structure.movePivotDown().alongWith(structure.moveArmDown()));
+    controller.raiseArm().onTrue(structure.moveArmUp());
+    controller.lowerArm().onTrue(structure.moveArmDown());
   }
 
   public Command getAutonomousCommand() {
