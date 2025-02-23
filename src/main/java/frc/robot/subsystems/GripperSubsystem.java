@@ -110,7 +110,7 @@ public class GripperSubsystem extends SubsystemBase {
     isIntaking = false;
     m_PositionDutyCycle.Position = -2;
     m_PositionDutyCycle.Velocity = 1;
-    gripperMotor.set(-0.27);
+    gripperMotor.set(-0.5);
       isMotorActive = true;
   }
 

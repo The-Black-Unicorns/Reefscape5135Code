@@ -17,9 +17,9 @@ public interface DriverInterface {
 
     public Trigger resetGyroButton();
 
-    public Trigger raiseArm();
+    public Trigger raiseArmOne();
 
-    public Trigger lowerArm();
+    public Trigger lowerArmOne();
 
     public Trigger outtakeCoral();
 
@@ -28,4 +28,8 @@ public interface DriverInterface {
     public Trigger isGripperActive();
 
     public Trigger climbMode();
+
+    public Trigger shouldArmMoveTrigger();
+
+    public DoubleSupplier getArmSpeed();
 }

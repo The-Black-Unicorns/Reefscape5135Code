@@ -9,21 +9,16 @@ import frc.robot.controllers.interfaces.DriverInterface;
 
 import static frc.robot.Constants.ControllerConstants.*;
 
-public class DriveController implements DriverInterface {
+public class XboxDriveController implements DriverInterface {
     private GenericHID controller;
     
-    public DriveController(int id) {
+    public XboxDriveController(int id) {
         controller = new GenericHID(id);
     } //add stick deadband
 
     @Override
     public Trigger isGripperActive() {
-        
-        if (intakeCoral().getAsBoolean() || outtakeCoral().getAsBoolean()){
-            return new Trigger(() -> true);
-        } else {
-            return new Trigger(() -> false);
-        }
+        return new Trigger(() -> (intakeCoral().getAsBoolean() || outtakeCoral().getAsBoolean()));
     }
 
     @Override
@@ -57,12 +52,12 @@ public class DriveController implements DriverInterface {
     }
 
     @Override
-    public Trigger raiseArm(){
+    public Trigger raiseArmOne(){
         return new Trigger(() -> controller.getRawButton(5));
     }
 
     @Override
-    public Trigger lowerArm(){
+    public Trigger lowerArmOne(){
         return new Trigger(() -> controller.getRawAxis(2) > BACK_BUTTONS_DEADBAND);
     }
 

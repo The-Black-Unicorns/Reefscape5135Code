@@ -335,15 +335,27 @@ public class PivotSubsystem extends SubsystemBase  {
     private double getDesiredPivotAngle(){
         return currentPivotTargetAngle;
     }
-    
-    
-    
 
+    public Command setPivotAngleUp(){
+        return runOnce(()->setPivotTargetAngle(PIVOT_TOP_ANGLE));
+    }
+
+    public Command setPivotAngleMiddle(){
+        return runOnce(()->setPivotTargetAngle(PIVOT_MID_ANGLE));
+    }
+
+    public Command setPivotAngleDown(){
+        return runOnce(()->setPivotTargetAngle(PIVOT_BOT_ANGLE));
+    }
+    
+    
+    
+    @Override
     public void periodic(){
         double ffVoltage = pivotFeedforward.calculate(pivotEncoder.getPosition()* Math.PI / 180.0,
         pivotEncoder.getVelocity()* Math.PI / 180.0);
         // double pidVoltage = armPIDController.calculate(armEncoder.getPosition(), 20.6);
-        SmartDashboard.putNumber("Pivot/pidVoltage", pivotPIDController.calculate(pivotEncoder.getPosition(),90));
+        // SmartDashboard.putNumber("Pivot/pidVoltage", pivotPIDController.calculate(pivotEncoder.getPosition(),90));
         SmartDashboard.putNumber("Pivot/pivotAngle", getPivotAngle());
         // SmartDashboard.putNumber("Arm/armSpeed", getArmVelocity());
         // SmartDashboard.putNumber("Arm/armVoltageR", armMotorR.getBusVoltage());

@@ -165,7 +165,7 @@ public class ArmSubsystem extends SubsystemBase  {
     }
 
     public Command setArmAngleDown(){
-        return runOnce(()->setArmTargetAngle(ARM_TOP_ANGLE));
+        return runOnce(()->setArmTargetAngle(ARM_BOT_ANGLE));
     }
 
     public void armEnabledInit(){

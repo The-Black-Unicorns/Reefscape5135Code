@@ -115,32 +115,23 @@ public class SwerveSubsystem extends SubsystemBase {
       }    
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        // currChassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-        //         translation.getX(),
-        //         translation.getY(),
-        //         rotation,
-        //         getHeading())
-        //         : new ChassisSpeeds(
-        //                 translation.getX(),
-        //                 translation.getY(),
-        //                 rotation);
-
-        // SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(currChassisSpeeds);
-        // setModuleStates(swerveModuleStates);    
-        // System.out.println("translation: " + translation + " rotation: " + rotation);    
-        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+        int invertInputs = isRedAlliance() ? -1 : 1;
+        invertInputs = 1;
+        Translation2d newTranslation =   translation.times(invertInputs);
+        swerveDrive.drive(newTranslation, rotation, fieldRelative, isOpenLoop);
 
     }
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
-        int invertInputs = isRedAlliance() ? -1 : 1;
+        // int invertInputs = isRedAlliance() ? -1 : 1;
+        // int invertInputs = 1 ;
         return new RunCommand(() ->
 
         drive(
             new Translation2d(
                 MathUtil.applyDeadband(xSpeed.getAsDouble(), STICK_DEADBAND),
-                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED * invertInputs),
+                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED),
             MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
@@ -209,13 +200,14 @@ public class SwerveSubsystem extends SubsystemBase {
         //         new Pose2d(getPose().getTranslation(), new Rotation2d()));
         // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
         swerveDrive.zeroGyro();
+        // if(isRedAlliance()) setHeading(new Rotation2d(180));
     }
 
     public void zeroGyroForDriver(){
         zeroGyro();
-        if(isRedAlliance()){
-            swerveDrive.setGyro(new Rotation3d(new Rotation2d(180)));
-        }
+        // if(isRedAlliance()){
+        //     swerveDrive.setGyro(new Rotation3d(new Rotation2d(Math.PI)));
+        // }
     }
 
     public void zeroGyroWithAlliance()
@@ -303,14 +295,14 @@ public class SwerveSubsystem extends SubsystemBase {
         else if(mt2 == null) doRejectUpdate = true;
         else if(mt2.tagCount == 0){ 
             doRejectUpdate = true;
-            System.out.println("found 0 tags");
+            // System.out.println("found 0 tags");
         }
-        if(mt2 == null) System.out.println("bad");
+        // if(mt2 == null) System.out.println("bad");
 
         if(!doRejectUpdate){
             swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.05,0.05,9999999));
             // add here putting vision measurement on dashboard
-            System.out.println("good");
+            // System.out.println("good");
         }
     }
 

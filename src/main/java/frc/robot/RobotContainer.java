@@ -12,18 +12,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.controllers.controllers.DriveController;
+import frc.robot.controllers.controllers.QxDriveController;
 
 public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
-  private DriveController controller;
+  private QxDriveController controller;
   // private SwerveSubsystem swerve;
   
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
   public RobotContainer() {
-    controller = new DriveController(0);
+    controller = new QxDriveController(0);
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
     field = new Field2d();
@@ -51,13 +51,17 @@ public class RobotContainer {
     // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
     // unlockMotorsTrigger.whileFalse(Commands.print("ahr"));
     
-    // controller.intakeCoral().onTrue(structure.ToggleGripper());
+    // controller.intakeCoral().onTrue(structure.IntakeCoral());
+    // controller.outtakeCoral().onTrue(structure.OuttakeCoral());
+    controller.isGripperActive().whileFalse(structure.StopGripper());
+    controller.isGripperActive().whileTrue(structure.actovateGripperCommand());
     // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
     //   () -> 0.1
     // ));
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
-    controller.raiseArm().onTrue(structure.moveArmUp());
-    controller.lowerArm().onTrue(structure.moveArmDown());
+    controller.raiseArmOne().onTrue(structure.moveArmUpOne());
+    controller.lowerArmOne().onTrue(structure.moveArmDownOne());
+
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroForDriver()));
 
     //   () -> 0.5
@@ -65,8 +69,8 @@ public class RobotContainer {
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
     // controller.raiseArm().onTrue(structure.movePivotUp().alongWith(structure.moveArmUp()));
     // controller.lowerArm().onTrue(structure.movePivotDown().alongWith(structure.moveArmDown()));
-    controller.raiseArm().onTrue(structure.moveArmUp());
-    controller.lowerArm().onTrue(structure.moveArmDown());
+    // controller.raiseArm().onTrue(structure.moveArmUp());
+    // controller.lowerArm().onTrue(structure.moveArmDown());
   }
 
   public Command getAutonomousCommand() {
@@ -74,6 +78,7 @@ public class RobotContainer {
   }
   
   public void periodic(){
+    structure.periodic();
   }
 
   public void testPeriodic(){
