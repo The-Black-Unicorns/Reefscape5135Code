@@ -102,6 +102,13 @@ public class SuperStructure {
         }
     }
 
+    public Command startClimb(){
+        return Commands.parallel(
+            arm.setArmAngleUp()
+            // pivot.setDesiredAngleDeg(120)
+        );
+    }
+
     // public Command movePivotDown(){
     //     return pivot.setDesiredAngleDeg(50);
     // }

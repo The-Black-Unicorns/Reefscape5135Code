@@ -58,6 +58,9 @@ public class RobotContainer {
     // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
     controller.raiseArm().onTrue(structure.moveArmUp());
     controller.lowerArm().onTrue(structure.moveArmDown());
+
+    controller.climbMode().onTrue(structure.startClimb());
+    
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroForDriver()));
 
     //   () -> 0.5
