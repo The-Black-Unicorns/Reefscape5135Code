@@ -336,6 +336,10 @@ public class PivotSubsystem extends SubsystemBase  {
         return currentPivotTargetAngle;
     }
 
+    public Command setPivotAngleUpOuttake(){
+        return runOnce(()->setPivotTargetAngle(PIVOT_TOP_OUTTAKE_ANGLE));
+    }
+
     public Command setPivotAngleUp(){
         return runOnce(()->setPivotTargetAngle(PIVOT_TOP_ANGLE));
     }

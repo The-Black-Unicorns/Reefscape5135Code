@@ -1,5 +1,6 @@
 package frc.lib.util;
 
+import static frc.robot.Constants.Swerve.MAX_SPEED;
 import static frc.robot.Constants.swerveMathConstants.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,22 +19,28 @@ public class SwerveMath {
     }
 
     private static Translation2d forwardAccelLimit(Translation2d curSpeeds, Translation2d lastSpeeds){
-        Rotation2d forwardAngle = lastSpeeds.getAngle();
-        Rotation2d curAngle = curSpeeds.getAngle();
+        Rotation2d forwardAngle;
+        if(lastSpeeds.getX() == 0 && lastSpeeds.getY() == 0) forwardAngle = new Rotation2d();
+        else forwardAngle = lastSpeeds.getAngle();
+
+        Rotation2d curAngle;
+        if(curSpeeds.getX() == 0 && curSpeeds.getY() == 0) curAngle = new Rotation2d();
+        else curAngle = lastSpeeds.getAngle();
         Rotation2d angleDiff = forwardAngle.minus(curAngle);
 
         Translation2d forwardProjection = new Translation2d(angleDiff.getCos() * Math.hypot(curSpeeds.getX(), curSpeeds.getY()), forwardAngle);
         Translation2d remainder = curSpeeds.minus(forwardProjection);
         
         double forwardDiff = Math.hypot(forwardProjection.getX(), forwardProjection.getY()) - Math.hypot(lastSpeeds.getX(), lastSpeeds.getY());
-        if(Math.abs(forwardDiff) > MAX_FORWARD_ACCEL * ROBOT_CYCLE){
+        double maxAccel = MAX_FORWARD_ACCEL* (1 - Math.hypot(lastSpeeds.getX(), lastSpeeds.getY())/MAX_SPEED);
+        if(Math.abs(forwardDiff) > maxAccel * ROBOT_CYCLE){
             Translation2d res;
             if(forwardDiff < 0){
-                double size = Math.hypot(lastSpeeds.getX(), lastSpeeds.getY()) - MAX_FORWARD_ACCEL * ROBOT_CYCLE;
+                double size = Math.hypot(lastSpeeds.getX(), lastSpeeds.getY()) - maxAccel * ROBOT_CYCLE;
                 res  = (new Translation2d(size, forwardAngle)).plus(remainder);
                 return res;
             } else if(forwardDiff>0){
-                double size = Math.hypot(lastSpeeds.getX(), lastSpeeds.getY()) + MAX_FORWARD_ACCEL * ROBOT_CYCLE;
+                double size = Math.hypot(lastSpeeds.getX(), lastSpeeds.getY()) + maxAccel * ROBOT_CYCLE;
                 res  = (new Translation2d(size, forwardAngle)).plus(remainder);
                 return res;
             }

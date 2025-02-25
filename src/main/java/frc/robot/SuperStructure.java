@@ -40,7 +40,7 @@ public class SuperStructure {
         // auto = new Autonomous();
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
-        curArmState = armStates.INTAKE_UP;
+        curArmState = armStates.OUTTAKE_UP;
         auto = new Autonomous(this);
 
 
@@ -80,27 +80,13 @@ public class SuperStructure {
         return gripper.stopGripperCommand();
     }
     public Command actovateGripperCommand(){
-        // return switch (curArmState) {
-        //     case DOWN:
-        //         IntakeCoral();
-        //     case MIDDLE:
-        //         OuttakeCoral();
-        //     case UP:
-        //         OuttakeCoral();
-        //     default:
-        //         OuttakeCoral();
-
-        // ;}    }    
         return Commands.either(IntakeCoral(), OuttakeCoral(),
          () -> (curArmState == armStates.INTAKE_DOWN || curArmState == armStates.INTAKE_UP));
         // return curArmState != armStates.DOWN ? IntakeCoral() :
         //     OuttakeCoral();
 
     }
-        
-    // public Command setIdleModeBreak(){
-    //     return new 
-    // }
+
     private Command changeArmState(armStates state){
         return Commands.runOnce(() -> changeVarArmState(state));
     }
@@ -111,35 +97,56 @@ public class SuperStructure {
     public Command moveArmDownOne(){
 
         return Commands.either(
-            Commands.parallel(
-                changeArmState(armStates.OUTTAKE_MIDDLE),
-                arm.setArmAngleMiddle(),
-                pivot.setPivotAngleMiddle()
-            ),
-            Commands.parallel(
-                changeArmState(armStates.INTAKE_DOWN),
-                arm.setArmAngleDown(),
-                pivot.setPivotAngleDown()
-            ), () -> curArmState == armStates.INTAKE_UP
+            moveArmUpIntake(),
+            Commands.either(
+
+                moveArmMiddleOuttake(),
+                moveArmDownIntake(),
+                () -> curArmState == armStates.INTAKE_UP),
+             () -> curArmState == armStates.OUTTAKE_UP
         );
 
     }
 
     public Command moveArmUpOne(){
-         return Commands.either(
-            Commands.parallel(
-                changeArmState(armStates.OUTTAKE_MIDDLE),
-                arm.setArmAngleMiddle(),
-                pivot.setPivotAngleMiddle()
-            ),
-            Commands.parallel(
-                changeArmState(armStates.INTAKE_UP),
-                arm.setArmAngleUp(),
-                pivot.setPivotAngleUp()
-            ), () -> (curArmState == armStates.INTAKE_DOWN)
-        );
+        return Commands.either(
+            moveArmUpOuttake(),
+
+            Commands.either(
+            moveArmUpIntake(),
+            moveArmMiddleOuttake(),
+             () -> (curArmState == armStates.INTAKE_UP || curArmState == armStates.OUTTAKE_UP))
+            , () -> curArmState == armStates.INTAKE_UP);
+    }
+    public Command moveArmDownIntake(){
+        return Commands.parallel(
+            changeArmState(armStates.INTAKE_DOWN),
+            arm.setArmAngleDown(),
+            pivot.setPivotAngleDown());
     }
 
+    public Command moveArmMiddleOuttake(){
+        return Commands.parallel(
+            changeArmState(armStates.OUTTAKE_MIDDLE),
+            arm.setArmAngleMiddle(),
+            pivot.setPivotAngleMiddle());
+    }
+
+    public Command moveArmUpIntake(){
+        return Commands.parallel(
+            changeArmState(armStates.INTAKE_UP),
+            arm.setArmAngleUp(),
+            pivot.setPivotAngleUp()
+            );
+    }
+    
+    public Command moveArmUpOuttake(){
+        return Commands.parallel(
+            changeArmState(armStates.OUTTAKE_UP),
+            arm.setArmAngleUp(),
+            pivot.setPivotAngleUpOuttake()
+        );
+    }
     public Command getAutonomousCommand() {
         return auto.getSelected();
     }

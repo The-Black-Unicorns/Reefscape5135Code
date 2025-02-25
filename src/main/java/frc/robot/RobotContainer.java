@@ -13,17 +13,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.controllers.QxDriveController;
+import frc.robot.controllers.controllers.XboxDriveController;
 
 public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
-  private QxDriveController controller;
+  private XboxDriveController controller;
   // private SwerveSubsystem swerve;
   
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
   public RobotContainer() {
-    controller = new QxDriveController(0);
+    controller = new XboxDriveController(0);
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
     field = new Field2d();
@@ -49,28 +50,20 @@ public class RobotContainer {
   private void configureBindings() {
     // unlockMotorsTrigger.whileTrue(new InstantCommand(() -> structure.setIdleModeCoast()).ignoringDisable(true));
     // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
-    // unlockMotorsTrigger.whileFalse(Commands.print("ahr"));
-    
-    // controller.intakeCoral().onTrue(structure.IntakeCoral());
-    // controller.outtakeCoral().onTrue(structure.OuttakeCoral());
-    controller.isGripperActive().whileFalse(structure.StopGripper());
-    controller.isGripperActive().whileTrue(structure.actovateGripperCommand());
-    // controller.shouldArmMoveTrigger().whileTrue(structure.moveArmPlewse(
-    //   () -> 0.1
-    // ));
-    // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
-    controller.raiseArmOne().onTrue(structure.moveArmUpOne());
-    controller.lowerArmOne().onTrue(structure.moveArmDownOne());
 
-    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroForDriver()));
+    controller.intakeCoral().whileFalse(structure.StopGripper());
+    controller.intakeCoral().whileTrue(structure.actovateGripperCommand());
 
-    //   () -> 0.5
-    // ));
-    // controller.shouldArmMoveTrigger().whileTrue(Commands.print("aa " + controller.getArmSpeed().getAsDouble()));
-    // controller.raiseArm().onTrue(structure.movePivotUp().alongWith(structure.moveArmUp()));
-    // controller.lowerArm().onTrue(structure.movePivotDown().alongWith(structure.moveArmDown()));
-    // controller.raiseArm().onTrue(structure.moveArmUp());
-    // controller.lowerArm().onTrue(structure.moveArmDown());
+
+    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
+    controller.outtakeCoral().onTrue(structure.moveArmUpOuttake());
+    controller.lowerArmOne().onTrue(structure.moveArmDownIntake());
+
+    // controller.raiseArmOne().onTrue(structure.moveArmUpOne());
+    // controller.lowerArmOne().onTrue(structure.moveArmDownOne());
+
+    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
+
   }
 
   public Command getAutonomousCommand() {

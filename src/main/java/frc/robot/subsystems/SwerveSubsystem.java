@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.SwerveMath;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
@@ -37,6 +38,7 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import swervelib.SwerveInputStream;
 
 import static frc.robot.Constants.ControllerConstants.STICK_DEADBAND;
 import static frc.robot.Constants.Swerve.*;
@@ -49,9 +51,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
 
     // private ChassisSpeeds currChassisSpeeds;
-    private final PIDController xController = new PIDController(3, 0.1, 0.0);
-    private final PIDController yController = new PIDController(3, 0.1, 0.0);
-    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
+    private final PIDController xController = new PIDController(0.5, 0, 0.0);
+    private final PIDController yController = new PIDController(0.5, 0, 0.0);
+    private final PIDController headingController = new PIDController(0.3, 0.0, 0.0);
     private boolean doRejectUpdate;
 
   Field2d field;
@@ -62,7 +64,7 @@ public class SwerveSubsystem extends SubsystemBase {
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED,
-                                                                  new Pose2d(new Translation2d(1, 4),
+                                                                  new Pose2d(new Translation2d(15, 4),
                                                                              Rotation2d.fromDegrees(0)));
     } catch (Exception e)
     {
@@ -92,6 +94,9 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.pushOffsetsToEncoders();
         headingController.enableContinuousInput(-Math.PI, Math.PI);
         doRejectUpdate = false;
+
+        //disable this if no vision
+        swerveDrive.stopOdometryThread();
     }
 
     @Override
@@ -112,30 +117,31 @@ public class SwerveSubsystem extends SubsystemBase {
 
       //System.out.println(getRobotOrientationForSpeaker());
       // System.out.println(mSwerveMods[4].getPosition());
+      System.out.println(swerveDrive.getPose());
+      System.out.println(swerveDrive.getYaw());
       }    
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        int invertInputs = isRedAlliance() ? -1 : 1;
-        invertInputs = 1;
-        Translation2d newTranslation =   translation.times(invertInputs);
-        swerveDrive.drive(newTranslation, rotation, fieldRelative, isOpenLoop);
-
+        // Translation2d lastSpeeds = 
+        // new Translation2d(swerveDrive.getFieldVelocity().vxMetersPerSecond, swerveDrive.getFieldVelocity().vyMetersPerSecond);
+        // Translation2d newTranslation = SwerveMath.normalizeWheelAccel(translation, lastSpeeds);
+        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+        swerveDrive.driveFieldOriented(getCurrentSpeeds());
     }
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
-        // int invertInputs = isRedAlliance() ? -1 : 1;
-        // int invertInputs = 1 ;
+        int invertInputs = isRedAlliance() ? 1 : -1;
         return new RunCommand(() ->
 
         drive(
             new Translation2d(
                 MathUtil.applyDeadband(xSpeed.getAsDouble(), STICK_DEADBAND),
-                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED),
-            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
+                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED * invertInputs),
+            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY * (invertInputs)
             ,
             isFieldOriented.getAsBoolean(),
-            false),//check if closed loop is better then open loop
+            true),//check if closed loop is better then open loop
 
         this);
     }
@@ -196,30 +202,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // makes robot face towards 0, red alliance wall
     public void zeroGyro() {
-        // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-        //         new Pose2d(getPose().getTranslation(), new Rotation2d()));
-        // swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
-        swerveDrive.zeroGyro();
-        // if(isRedAlliance()) setHeading(new Rotation2d(180));
-    }
 
-    public void zeroGyroForDriver(){
-        zeroGyro();
-        // if(isRedAlliance()){
-        //     swerveDrive.setGyro(new Rotation3d(new Rotation2d(Math.PI)));
-        // }
+        swerveDrive.zeroGyro();
     }
 
     public void zeroGyroWithAlliance()
     {
-      if (isRedAlliance())
+      if (!
+      isRedAlliance())
       {
         zeroGyro();
         //Set the pose 180 degrees
-        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+        
       } else
       {
         zeroGyro();
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
       }
     }
 
@@ -289,7 +288,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
+        LimelightHelpers.PoseEstimate mt2;
+        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);
+        // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
         doRejectUpdate = false;
         if(Math.abs(robotYawRate.getAsDouble()) > 720) doRejectUpdate = true;
         else if(mt2 == null) doRejectUpdate = true;
@@ -300,7 +301,9 @@ public class SwerveSubsystem extends SubsystemBase {
         // if(mt2 == null) System.out.println("bad");
 
         if(!doRejectUpdate){
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.05,0.05,9999999));
+            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.70,0.7,9999999));
+            // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
+            // System.out.println(mt2.pose);
             // add here putting vision measurement on dashboard
             // System.out.println("good");
         }
