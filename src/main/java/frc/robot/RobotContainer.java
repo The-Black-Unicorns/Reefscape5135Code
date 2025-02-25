@@ -71,7 +71,6 @@ public class RobotContainer {
   }
   
   public void periodic(){
-    System.out.println("" + controller.getXSpeed() + " " + controller.getYSpeed());
     structure.periodic();
   }
 
