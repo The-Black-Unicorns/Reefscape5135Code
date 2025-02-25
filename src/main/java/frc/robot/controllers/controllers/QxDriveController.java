@@ -34,52 +34,55 @@ public class QxDriveController implements DriverInterface {
 
     @Override
     public DoubleSupplier getRotationSpeed(){
-        return () -> controller.getRawAxis(0);
+        return (() -> controller.getRawAxis(0));
     }
 
     @Override
     public DoubleSupplier getXSpeed(){
-        return () -> controller.getRawAxis(3);
+        return (() -> controller.getRawAxis(3));
     }
 
     @Override
     public DoubleSupplier getYSpeed(){
-        return () -> controller.getRawAxis(2);
+        return () -> -controller.getRawAxis(2);
     }
 
     @Override
     public Trigger resetGyroButton(){
-        return new Trigger(()->controller.getRawButton(3));
+        return new Trigger(()->controller.getRawButton(2));
     }
 
     @Override
     public Trigger raiseArmOne(){
-        return new Trigger(() -> controller.getRawButton(5));
+        return new Trigger(() -> controller.getRawButton(3));
     }
 
     @Override
     public Trigger lowerArmOne(){
-        return new Trigger(() -> controller.getRawAxis(2) > BACK_BUTTONS_DEADBAND);
+        return new Trigger(() -> !controller.getRawButton(3));
     }
 
     @Override
     public Trigger outtakeCoral(){
-        return new Trigger(()->controller.getRawButton(6));
+        // return new Trigger(()->controller.getRawButton(6));
+        return null;
     }
 
     @Override
     public Trigger intakeCoral(){
-        return new Trigger(() -> controller.getRawAxis(3) > BACK_BUTTONS_DEADBAND);
+        return new Trigger(() -> controller.getRawButton(4));
     }
 
     @Override
     public Trigger climbMode(){
-        return new Trigger(() -> (controller.getRawButton(8) && controller.getRawButton(7)));
+        // return new Trigger(() -> (controller.getRawButton(8) && controller.getRawButton(7)));
+        return null;
     }
 
     @Override
     public Trigger shouldArmMoveTrigger(){
-        return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < -0.1);
+        // return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < -0.1);
+        return null;
     }
 
     @Override

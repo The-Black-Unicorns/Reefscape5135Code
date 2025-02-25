@@ -72,12 +72,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-    swerveDrive.setCosineCompensator(true);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
-    swerveDrive.setAngularVelocityCompensation(true,
-                                               true,
+    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setAngularVelocityCompensation(false,
+                                               false,
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
-    swerveDrive.setModuleEncoderAutoSynchronize(false,
-                                                3); //try to use this today
+    // swerveDrive.setModuleEncoderAutoSynchronize(true,
+                                                // 3); //try to use this today
 
         // mSwerveMods = new SwerveModule[] {
         //         new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -126,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // new Translation2d(swerveDrive.getFieldVelocity().vxMetersPerSecond, swerveDrive.getFieldVelocity().vyMetersPerSecond);
         // Translation2d newTranslation = SwerveMath.normalizeWheelAccel(translation, lastSpeeds);
         swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
-        swerveDrive.driveFieldOriented(getCurrentSpeeds());
+        // swerveDrive.driveFieldOriented(getCurrentSpeeds());
     }
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
@@ -301,7 +301,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // if(mt2 == null) System.out.println("bad");
 
         if(!doRejectUpdate){
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.70,0.7,9999999));
+            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.1,0.1,9999999));
             // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
             // System.out.println(mt2.pose);
             // add here putting vision measurement on dashboard

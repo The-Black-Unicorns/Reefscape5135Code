@@ -13,18 +13,18 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.controllers.QxDriveController;
-import frc.robot.controllers.controllers.XboxDriveController;
+// import frc.robot.controllers.controllers.XboxDriveController;
 
 public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
-  private XboxDriveController controller;
+  private QxDriveController controller;
   // private SwerveSubsystem swerve;
   
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
   public RobotContainer() {
-    controller = new XboxDriveController(0);
+    controller = new QxDriveController(0);
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
     field = new Field2d();
@@ -52,11 +52,11 @@ public class RobotContainer {
     // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
 
     controller.intakeCoral().whileFalse(structure.StopGripper());
-    controller.intakeCoral().whileTrue(structure.actovateGripperCommand());
+    controller.intakeCoral().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
 
 
     controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
-    controller.outtakeCoral().onTrue(structure.moveArmUpOuttake());
+    // controller.outtakeCoral().onTrue(structure.moveArmUpIntake());
     controller.lowerArmOne().onTrue(structure.moveArmDownIntake());
 
     // controller.raiseArmOne().onTrue(structure.moveArmUpOne());
@@ -71,6 +71,7 @@ public class RobotContainer {
   }
   
   public void periodic(){
+    System.out.println("" + controller.getXSpeed() + " " + controller.getYSpeed());
     structure.periodic();
   }
 

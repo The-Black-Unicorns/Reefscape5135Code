@@ -21,7 +21,7 @@ public class Constants {
         public static final double ROBOT_CYCLE = 0.02; // s
     }
     public static final class ControllerConstants {
-        public static final double STICK_DEADBAND = 0.22;
+        public static final double STICK_DEADBAND = 0.2;
         public static final double BACK_BUTTONS_DEADBAND = 0.15;
     }
 

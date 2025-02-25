@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -61,6 +62,7 @@ public class GripperSubsystem extends SubsystemBase {
 
     gripperMotor = new SparkMax(K_SPARK_ID, MotorType.kBrushless);
     configs = new SparkMaxConfig();
+    configs.idleMode(IdleMode.kCoast);
     configs.closedLoop.pid(GRIPPER_KP, GRIPPER_KI, GRIPPER_KD);
     configs.inverted(true);
 
