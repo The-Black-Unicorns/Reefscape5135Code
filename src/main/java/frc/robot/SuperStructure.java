@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -148,8 +149,20 @@ public class SuperStructure {
         );
     }
     public Command getAutonomousCommand() {
-        return auto.getSelected();
+        return Commands.sequence(
+            new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve),
+            Commands.parallel(
+                swerve.driveConstantSpeed(0.5, 0, 0, 8, false),
+                this.moveArmMiddleOuttake()
+            ),
+            new WaitCommand(8),
+            this.OuttakeCoral(),
+            new WaitCommand(1),
+            this.StopGripper(),
+            new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+        );
     }
+    
 
     
 

@@ -96,7 +96,7 @@ public class SwerveSubsystem extends SubsystemBase {
         doRejectUpdate = false;
 
         //disable this if no vision
-        swerveDrive.stopOdometryThread();
+        // swerveDrive.stopOdometryThread();
     }
 
     @Override
@@ -109,8 +109,8 @@ public class SwerveSubsystem extends SubsystemBase {
     //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
     //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
     //   }
-    swerveDrive.updateOdometry();
-      updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
+    // swerveDrive.updateOdometry();
+    //   updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
     //   System.out.println(gyro.getYaw());
         // publisher.set(getModuleStates());
         // chpublisher.set(getCurrentSpeeds());
@@ -131,7 +131,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented) {
-        int invertInputs = isRedAlliance() ? 1 : -1;
+        int invertInputs = isRedAlliance() ? -1 : 1;
         return new RunCommand(() ->
 
         drive(
@@ -146,8 +146,8 @@ public class SwerveSubsystem extends SubsystemBase {
         this);
     }
 
-    public Command driveConstantSpeed(double x, double y, double rotations, double time) {
-        return new RunCommand(() -> drive(new Translation2d(x, y), rotations, true, true), this)
+    public Command driveConstantSpeed(double x, double y, double rotations, double time, boolean isFieldOriented) {
+        return new RunCommand(() -> drive(new Translation2d(x, y), rotations, isFieldOriented, true), this)
                 .withTimeout(time)
                 .andThen(new InstantCommand(() -> drive(new Translation2d(), 0, true, true)));
     }
@@ -219,6 +219,22 @@ public class SwerveSubsystem extends SubsystemBase {
       {
         zeroGyro();
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+      }
+    }
+
+    public void zeroGyroAutonomous()
+    {
+      if (!
+      isRedAlliance())
+      {
+        zeroGyro();
+        //Set the pose 180 degrees
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+        
+      } else
+      {
+        zeroGyro();
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
       }
     }
 
