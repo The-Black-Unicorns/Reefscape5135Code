@@ -152,17 +152,17 @@ public class SuperStructure {
         return Commands.sequence(
             new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve),
             Commands.parallel(
-                swerve.driveConstantSpeed(0.5, 0, 0, 8, false),
+                swerve.driveConstantSpeed(0.5, 0, 0, 4, false),
                 this.moveArmMiddleOuttake()
             ),
-            new WaitCommand(8),
+            new WaitCommand(1),
             this.OuttakeCoral(),
             new WaitCommand(1),
             this.StopGripper(),
             new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
         );
     }
-    
+
 
     
 

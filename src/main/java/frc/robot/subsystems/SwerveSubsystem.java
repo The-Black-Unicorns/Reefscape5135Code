@@ -16,6 +16,7 @@ import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -55,6 +56,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private final PIDController yController = new PIDController(0.5, 0, 0.0);
     private final PIDController headingController = new PIDController(0.3, 0.0, 0.0);
     private boolean doRejectUpdate;
+
+    private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
+    private SlewRateLimiter yLimiter = new SlewRateLimiter(10);
 
   Field2d field;
     public SwerveSubsystem(File directory) {
@@ -125,6 +129,13 @@ public class SwerveSubsystem extends SubsystemBase {
         // Translation2d lastSpeeds = 
         // new Translation2d(swerveDrive.getFieldVelocity().vxMetersPerSecond, swerveDrive.getFieldVelocity().vyMetersPerSecond);
         // Translation2d newTranslation = SwerveMath.normalizeWheelAccel(translation, lastSpeeds);
+
+        // double x_speed = translation.getX();
+        // double y_speed = translation.getY();
+        // double x = xLimiter.calculate(x_speed);
+        // double y = yLimiter.calculate(y_speed);
+        // translation = new Translation2d(x, y);
+
         swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
         // swerveDrive.driveFieldOriented(getCurrentSpeeds());
     }
