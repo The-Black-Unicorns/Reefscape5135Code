@@ -1,6 +1,7 @@
 package frc.robot.controllers.interfaces;
 
 import java.security.PublicKey;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,4 +33,14 @@ public interface DriverInterface {
     public Trigger shouldArmMoveTrigger();
 
     public DoubleSupplier getArmSpeed();
+
+    public DoubleSupplier getIntakeMode();
+
+    public Trigger intakeSource();
+
+    // public Trigger setIntakeDown();
+
+    // public Trigger setIntakeUp();
+
+    public DoubleSupplier getSpeedPotentiometer();
 }

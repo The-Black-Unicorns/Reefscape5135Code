@@ -1,13 +1,17 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amp;
+
 import java.io.File;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+// import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -20,6 +24,8 @@ public class SuperStructure {
     private final GripperSubsystem gripper;
     private final ArmSubsystem arm;
     private final PivotSubsystem pivot;
+    
+    private armStates lastpose;
 
     // private final Autonomous auto;
 
@@ -44,6 +50,8 @@ public class SuperStructure {
         curArmState = armStates.OUTTAKE_UP;
         auto = new Autonomous(this);
 
+        
+
 
         // new WaitCommand(0.1).andThen(() -> arm.setDefaultCommand(
         //     arm.setDesiredAngle()))
@@ -51,6 +59,9 @@ public class SuperStructure {
 
         arm.setDefaultCommand(arm.setDesiredAngle());
         pivot.setDefaultCommand(pivot.setDesiredAngle());
+
+        curArmState = armStates.OUTTAKE_MIDDLE;
+
     }
 
     // public Command ToggleGripper(){
@@ -123,7 +134,10 @@ public class SuperStructure {
         return Commands.parallel(
             changeArmState(armStates.INTAKE_DOWN),
             arm.setArmAngleDown(),
-            pivot.setPivotAngleDown());
+            pivot.setPivotAngleDown(),
+            new InstantCommand(() -> lastpose = armStates.INTAKE_DOWN)
+            );
+            
     }
 
     public Command moveArmMiddleOuttake(){
@@ -137,8 +151,10 @@ public class SuperStructure {
         return Commands.parallel(
             changeArmState(armStates.INTAKE_UP),
             arm.setArmAngleUp(),
-            pivot.setPivotAngleUp()
+            pivot.setPivotAngleUp(),
+            new InstantCommand(() -> lastpose = armStates.INTAKE_UP)
             );
+
     }
     
     public Command moveArmUpOuttake(){
@@ -149,19 +165,42 @@ public class SuperStructure {
         );
     }
     public Command getAutonomousCommand() {
-        return Commands.sequence(
+        return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+         Commands.sequence(
             new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve),
-            Commands.parallel(
-                swerve.driveConstantSpeed(0.5, 0, 0, 4, false),
-                this.moveArmMiddleOuttake()
-            ),
-            new WaitCommand(1),
-            this.OuttakeCoral(),
-            new WaitCommand(1),
-            this.StopGripper(),
-            new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
-        );
+            
+
+            swerve.driveConstantSpeed(-1, 0, 0,3, true),
+            
+
+            // new WaitCommand(1),
+            // this.OuttakeCoral(),
+            // new WaitCommand(1),
+            // this.StopGripper()
+
+            this.OuttakeCoral().withTimeout(1),
+            this.StopGripper()
+            // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+        ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
     }
+
+    public Command moveArmToPos(){
+        return Commands.either(
+            moveArmUpIntake(), Commands.either(
+                moveArmMiddleOuttake(),
+                 moveArmDownIntake(), () -> curArmState == armStates.OUTTAKE_MIDDLE),
+        () -> curArmState == armStates.INTAKE_UP);
+    }
+
+    public Command setArmLastState(){
+       return new InstantCommand(() ->  curArmState = lastpose);
+    }
+
+    public Command setDesiredState(armStates state){
+        return new InstantCommand(() -> curArmState = state);
+    }
+
+
 
 
     
@@ -170,6 +209,8 @@ public class SuperStructure {
         arm.armEnabledInit();
         pivot.pivotEnabledInit();
         gripper.stopGripper();
+
+
     }
 
     public void testPeriodic(){
@@ -189,5 +230,6 @@ public class SuperStructure {
         // if(curArmState == armStates.UP) System.out.println("bad");
         // else if(curArmState == armStates.MIDDLE) System.out.println("fine");
         // else System.out.println("greate");
+        // SmartDashboard.putString("armState", curArmState.name());
     }
 }

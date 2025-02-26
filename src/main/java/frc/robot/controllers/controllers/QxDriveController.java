@@ -1,5 +1,6 @@
 package frc.robot.controllers.controllers;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -34,17 +35,17 @@ public class QxDriveController implements DriverInterface {
 
     @Override
     public DoubleSupplier getRotationSpeed(){
-        return (() -> controller.getRawAxis(0));
+        return (() -> controller.getRawAxis(0)*Math.abs(controller.getRawAxis(0)));
     }
 
     @Override
     public DoubleSupplier getXSpeed(){
-        return (() -> controller.getRawAxis(3));
+        return (() -> controller.getRawAxis(3) * Math.abs(controller.getRawAxis(3)));
     }
 
     @Override
     public DoubleSupplier getYSpeed(){
-        return () -> -controller.getRawAxis(2);
+        return () -> -controller.getRawAxis(2)*Math.abs(controller.getRawAxis(2));
     }
 
     @Override
@@ -88,5 +89,32 @@ public class QxDriveController implements DriverInterface {
     @Override
     public DoubleSupplier getArmSpeed(){
         return () -> controller.getRawAxis(1);
+    }
+
+    // @Override
+    // public Trigger setIntakeDown(){
+    //     return new Trigger(() -> controller.getRawButton(5));
+    // }
+
+    // @Override
+    // public Trigger setIntakeUp() {
+        
+    //     return new Trigger(() -> controller.getRawButton(6));
+    // }
+
+    @Override
+    public Trigger intakeSource() {
+        
+        return new Trigger(() -> controller.getRawButton(5));
+    }
+
+    @Override
+    public DoubleSupplier getIntakeMode() {
+        
+        return () -> controller.getRawAxis(7);
+    }
+    @Override
+    public DoubleSupplier getSpeedPotentiometer() {
+        return () -> controller.getRawAxis(4) * controller.getRawAxis(4);
     }
 }

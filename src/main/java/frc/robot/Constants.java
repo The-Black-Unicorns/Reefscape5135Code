@@ -21,14 +21,14 @@ public class Constants {
         public static final double ROBOT_CYCLE = 0.02; // s
     }
     public static final class ControllerConstants {
-        public static final double STICK_DEADBAND = 0.2;
+        public static final double STICK_DEADBAND = 0.04;
         public static final double BACK_BUTTONS_DEADBAND = 0.15;
     }
 
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 0.08;
+        public static final double PIVOT_MOTOR_KP = 0.15;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
         public static final double PIVOT_MOTOR_KF = 1;
@@ -47,13 +47,13 @@ public class Constants {
         public static final double MAX_PIVOT_DEGREES_PER_SECOND = 100;
         public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 680;
 
-        public static final double PIVOT_POSITION_TOLERANCE_DEG = 3.0;
+        public static final double PIVOT_POSITION_TOLERANCE_DEG = 1.0;
 
 
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
         public static final double PIVOT_TOP_ANGLE = 200.0;
-        public static final double PIVOT_MID_ANGLE = 93.0;
-        public static final double PIVOT_BOT_ANGLE = 110.0;
+        public static final double PIVOT_MID_ANGLE = 87.0;
+        public static final double PIVOT_BOT_ANGLE = 107;
     }
     public static final class Gripper {
         public static final double GRIPPER_KP = 0.1;
@@ -73,20 +73,20 @@ public class Constants {
         public static final double ARM_MAX_VELOCITY = 270, ARM_MAX_ACCELARATION = 400; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
         public static final double ARM_KS = 0.01, ARM_KV = 0.1, ARM_KA = 0.0, ARM_KG = 0.113; //0.32
-        public static final double ARM_KP = 0.07
+        public static final double ARM_KP = 0.13
          , ARM_KI = 0.0, ARM_KD = 0.02;
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 240.0;
+        public static final double ARM_ENCODER_OFFSET = 258.0;
         public static final double ARM_NORMALIZE_OFFSET = 15.0;
-        public static final double ARM_POSITION_TOLERANCE_DEG = 3.0;
+        public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
         public static final double ARM_MID_ANGLE = 54;
-        public static final double ARM_TOP_ANGLE = 65;
-        public static final double ARM_BOT_ANGLE = 350.0;
+        public static final double ARM_TOP_ANGLE = 85;
+        public static final double ARM_BOT_ANGLE = 352;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }

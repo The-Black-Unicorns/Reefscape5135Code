@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.ResourceBundle.Control;
+
 import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.SuperStructure.armStates;
 import frc.robot.controllers.controllers.QxDriveController;
 // import frc.robot.controllers.controllers.XboxDriveController;
 
@@ -23,6 +26,11 @@ public class RobotContainer {
   
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
+
+
+  private Trigger moveArmDown;
+  private Trigger moveArmMid;
+  private Trigger moveArmTop;
   public RobotContainer() {
     controller = new QxDriveController(0);
     // autonomous = new Autonomous();
@@ -30,6 +38,20 @@ public class RobotContainer {
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
+
+    moveArmDown = new Trigger(
+      () -> controller.getIntakeMode().getAsDouble() == -1
+    );
+    
+    moveArmMid = new Trigger(
+      () -> controller.getIntakeMode().getAsDouble() == 0
+    );
+    
+    moveArmTop = new Trigger(
+      () -> controller.getIntakeMode().getAsDouble() == 1
+    );
+
+
 
 
     // unlockMotorsDIO = new DigitalInput(0);
@@ -39,7 +61,8 @@ public class RobotContainer {
     controller.getXSpeed(),
     controller.getYSpeed(),
     controller.getRotationSpeed(),
-    () -> true )
+    () -> true,
+    controller.getSpeedPotentiometer() )
   );
 
   // check if works
@@ -55,12 +78,24 @@ public class RobotContainer {
     controller.intakeCoral().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
 
 
-    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
+    
+    moveArmDown.onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
+    // // moveArmMid.onTrue(structure.setDesiredState(armStates.INTAKE_UP));
+    moveArmTop.onTrue(structure.setDesiredState(armStates.INTAKE_UP));
     // controller.outtakeCoral().onTrue(structure.moveArmUpIntake());
-    controller.lowerArmOne().onTrue(structure.moveArmDownIntake());
 
-    // controller.raiseArmOne().onTrue(structure.moveArmUpOne());
-    // controller.lowerArmOne().onTrue(structure.moveArmDownOne());
+    
+    
+    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake().andThen(structure.setArmLastState()));
+    controller.raiseArmOne().onTrue(structure.StopGripper());
+
+    controller.lowerArmOne().onTrue(structure.moveArmToPos());
+    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
+    controller.lowerArmOne().onTrue(structure.IntakeCoral());
+    
+
+    
+
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
 

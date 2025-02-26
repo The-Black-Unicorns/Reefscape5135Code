@@ -121,8 +121,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
       //System.out.println(getRobotOrientationForSpeaker());
       // System.out.println(mSwerveMods[4].getPosition());
-      System.out.println(swerveDrive.getPose());
-      System.out.println(swerveDrive.getYaw());
+    //   System.out.println(swerveDrive.getPose());
+    //   System.out.println(swerveDrive.getYaw());
       }    
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -141,15 +141,16 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
-            BooleanSupplier isFieldOriented) {
+            BooleanSupplier isFieldOriented, DoubleSupplier speedExponent) {
         int invertInputs = isRedAlliance() ? -1 : 1;
         return new RunCommand(() ->
 
         drive(
             new Translation2d(
                 MathUtil.applyDeadband(xSpeed.getAsDouble(), STICK_DEADBAND),
-                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED * invertInputs),
-            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY * (invertInputs)
+                MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED).times(speedExponent.getAsDouble() * 
+                Math.abs(speedExponent.getAsDouble())),
+            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY * (-1)
             ,
             isFieldOriented.getAsBoolean(),
             true),//check if closed loop is better then open loop
@@ -219,34 +220,34 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void zeroGyroWithAlliance()
     {
-      if (!
-      isRedAlliance())
-      {
-        zeroGyro();
-        //Set the pose 180 degrees
-        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    //   if (!
+    //   isRedAlliance())
+    //   {
+    //     zeroGyro();
+    //     //Set the pose 180 degrees
+    //     swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
         
-      } else
-      {
+    //   } else
+    //   {
         zeroGyro();
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
-      }
+    //   }
     }
 
     public void zeroGyroAutonomous()
     {
-      if (!
-      isRedAlliance())
-      {
+    //   if (!
+    //   isRedAlliance())
+    //   {
         zeroGyro();
         //Set the pose 180 degrees
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
         
-      } else
-      {
-        zeroGyro();
-        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
-      }
+    //   } else
+    //   {
+    //     zeroGyro();
+    //     swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    //   }
     }
 
     public Rotation2d getGyroYaw() {
@@ -337,7 +338,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // returns true if red alliance, false if blue alliance and if no alliance
-    private boolean isRedAlliance(){
+    public boolean isRedAlliance(){
         var alliance = DriverStation.getAlliance();
         return alliance.isPresent() ? alliance.get() == DriverStation.Alliance.Red : false;
     }
