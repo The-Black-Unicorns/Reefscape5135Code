@@ -102,17 +102,26 @@ public class QxDriveController implements DriverInterface {
     //     return new Trigger(() -> controller.getRawButton(6));
     // }
 
-    @Override
-    public Trigger intakeSource() {
+    // @Override
+    // public Trigger getIntakeMode() {
+
         
-        return new Trigger(() -> controller.getRawButton(5));
-    }
+    //     if (controller.getRawAxis(7) == -1){
+    //         return new Trigger(() -> true);
+    //     } else if (controller.getRawAxis(7) == 1 || controller.getRawAxis(7) == 0){
+    //         return new Trigger(() -> false);
+
+    //     }
+    //     return new Trigger(() -> false);
+    // }
 
     @Override
-    public DoubleSupplier getIntakeMode() {
-        
-        return () -> controller.getRawAxis(7);
+    public Trigger getIntakeMode() {
+        // 
+        return new Trigger(() -> controller.getRawButton(6));
     }
+
+
     @Override
     public DoubleSupplier getSpeedPotentiometer() {
         return () -> controller.getRawAxis(4) * controller.getRawAxis(4);

@@ -34,9 +34,9 @@ public interface DriverInterface {
 
     public DoubleSupplier getArmSpeed();
 
-    public DoubleSupplier getIntakeMode();
+    public Trigger getIntakeMode();
 
-    public Trigger intakeSource();
+    
 
     // public Trigger setIntakeDown();
 

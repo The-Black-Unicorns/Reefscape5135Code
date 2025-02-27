@@ -51,7 +51,7 @@ public class Constants {
 
 
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
-        public static final double PIVOT_TOP_ANGLE = 200.0;
+        public static final double PIVOT_TOP_ANGLE = 185;
         public static final double PIVOT_MID_ANGLE = 87.0;
         public static final double PIVOT_BOT_ANGLE = 107;
     }
@@ -85,7 +85,7 @@ public class Constants {
         public static final int LEFT_ARM_MOTOR = 8;
 
         public static final double ARM_MID_ANGLE = 54;
-        public static final double ARM_TOP_ANGLE = 85;
+        public static final double ARM_TOP_ANGLE = 76;
         public static final double ARM_BOT_ANGLE = 352;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);

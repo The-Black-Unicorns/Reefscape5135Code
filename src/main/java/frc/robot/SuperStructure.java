@@ -47,7 +47,7 @@ public class SuperStructure {
         // auto = new Autonomous();
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
-        curArmState = armStates.OUTTAKE_UP;
+        curArmState = armStates.OUTTAKE_MIDDLE;
         auto = new Autonomous(this);
 
         
@@ -190,6 +190,22 @@ public class SuperStructure {
                 moveArmMiddleOuttake(),
                  moveArmDownIntake(), () -> curArmState == armStates.OUTTAKE_MIDDLE),
         () -> curArmState == armStates.INTAKE_UP);
+    }
+
+    public Command armSourceScoreToggle(){
+        return Commands.either(
+            Commands.sequence(
+                moveArmUpIntake(),
+                IntakeCoral()), moveArmMiddleOuttake(), () -> curArmState == armStates.OUTTAKE_MIDDLE);
+        
+    }
+
+    public Command armGroundScoreToggle(){
+        return Commands.either(
+            Commands.sequence(
+                moveArmDownIntake(),
+                IntakeCoral()
+            ), moveArmMiddleOuttake(), () -> curArmState == armStates.OUTTAKE_MIDDLE);
     }
 
     public Command setArmLastState(){

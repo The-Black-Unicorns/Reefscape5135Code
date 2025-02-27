@@ -39,24 +39,7 @@ public class RobotContainer {
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
-    moveArmDown = new Trigger(
-      () -> controller.getIntakeMode().getAsDouble() == -1
-    );
-    
-    moveArmMid = new Trigger(
-      () -> controller.getIntakeMode().getAsDouble() == 0
-    );
-    
-    moveArmTop = new Trigger(
-      () -> controller.getIntakeMode().getAsDouble() == 1
-    );
-
-
-
-
-    // unlockMotorsDIO = new DigitalInput(0);
-    // unlockMotorsTrigger = new Trigger(() -> !unlockMotorsDIO.get());
-
+  
     structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
     controller.getXSpeed(),
     controller.getYSpeed(),
@@ -71,31 +54,18 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // unlockMotorsTrigger.whileTrue(new InstantCommand(() -> structure.setIdleModeCoast()).ignoringDisable(true));
-    // unlockMotorsTrigger.whileFalse(new InstantCommand(() -> structure.setIdleModeBreak()).ignoringDisable(true));
 
     controller.intakeCoral().whileFalse(structure.StopGripper());
     controller.intakeCoral().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
 
-
-    
-    moveArmDown.onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
-    // // moveArmMid.onTrue(structure.setDesiredState(armStates.INTAKE_UP));
-    moveArmTop.onTrue(structure.setDesiredState(armStates.INTAKE_UP));
-    // controller.outtakeCoral().onTrue(structure.moveArmUpIntake());
-
-    
-    
-    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake().andThen(structure.setArmLastState()));
+    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
     controller.raiseArmOne().onTrue(structure.StopGripper());
 
-    controller.lowerArmOne().onTrue(structure.moveArmToPos());
-    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
+    controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
     controller.lowerArmOne().onTrue(structure.IntakeCoral());
-    
 
-    
-
+    controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
+    controller.getIntakeMode().onTrue(structure.IntakeCoral());
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
 
