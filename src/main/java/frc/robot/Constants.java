@@ -40,7 +40,7 @@ public class Constants {
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 210;
+        public static final double PIVOT_ENCODER_OFFSET = 207.2;
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
@@ -166,7 +166,7 @@ public class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double MAX_SPEED = 4; // TODO: This must be tuned to specific robot
+        public static final double MAX_SPEED = 4.5; // TODO: This must be tuned to specific robot
         /** Radians per Second */
         public static final double MAX_ANGULAR_VELOCITY = 4.0; // TODO: This must be tuned to specific robot
 

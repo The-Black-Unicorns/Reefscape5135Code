@@ -62,7 +62,7 @@ public class GripperSubsystem extends SubsystemBase {
 
     gripperMotor = new SparkMax(K_SPARK_ID, MotorType.kBrushless);
     configs = new SparkMaxConfig();
-    configs.idleMode(IdleMode.kCoast);
+    configs.idleMode(IdleMode.kBrake);
     configs.closedLoop.pid(GRIPPER_KP, GRIPPER_KI, GRIPPER_KD);
     configs.inverted(true);
 

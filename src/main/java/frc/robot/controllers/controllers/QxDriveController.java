@@ -104,15 +104,15 @@ public class QxDriveController implements DriverInterface {
 
     // @Override
     // public Trigger getIntakeMode() {
-
+    //     Trigger desiredstate;
         
-    //     if (controller.getRawAxis(7) == -1){
-    //         return new Trigger(() -> true);
-    //     } else if (controller.getRawAxis(7) == 1 || controller.getRawAxis(7) == 0){
-    //         return new Trigger(() -> false);
-
+    //     if( controller.getRawAxis(7) == -1) {
+    //         desiredstate = new Trigger(() -> true);
+    //     }else {
+    //         desiredstate = new Trigger(() -> false);
     //     }
-    //     return new Trigger(() -> false);
+
+    //     return desiredstate;
     // }
 
     @Override

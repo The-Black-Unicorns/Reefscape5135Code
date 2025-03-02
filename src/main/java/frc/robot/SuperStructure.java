@@ -27,6 +27,7 @@ public class SuperStructure {
     
     private armStates lastpose;
 
+
     // private final Autonomous auto;
 
     private final Autonomous auto;
@@ -39,6 +40,7 @@ public class SuperStructure {
         INTAKE_DOWN
     }
     public armStates curArmState;
+    private armStates curIntakeMode;
     public SuperStructure(){
 
         gripper = new GripperSubsystem();
@@ -47,7 +49,8 @@ public class SuperStructure {
         // auto = new Autonomous();
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
-        curArmState = armStates.OUTTAKE_MIDDLE;
+        
+        curIntakeMode = armStates.INTAKE_UP;
         auto = new Autonomous(this);
 
         
@@ -135,7 +138,7 @@ public class SuperStructure {
             changeArmState(armStates.INTAKE_DOWN),
             arm.setArmAngleDown(),
             pivot.setPivotAngleDown(),
-            new InstantCommand(() -> lastpose = armStates.INTAKE_DOWN)
+            new InstantCommand(() -> curIntakeMode = armStates.INTAKE_DOWN)
             );
             
     }
@@ -152,7 +155,7 @@ public class SuperStructure {
             changeArmState(armStates.INTAKE_UP),
             arm.setArmAngleUp(),
             pivot.setPivotAngleUp(),
-            new InstantCommand(() -> lastpose = armStates.INTAKE_UP)
+            new InstantCommand(() -> curIntakeMode = armStates.INTAKE_UP)
             );
 
     }
@@ -187,9 +190,10 @@ public class SuperStructure {
     public Command moveArmToPos(){
         return Commands.either(
             moveArmUpIntake(), Commands.either(
-                moveArmMiddleOuttake(),
-                 moveArmDownIntake(), () -> curArmState == armStates.OUTTAKE_MIDDLE),
-        () -> curArmState == armStates.INTAKE_UP);
+                moveArmDownIntake(),
+                Commands.print("nuh uh")
+                 , () -> curIntakeMode == armStates.INTAKE_DOWN),
+        () -> curIntakeMode == armStates.INTAKE_UP);
     }
 
     public Command armSourceScoreToggle(){
@@ -209,11 +213,15 @@ public class SuperStructure {
     }
 
     public Command setArmLastState(){
-       return new InstantCommand(() ->  curArmState = lastpose);
+       return new InstantCommand(() ->  curArmState = curIntakeMode);
     }
 
     public Command setDesiredState(armStates state){
-        return new InstantCommand(() -> curArmState = state);
+        return new InstantCommand(() -> curIntakeMode = state);
+    }
+
+    public BooleanSupplier isArmNotMid(){
+        return () -> !(curArmState == armStates.OUTTAKE_MIDDLE);
     }
 
 

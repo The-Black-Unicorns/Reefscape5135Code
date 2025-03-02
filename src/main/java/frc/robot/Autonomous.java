@@ -31,6 +31,12 @@ public class Autonomous {
         autoChooser.addRoutine("aaa", this::followPathAuto);
         autoChooser.select("aaa");
         SmartDashboard.putData("Routine" ,autoChooser);
+
+        autoFactory.bind("MoveArmScore", structure.moveArmMiddleOuttake());
+        autoFactory.bind("Outtake", structure.OuttakeCoral());
+        autoFactory.bind("MoveArmIntakeSource", structure.moveArmUpIntake());
+        autoFactory.bind("Intake", structure.IntakeCoral());
+        autoFactory.bind("StopGripper", structure.StopGripper());
     }
     
     
@@ -40,7 +46,8 @@ public class Autonomous {
 
     public AutoRoutine followPathAuto(){
         AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
-        AutoTrajectory follow = routine.trajectory("New Path");
+        AutoTrajectory follow = routine.trajectory("try");
+        
 
         routine.active().onTrue(
             Commands.sequence(
@@ -49,6 +56,7 @@ public class Autonomous {
                 
             )
         );
+
         return routine;
 
     }

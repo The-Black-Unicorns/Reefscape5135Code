@@ -61,11 +61,14 @@ public class RobotContainer {
     controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
     controller.raiseArmOne().onTrue(structure.StopGripper());
 
-    controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
-    controller.lowerArmOne().onTrue(structure.IntakeCoral());
+    controller.lowerArmOne().onTrue((structure.moveArmToPos()));
+    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
+    controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
 
-    controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
-    controller.getIntakeMode().onTrue(structure.IntakeCoral());
+    controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
+    controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
+  
+    // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
 
