@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -124,12 +125,21 @@ public class GripperSubsystem extends SubsystemBase {
   }
 
   public Command stopGripperCommand(){
-    return this.runOnce(() -> stopGripper());
+    return Commands.sequence(
+      this.runOnce(() -> stopGripper()),
+      this.runOnce(() -> intakeWhileNoCoral().cancel()),
+      this.runOnce(() -> intakeCommand().cancel()) 
+    );
   }
 
   public Command outtakeCommand() {
     
     return this.runOnce(() -> outtake());
+  }
+
+  public Command intakeWhileNoCoral(){
+
+    return this.run(() -> intake()).onlyWhile(this::isNotCoral);
   }
   
   public boolean isMotorRunning(){
@@ -139,6 +149,10 @@ public class GripperSubsystem extends SubsystemBase {
   public boolean isCoral(){
     // return beamBreakSensor.get();
     return colorSensor.getProximity() > 1000;
+  }
+
+  public boolean isNotCoral(){
+    return !isCoral();
   }
 
   public void setMotorVoltage(Voltage v){
