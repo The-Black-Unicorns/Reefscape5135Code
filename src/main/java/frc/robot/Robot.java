@@ -8,34 +8,44 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+
 public class Robot extends TimedRobot {
   public static final String CTREConfigs = null;
 
+public static Object ctreConfigs;
 private Command m_autonomousCommand;
+
 
   private final RobotContainer m_robotContainer;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    // Logger.getins
     
+    // DataLogManager.start();
+    // DriverStation.startDataLog(DataLogManager.getLog());
+
+    // SmartDashboard.putNumber("My Field", 3.14);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     m_robotContainer.periodic();
-    
   }
 
   @Override
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.enabledInit();
+
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    
+  }
 
   @Override
   public void autonomousInit() {
@@ -44,6 +54,7 @@ private Command m_autonomousCommand;
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    m_robotContainer.enabledInit();
   }
 
   @Override
@@ -57,6 +68,7 @@ private Command m_autonomousCommand;
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.enabledInit();
   }
 
   @Override
@@ -68,10 +80,13 @@ private Command m_autonomousCommand;
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.enabledInit();
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    m_robotContainer.testPeriodic();
+  }
 
   @Override
   public void testExit() {}

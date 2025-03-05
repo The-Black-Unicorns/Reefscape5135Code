@@ -305,6 +305,50 @@ public class COTSTalonFXSwerveConstants {
                 public static final double L3 = (6.12 / 1.0);
             }
         }
+        public static final class MK4N{
+            /** Swerve Drive Specialties - MK4 Module (Falcon 500)*/
+            public static final COTSTalonFXSwerveConstants Falcon500(double driveGearRatio){
+                double wheelDiameter = Units.inchesToMeters(4.0);
+        
+                /** 18.75 : 1 */
+                double angleGearRatio = (18.75 / 1.0);
+        
+                double angleKP = 40.0; //change!
+                double angleKI = 0.0;
+                double angleKD = 0.0;
+        
+                InvertedValue driveMotorInvert = InvertedValue.CounterClockwise_Positive;
+                InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
+                SensorDirectionValue cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
+                return new COTSTalonFXSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, driveMotorInvert, angleMotorInvert, cancoderInvert);
+            }
+
+            /** Swerve Drive Specialties - MK4 Module (Kraken X60)*/
+            public static final COTSTalonFXSwerveConstants KrakenX60(double driveGearRatio){
+                double wheelDiameter = Units.inchesToMeters(4.0);
+        
+                /** 18.75 : 1 */
+                double angleGearRatio = (18.75 / 1.0);
+        
+                double angleKP = 1.0;
+                double angleKI = 0.0;
+                double angleKD = 0.0;
+        
+                InvertedValue driveMotorInvert = InvertedValue.CounterClockwise_Positive;
+                InvertedValue angleMotorInvert = InvertedValue.CounterClockwise_Positive;
+                SensorDirectionValue cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
+                return new COTSTalonFXSwerveConstants(wheelDiameter, angleGearRatio, driveGearRatio, angleKP, angleKI, angleKD, driveMotorInvert, angleMotorInvert, cancoderInvert);
+            }
+
+            public static final class driveRatios{
+                /** SDS MK4N - (7.13 : 1) */
+                public static final double L1PLUS = (7.13 / 1.0);
+                /** SDS MK4N - (5.9 : 1) */
+                public static final double L2PLUS = (5.9 / 1.0);
+                /** SDS MK4N - (5.36 : 1) */
+                public static final double L3PLUS = (5.36 / 1.0);
+            }
+        }
     }
 }
 

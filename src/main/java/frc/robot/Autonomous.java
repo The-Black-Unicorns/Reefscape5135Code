@@ -13,22 +13,30 @@ public class Autonomous {
     private final SwerveSubsystem drive;
     private final AutoFactory autoFactory;
     private final AutoChooser autoChooser;
+    
 
-    public Autonomous(){
-        drive = new SwerveSubsystem();
+    public Autonomous(SuperStructure structure){
+        drive = structure.swerve;
         autoChooser = new AutoChooser();
+        
 
         autoFactory = new AutoFactory(
             drive::getPose,
             drive::setPose,
             drive::followTrajectory,
             false,
-            drive,
-            null
+            drive
         );
-        autoChooser.addCmd("aaa", this::followPathAuto);
+        
+        autoChooser.addRoutine("aaa", this::followPathAuto);
         autoChooser.select("aaa");
         SmartDashboard.putData("Routine" ,autoChooser);
+
+        autoFactory.bind("MoveArmScore", structure.moveArmMiddleOuttake());
+        autoFactory.bind("Outtake", structure.OuttakeCoral());
+        autoFactory.bind("MoveArmIntakeSource", structure.moveArmUpIntake());
+        autoFactory.bind("Intake", structure.IntakeCoral());
+        autoFactory.bind("StopGripper", structure.StopGripper());
     }
     
     
@@ -36,21 +44,21 @@ public class Autonomous {
 
     
 
-    public Command followPathAuto(){
-        // AutoRoutine routine = autoFactory.newRoutine("testroutine");
-        Command follow = autoFactory.trajectoryCmd("New Path");
+    public AutoRoutine followPathAuto(){
+        AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
+        AutoTrajectory follow = routine.trajectory("try");
+        
 
-        // routine.active().onTrue(
-        //     Commands.sequence(
-        //         routine.resetOdometry(follow),
-        //         follow.cmd()
-        //     )
-            
-        // );
-        return Commands.sequence(
-            autoFactory.resetOdometry("New Path"),
-            follow
+        routine.active().onTrue(
+            Commands.sequence(
+                follow.resetOdometry(),
+                follow.cmd()
+                
+            )
         );
+
+        return routine;
+
     }
 
 

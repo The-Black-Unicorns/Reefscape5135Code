@@ -4,56 +4,89 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.DoublePublisher;
+import java.util.ResourceBundle.Control;
+
+import edu.wpi.first.hal.util.UncleanStatusException;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.controllers.controllers.GenericController;
-import frc.robot.subsystems.SwerveSubsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.SuperStructure.armStates;
+import frc.robot.controllers.controllers.QxDriveController;
+// import frc.robot.controllers.controllers.XboxDriveController;
 
 public class RobotContainer {
   private SuperStructure structure;
-  private Autonomous autonomous;
-  private SwerveSubsystem swerve;
   private Field2d field;
-  private GenericController controller;
-    DoublePublisher xPub;
-    DoublePublisher yPub;
-    DoublePublisher rotPub;
+  private QxDriveController controller;
+  // private SwerveSubsystem swerve;
+  
+  // private DigitalInput unlockMotorsDIO;
+  // private Trigger unlockMotorsTrigger;
+
+
+  private Trigger moveArmDown;
+  private Trigger moveArmMid;
+  private Trigger moveArmTop;
   public RobotContainer() {
-    controller = new GenericController(0);
-    autonomous = new Autonomous();
-    swerve = new SwerveSubsystem();
+    controller = new QxDriveController(0);
+    // autonomous = new Autonomous();
+    // swerve = new SwerveSubsystem();
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
-    swerve.setDefaultCommand(swerve.driveCommand(
-    controller.getLeftX(),
-    controller.getLeftY(),
-    controller.getRightX(),
-    () -> true )
+  
+    structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
+    controller.getXSpeed(),
+    controller.getYSpeed(),
+    controller.getRotationSpeed(),
+    () -> true,
+    controller.getSpeedPotentiometer() )
   );
 
   // check if works
     
     configureBindings();
-    
-
   }
 
   private void configureBindings() {
 
-    controller.getA().onTrue(structure.ToggleGripper());
+    controller.intakeCoral().whileFalse(structure.StopGripper());
+    controller.intakeCoral().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
+
+    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
+    controller.raiseArmOne().onTrue(structure.StopGripper());
+
+    controller.lowerArmOne().onTrue((structure.moveArmToPos()));
+    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
+    controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
+
+    controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
+    controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
+  
+    // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
+
+    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
+
   }
 
   public Command getAutonomousCommand() {
-    return autonomous.getSelected();
+    return structure.getAutonomousCommand();
   }
   
   public void periodic(){
-
+    structure.periodic();
   }
+
+  public void testPeriodic(){
+    structure.testPeriodic();
+  }
+  public void enabledInit(){
+    structure.enabledInit();
+  }
+  
 }

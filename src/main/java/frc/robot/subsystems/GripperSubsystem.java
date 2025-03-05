@@ -15,6 +15,8 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -24,7 +26,9 @@ import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.I2C.Port;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,16 +42,19 @@ import static frc.robot.Constants.Gripper.*;
 
 public class GripperSubsystem extends SubsystemBase {
 
+
   // DigitalInput beamBreakSensor;
   ColorSensorV3 colorSensor;
   boolean isMotorActive;
   boolean isIntaking;
 
-  SparkMax gripperMotor;
-  SparkClosedLoopController closedLoopController;
-  SparkBaseConfig configs;
-  VelocityDutyCycle m_VelocityDutyCycle;
-  PositionDutyCycle m_PositionDutyCycle;
+  private SparkMax gripperMotor;
+  private SparkClosedLoopController closedLoopController;
+  private SparkBaseConfig configs;
+  private VelocityDutyCycle m_VelocityDutyCycle;
+  private PositionDutyCycle m_PositionDutyCycle;
+
+  private double KP, KI, KD;
 
   SysIdRoutine routine;
   SysIdRoutineLog logger;
@@ -64,10 +71,13 @@ public class GripperSubsystem extends SubsystemBase {
 
     gripperMotor = new SparkMax(K_SPARK_ID, MotorType.kBrushless);
     configs = new SparkMaxConfig();
-    configs.closedLoop.pid(KP, KI, KD);
+    configs.idleMode(IdleMode.kBrake);
+    configs.closedLoop.pid(GRIPPER_KP, GRIPPER_KI, GRIPPER_KD);
+    configs.inverted(true);
 
     gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     closedLoopController = gripperMotor.getClosedLoopController();
+    
 
     MutVoltage appliedVoltage = Volts.mutable(0);
     MutAngle m_angle = Radians.mutable(0);
@@ -84,22 +94,26 @@ public class GripperSubsystem extends SubsystemBase {
       },
        this));
 
+       KP = GRIPPER_KP;
+       KI = GRIPPER_KI;
+       KD = GRIPPER_KD;
   }
 
 
   private void intake(){
-    // if(beamBreakSensor.get()){
+
     if(isCoral()){
       isIntaking = false;
       m_VelocityDutyCycle.Velocity = 0;
       m_PositionDutyCycle.Position = 0;
-      closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+      gripperMotor.set(0);
       isMotorActive = false;
     }
     else{
       isIntaking = true;
-      m_VelocityDutyCycle.Velocity = 0.5;
-      closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+      m_VelocityDutyCycle.Velocity = 0.1;
+      
+      gripperMotor.set(0.65);
       isMotorActive = true;
     }
   }
@@ -108,20 +122,20 @@ public class GripperSubsystem extends SubsystemBase {
     isIntaking = false;
     m_PositionDutyCycle.Position = -2;
     m_PositionDutyCycle.Velocity = 1;
-      closedLoopController.setReference(m_PositionDutyCycle.Position, ControlType.kPosition);
+    gripperMotor.set(-0.25);
       isMotorActive = true;
   }
 
-  private void stopGripper(){
+  public void stopGripper(){
     isIntaking = false;
     m_VelocityDutyCycle.Velocity = 0;
     m_PositionDutyCycle.Position = 0;
-    closedLoopController.setReference(m_VelocityDutyCycle.Velocity, ControlType.kVelocity);
+    gripperMotor.set(0);
     isMotorActive = false;
   }
 
   public Command intakeCommand(){
-    return this.runOnce(() -> intake());
+    return this.run(() -> intake());
   }
 
   public Command stopGripperCommand(){
@@ -134,7 +148,7 @@ public class GripperSubsystem extends SubsystemBase {
 
   public Command outtakeCommand() {
     
-    return this.runOnce(() -> outtake());
+    return this.run(() -> outtake());
   }
 
   public Command intakeWhileNoCoral(){
@@ -147,15 +161,16 @@ public class GripperSubsystem extends SubsystemBase {
   }
 
   public boolean isCoral(){
-    // return beamBreakSensor.get();
+
     return colorSensor.getProximity() > 1000;
   }
 
   public boolean isNotCoral(){
     return !isCoral();
+
   }
 
-  public void setMotorVoltage(Voltage v){
+  private void setMotorVoltage(Voltage v){
     gripperMotor.setVoltage(v);
   }
 
@@ -174,8 +189,26 @@ public class GripperSubsystem extends SubsystemBase {
       intakeCommand().cancel();
       stopGripper();
     }
-
-    
-
+    SmartDashboard.putBoolean("Gripper/isCoral", SmartDashboard.getBoolean("Gripper/isCoral", false));
   }
+
+public void testPeriodic(){
+  SmartDashboard.putNumber("Gripper/gripperKp", SmartDashboard.getNumber("Gripper/gripperKp", 0));
+  SmartDashboard.putNumber("Gripper/gripperKi", SmartDashboard.getNumber("Gripper/gripperKi", 0));
+  SmartDashboard.putNumber("Gripper/gripperKd", SmartDashboard.getNumber("Gripper/gripperKd", 0));
+  double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
+  double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
+  double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
+  if(newKP != KP || newKI != KI || newKD != KD){
+    KP = newKP;
+    KI = newKI;
+    KD = newKD;
+
+    configs.closedLoop.pid(KP, KI, KD);
+
+    gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
+  }
+
+
 }
