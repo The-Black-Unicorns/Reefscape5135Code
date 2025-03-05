@@ -25,6 +25,7 @@ import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.RobotController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
