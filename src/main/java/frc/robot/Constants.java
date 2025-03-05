@@ -72,9 +72,15 @@ public class Constants {
 
         public static final double ARM_MAX_VELOCITY = 270, ARM_MAX_ACCELARATION = 400; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
-        public static final double ARM_KS = 0.01, ARM_KV = 0.1, ARM_KA = 0.0, ARM_KG = 0.113; //0.32
-        public static final double ARM_KP = 0.13
-         , ARM_KI = 0.0, ARM_KD = 0.02;
+
+        public static final double ARM_KS = 0.01;
+        public static final double ARM_KV = 0.1;
+        public static final double ARM_KA = 0.0;
+        public static final double ARM_KG = 0.113; //0.32
+
+        public static final double ARM_KP = 0.13;  // previus was 0.13
+        public static final double ARM_KI = 0.005; // previus was 0.0
+        public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
         public static final double ARM_ENCODER_OFFSET = 258.0;

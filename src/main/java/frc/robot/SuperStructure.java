@@ -41,6 +41,7 @@ public class SuperStructure {
     }
     public armStates curArmState;
     private armStates curIntakeMode;
+    
     public SuperStructure(){
 
         gripper = new GripperSubsystem();
@@ -87,15 +88,15 @@ public class SuperStructure {
         return gripper.intakeCommand();
     }
 
-    public Command OuttakeCoral(){
+    public Command outtakeCoral(){
         return gripper.outtakeCommand();
     }
 
-    public Command StopGripper() {
+    public Command stopGripper() {
         return gripper.stopGripperCommand();
     }
     public Command actovateGripperCommand(){
-        return Commands.either(IntakeCoral(), OuttakeCoral(),
+        return Commands.either(IntakeCoral(), outtakeCoral(),
          () -> (curArmState == armStates.INTAKE_DOWN || curArmState == armStates.INTAKE_UP));
         // return curArmState != armStates.DOWN ? IntakeCoral() :
         //     OuttakeCoral();
@@ -181,8 +182,8 @@ public class SuperStructure {
             // new WaitCommand(1),
             // this.StopGripper()
 
-            this.OuttakeCoral().withTimeout(1),
-            this.StopGripper()
+            this.outtakeCoral().withTimeout(1),
+            this.stopGripper()
             // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
         ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
     }
@@ -224,10 +225,10 @@ public class SuperStructure {
         return () -> !(curArmState == armStates.OUTTAKE_MIDDLE);
     }
 
+    public Command intakeUntilCoral(){
+        return gripper.intakeWhileNoCoral();
+    }
 
-
-
-    
 
     public void enabledInit(){
         arm.armEnabledInit();

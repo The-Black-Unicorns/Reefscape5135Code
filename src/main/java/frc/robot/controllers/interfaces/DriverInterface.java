@@ -18,23 +18,25 @@ public interface DriverInterface {
 
     public Trigger resetGyroButton();
 
-    public Trigger raiseArmOne();
+    // public Trigger raiseArmOne();
 
-    public Trigger lowerArmOne();
+    // public Trigger lowerArmOne();
 
-    public Trigger outtakeCoral();
+    // public Trigger outtakeCoral();
 
-    public Trigger intakeCoral();
+    // public Trigger intakeCoral();
 
-    public Trigger isGripperActive();
+    // public Trigger isGripperActive();
 
-    public Trigger climbMode();
+    // public Trigger climbMode();
 
-    public Trigger shouldArmMoveTrigger();
+    // public Trigger shouldArmMoveTrigger();
 
-    public DoubleSupplier getArmSpeed();
+    // public DoubleSupplier getArmSpeed();
 
-    public Trigger getIntakeMode();
+    // public Trigger getIntakeMode();
+
+
 
     
 

@@ -33,10 +33,10 @@ public class Autonomous {
         SmartDashboard.putData("Routine" ,autoChooser);
 
         autoFactory.bind("MoveArmScore", structure.moveArmMiddleOuttake());
-        autoFactory.bind("Outtake", structure.OuttakeCoral());
+        autoFactory.bind("Outtake", structure.outtakeCoral());
         autoFactory.bind("MoveArmIntakeSource", structure.moveArmUpIntake());
         autoFactory.bind("Intake", structure.IntakeCoral());
-        autoFactory.bind("StopGripper", structure.StopGripper());
+        autoFactory.bind("StopGripper", structure.stopGripper());
     }
     
     

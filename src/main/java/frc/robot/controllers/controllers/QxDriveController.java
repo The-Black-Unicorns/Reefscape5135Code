@@ -7,21 +7,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.interfaces.DriverInterface;
+import frc.robot.controllers.interfaces.OperatorInterface;
 
 import static frc.robot.Constants.ControllerConstants.*;
 
-public class QxDriveController implements DriverInterface {
+public class QxDriveController implements DriverInterface{
     private GenericHID controller;
     //this is qx controller!!!
 
     public QxDriveController(int id) {
         controller = new GenericHID(id);
     } //add stick deadband
-
-    @Override
-    public Trigger isGripperActive() {
-        return new Trigger(() -> (intakeCoral().getAsBoolean() || outtakeCoral().getAsBoolean()));
-    }
 
     @Override
     public Trigger isDriving() {
@@ -53,77 +49,18 @@ public class QxDriveController implements DriverInterface {
         return new Trigger(()->controller.getRawButton(2));
     }
 
-    @Override
-    public Trigger raiseArmOne(){
-        return new Trigger(() -> controller.getRawButton(3));
-    }
-
-    @Override
-    public Trigger lowerArmOne(){
-        return new Trigger(() -> !controller.getRawButton(3));
-    }
-
-    @Override
-    public Trigger outtakeCoral(){
-        // return new Trigger(()->controller.getRawButton(6));
-        return null;
-    }
-
-    @Override
-    public Trigger intakeCoral(){
-        return new Trigger(() -> controller.getRawButton(4));
-    }
-
-    @Override
-    public Trigger climbMode(){
-        // return new Trigger(() -> (controller.getRawButton(8) && controller.getRawButton(7)));
-        return null;
-    }
-
-    @Override
-    public Trigger shouldArmMoveTrigger(){
-        // return new Trigger(() -> controller.getRawAxis(1) > 0.1 || controller.getRawAxis(1) < -0.1);
-        return null;
-    }
-
-    @Override
-    public DoubleSupplier getArmSpeed(){
-        return () -> controller.getRawAxis(1);
-    }
-
-    // @Override
-    // public Trigger setIntakeDown(){
-    //     return new Trigger(() -> controller.getRawButton(5));
-    // }
-
-    // @Override
-    // public Trigger setIntakeUp() {
-        
-    //     return new Trigger(() -> controller.getRawButton(6));
-    // }
-
-    // @Override
-    // public Trigger getIntakeMode() {
-    //     Trigger desiredstate;
-        
-    //     if( controller.getRawAxis(7) == -1) {
-    //         desiredstate = new Trigger(() -> true);
-    //     }else {
-    //         desiredstate = new Trigger(() -> false);
-    //     }
-
-    //     return desiredstate;
-    // }
-
-    @Override
-    public Trigger getIntakeMode() {
-        // 
-        return new Trigger(() -> controller.getRawButton(6));
-    }
-
 
     @Override
     public DoubleSupplier getSpeedPotentiometer() {
         return () -> controller.getRawAxis(4) * controller.getRawAxis(4);
     }
+
+    public Trigger isGripperActive() {
+        return new Trigger(() -> controller.getRawButton(4));
+    }
+
+    public Trigger getIntakeMode() {
+        return new Trigger(() -> controller.getRawButton(6));
+    }
+
 }

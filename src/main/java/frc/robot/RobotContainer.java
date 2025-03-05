@@ -17,11 +17,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.SuperStructure.armStates;
 import frc.robot.controllers.controllers.QxDriveController;
 // import frc.robot.controllers.controllers.XboxDriveController;
+import frc.robot.controllers.controllers.XboxOperatorController;
 
 public class RobotContainer {
   private SuperStructure structure;
   private Field2d field;
   private QxDriveController controller;
+  private XboxOperatorController operator;
   // private SwerveSubsystem swerve;
   
   // private DigitalInput unlockMotorsDIO;
@@ -31,8 +33,11 @@ public class RobotContainer {
   private Trigger moveArmDown;
   private Trigger moveArmMid;
   private Trigger moveArmTop;
+
   public RobotContainer() {
     controller = new QxDriveController(0);
+    operator = new XboxOperatorController(1);
+    
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
     field = new Field2d();
@@ -55,18 +60,29 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    controller.intakeCoral().whileFalse(structure.StopGripper());
-    controller.intakeCoral().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
+    controller.isGripperActive().whileFalse(structure.stopGripper());
+    controller.isGripperActive().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
 
-    controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
-    controller.raiseArmOne().onTrue(structure.StopGripper());
+    // controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
+    // controller.raiseArmOne().onTrue(structure.stopGripper());
 
-    controller.lowerArmOne().onTrue((structure.moveArmToPos()));
+    // controller.lowerArmOne().onTrue((structure.moveArmToPos()));
     // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
-    controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
+    // controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
 
     controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
     controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
+
+
+
+    operator.setArmLowAngleButton().onTrue(structure.moveArmDownIntake().alongWith(structure.setDesiredState(armStates.INTAKE_DOWN)));
+    operator.setArmMidAngleButton().onTrue(structure.moveArmMiddleOuttake());
+    operator.setArmTopAngleButton().onTrue(structure.moveArmUpIntake().alongWith(structure.setDesiredState(armStates.INTAKE_UP)));
+
+    operator.intakeCoralButton().onTrue(structure.intakeUntilCoral());
+    operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
+
+    operator.intakeCoralButton().or(operator.outtakeCoralButton()).onFalse(structure.stopGripper());
   
     // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
