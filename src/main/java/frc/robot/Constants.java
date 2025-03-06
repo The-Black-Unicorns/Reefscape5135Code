@@ -45,7 +45,7 @@ public class Constants {
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
         public static final double MAX_PIVOT_DEGREES_PER_SECOND = 100;
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 680;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 550;
 
         public static final double PIVOT_POSITION_TOLERANCE_DEG = 1.0;
 
@@ -70,21 +70,21 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
 
-        public static final double ARM_MAX_VELOCITY = 270, ARM_MAX_ACCELARATION = 400; // deg/s, deg/s2
+        public static final double ARM_MAX_VELOCITY = 600, ARM_MAX_ACCELARATION = 600; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
 
         public static final double ARM_KS = 0.01;
         public static final double ARM_KV = 0.1;
         public static final double ARM_KA = 0.0;
-        public static final double ARM_KG = 0.113; //0.32
+        public static final double ARM_KG = 0.1; //0.32
 
-        public static final double ARM_KP = 0.13;  // previus was 0.13
-        public static final double ARM_KI = 0.005; // previus was 0.0
+        public static final double ARM_KP = 0.12;  // previus was 0.13
+        public static final double ARM_KI = 0.033; // previus was 0.0
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
         public static final double ARM_ENCODER_OFFSET = 258.0;
-        public static final double ARM_NORMALIZE_OFFSET = 15.0;
+        public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
@@ -92,14 +92,14 @@ public class Constants {
 
         public static final double ARM_MID_ANGLE = 54;
         public static final double ARM_TOP_ANGLE = 76;
-        public static final double ARM_BOT_ANGLE = 352;
+        public static final double ARM_BOT_ANGLE = 354;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }
 
     public static final class Swerve {
 
-        public static final String LIMELIGHT_NAME = "limelight-bulime";
+        public static final String LIMELIGHT_NAME = "limelight-tsachi";
         // public static final double MAX_FORWARD_ACCEL = 5; // MPS^2 
         // public static final double MAX_SKID_ACCEL = 5; //MPS^2
 
