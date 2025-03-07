@@ -53,7 +53,7 @@ public class Constants {
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
         public static final double PIVOT_TOP_ANGLE = 185;
         public static final double PIVOT_MID_ANGLE = 87.0;
-        public static final double PIVOT_BOT_ANGLE = 107;
+        public static final double PIVOT_BOT_ANGLE = 102;
     }
     public static final class Gripper {
         public static final double GRIPPER_KP = 0.1;
@@ -70,7 +70,7 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
 
-        public static final double ARM_MAX_VELOCITY = 600, ARM_MAX_ACCELARATION = 600; // deg/s, deg/s2
+        public static final double ARM_MAX_VELOCITY = 600, ARM_MAX_ACCELARATION = 900; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
 
         public static final double ARM_KS = 0.01;
@@ -78,8 +78,8 @@ public class Constants {
         public static final double ARM_KA = 0.0;
         public static final double ARM_KG = 0.1; //0.32
 
-        public static final double ARM_KP = 0.12;  // previus was 0.13
-        public static final double ARM_KI = 0.033; // previus was 0.0
+        public static final double ARM_KP = 0.13;  // previus was 0.13
+        public static final double ARM_KI = 0.005; // previus was 0.0
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
@@ -90,9 +90,9 @@ public class Constants {
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_MID_ANGLE = 54;
+        public static final double ARM_MID_ANGLE = 51;
         public static final double ARM_TOP_ANGLE = 76;
-        public static final double ARM_BOT_ANGLE = 354;
+        public static final double ARM_BOT_ANGLE = 353;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }
@@ -174,7 +174,7 @@ public class Constants {
         /** Meters per Second */
         public static final double MAX_SPEED = 4.5; // TODO: This must be tuned to specific robot
         /** Radians per Second */
-        public static final double MAX_ANGULAR_VELOCITY = 4.0; // TODO: This must be tuned to specific robot
+        public static final double MAX_ANGULAR_VELOCITY = 8.5; // TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue ANGLE_NEUTRAL_MODE = NeutralModeValue.Coast;

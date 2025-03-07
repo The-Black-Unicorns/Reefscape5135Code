@@ -105,6 +105,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        System.out.println(isRedAlliance());
     //  swerveOdometry.update(getGyroYaw(), getModulePositions());
     // swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
     //   for (swervelib.SwerveModule mod : mSwerveMods) {
@@ -136,13 +137,15 @@ public class SwerveSubsystem extends SubsystemBase {
         // double y = yLimiter.calculate(y_speed);
         // translation = new Translation2d(x, y);
 
-        swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+        int invertInputs = isRedAlliance() ? -1 : 1;
+        swerveDrive.drive(translation.times(invertInputs), rotation * invertInputs, fieldRelative, isOpenLoop);
         // swerveDrive.driveFieldOriented(getCurrentSpeeds());
     }
 
     public Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
             BooleanSupplier isFieldOriented, DoubleSupplier speedExponent) {
-        int invertInputs = isRedAlliance() ? -1 : 1;
+        // int invertInputs = isRedAlliance() ? -1 : 1;
+
         return new RunCommand(() ->
 
         drive(
@@ -150,7 +153,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 MathUtil.applyDeadband(xSpeed.getAsDouble(), STICK_DEADBAND),
                 MathUtil.applyDeadband(ySpeed.getAsDouble(), STICK_DEADBAND)).times(MAX_SPEED).times(speedExponent.getAsDouble() * 
                 Math.abs(speedExponent.getAsDouble())),
-            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY * (-1)
+            MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
             true),//check if closed loop is better then open loop
@@ -229,8 +232,13 @@ public class SwerveSubsystem extends SubsystemBase {
         
     //   } else
     //   {
+    if(!isRedAlliance()){
         zeroGyro();
         swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+    } else{
+        zeroGyro();
+        swerveDrive.resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    }
     //   }
     }
 

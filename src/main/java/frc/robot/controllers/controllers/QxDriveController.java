@@ -31,7 +31,7 @@ public class QxDriveController implements DriverInterface{
 
     @Override
     public DoubleSupplier getRotationSpeed(){
-        return (() -> -controller.getRawAxis(0)*Math.abs(controller.getRawAxis(0)));
+        return (() -> -controller.getRawAxis(0)*Math.abs(controller.getRawAxis(0)) * (controller.getRawAxis(5) + 1) / 2.0);
     }
 
     @Override
