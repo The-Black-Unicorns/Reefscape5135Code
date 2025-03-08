@@ -75,9 +75,16 @@ public class RobotContainer {
 
 
 
-    operator.setArmLowAngleButton().onTrue(structure.moveArmDownIntake().alongWith(structure.setDesiredState(armStates.INTAKE_DOWN)));
-    operator.setArmMidAngleButton().onTrue(structure.moveArmMiddleOuttake());
-    operator.setArmTopAngleButton().onTrue(structure.moveArmUpIntake().alongWith(structure.setDesiredState(armStates.INTAKE_UP)));
+    operator.setArmLowAngleButton().onTrue(structure.moveArmDownIntake()
+      .alongWith(structure.setDesiredState(armStates.INTAKE_DOWN))
+      .alongWith(structure.IntakeCoral()));
+
+    operator.setArmMidAngleButton().onTrue(structure.moveArmMiddleOuttake()
+      .alongWith(structure.stopGripper()));
+
+    operator.setArmTopAngleButton().onTrue(structure.moveArmUpIntake()
+      .alongWith(structure.setDesiredState(armStates.INTAKE_UP))
+      .alongWith(structure.IntakeCoral()));
 
     operator.intakeCoralButton().onTrue(structure.intakeUntilCoral());
     operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
