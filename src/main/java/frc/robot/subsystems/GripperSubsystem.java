@@ -6,16 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorSensorV3.ProximitySensorMeasurementRate;
-import com.revrobotics.ColorSensorV3.ProximitySensorResolution;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -24,8 +19,6 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.RobotController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +38,7 @@ public class GripperSubsystem extends SubsystemBase {
 
 
   // DigitalInput beamBreakSensor;
-  ColorSensorV3 colorSensor;
+  // ColorSensorV3 colorSensor;
   boolean isMotorActive;
   boolean isIntaking;
 
@@ -62,8 +55,8 @@ public class GripperSubsystem extends SubsystemBase {
 
   public GripperSubsystem() {
     // beamBreakSensor = new DigitalInput(K_BEAMBREAK_ID);
-    colorSensor = new ColorSensorV3(Port.kOnboard);
-    colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit, ProximitySensorMeasurementRate.kProxRate12ms);
+    // colorSensor = new ColorSensorV3(Port.kOnboard);
+    // colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit, ProximitySensorMeasurementRate.kProxRate12ms);
     isIntaking = false;
     isMotorActive = false;
 
