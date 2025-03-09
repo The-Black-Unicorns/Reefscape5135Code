@@ -105,7 +105,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println(isRedAlliance());
+        // System.out.println(isRedAlliance());
     //  swerveOdometry.update(getGyroYaw(), getModulePositions());
     // swervelib.SwerveModule[] mSwerveMods = swerveDrive.getModules();
     //   for (swervelib.SwerveModule mod : mSwerveMods) {
@@ -138,7 +138,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // translation = new Translation2d(x, y);
 
         int invertInputs = isRedAlliance() ? -1 : 1;
-        swerveDrive.drive(translation.times(invertInputs), rotation * invertInputs, fieldRelative, isOpenLoop);
+        swerveDrive.drive(translation.times(invertInputs), rotation, fieldRelative, isOpenLoop);
         // swerveDrive.driveFieldOriented(getCurrentSpeeds());
     }
 
