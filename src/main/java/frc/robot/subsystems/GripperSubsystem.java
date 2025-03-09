@@ -154,7 +154,7 @@ public class GripperSubsystem extends SubsystemBase {
 
   public Command intakeWhileNoCoral(){
 
-    return this.run(() -> intake()).onlyWhile(this::isNotCoral);
+    return this.run(() -> intake()).until(this::isCoral);
   }
   
   public boolean isMotorRunning(){
@@ -163,7 +163,8 @@ public class GripperSubsystem extends SubsystemBase {
 
   public boolean isCoral(){
 
-    return colorSensor.getProximity() > 1000;
+    // return colorSensor.getProximity() > 1000;
+    return false;
   }
 
   public boolean isNotCoral(){
