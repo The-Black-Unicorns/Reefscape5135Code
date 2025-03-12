@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.Arm;
 
 import static frc.robot.Constants.Arm.*;
@@ -194,9 +195,13 @@ public class ArmSubsystem extends SubsystemBase  {
         SmartDashboard.putNumber("Arm/armKp", SmartDashboard.getNumber("Arm/armKp", 0.15));
         SmartDashboard.putNumber("Arm/armKi", SmartDashboard.getNumber("Arm/armKi", 0.01));
         SmartDashboard.putNumber("Arm/armKd", SmartDashboard.getNumber("Arm/armKd", 0.04));
+
+        
         double newKP = SmartDashboard.getNumber("Arm/armKp", KP);
         double newKI = SmartDashboard.getNumber("Arm/armKi", KI);
         double newKD = SmartDashboard.getNumber("Arm/armKd", KD);
+
+        currentArmTargetAngle = SmartDashboard.getNumber("Arm/desiredAngle", Constants.Arm.ARM_MID_ANGLE);
 
         if(newKP != KP || newKI != KI || newKD != KD){
             KP = newKP;

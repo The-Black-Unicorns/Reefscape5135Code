@@ -187,6 +187,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
 
 import static frc.robot.Constants.PivotConstants.*;
@@ -364,6 +365,7 @@ public class PivotSubsystem extends SubsystemBase  {
         // double newKI = SmartDashboard.getNumber("Arm/armKi", KI);
         // double newKD = SmartDashboard.getNumber("Arm/armKd", KD);
 
+        currentPivotTargetAngle = SmartDashboard.getNumber("Pivot/desiredPivot", Constants.Arm.ARM_MID_ANGLE);
         // if(newKP != KP || newKI != KI || newKD != KD){
         //     KP = newKP;
         //     KI = newKI;

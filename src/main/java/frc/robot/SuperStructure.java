@@ -168,13 +168,22 @@ public class SuperStructure {
             pivot.setPivotAngleUpOuttake()
         );
     }
+
+    public Command moveArmForAuto(){
+        
+            return Commands.parallel(
+                changeArmState(armStates.OUTTAKE_MIDDLE),
+                arm.setDesiredAngleDeg(36),
+                pivot.setDesiredAngleDeg(83));
+        
+    }
     public Command getAutonomousCommand() {
-        return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+        return new WaitCommand(1).andThen(this.moveArmForAuto().andThen(
          Commands.sequence(
-            new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve),
+            new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
             
 
-            swerve.driveConstantSpeed(-1, 0, 0,3, true),
+            swerve.driveConstantSpeed(-1, 0, 0,7, true),
             
 
             // new WaitCommand(1),
@@ -227,6 +236,10 @@ public class SuperStructure {
 
     public Command intakeUntilCoral(){
         return gripper.intakeWhileNoCoral();
+    }
+
+    public Command OuttakeFast(){
+        return gripper.outtakeFastCommand();
     }
 
 

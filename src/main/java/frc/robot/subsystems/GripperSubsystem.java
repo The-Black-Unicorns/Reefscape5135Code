@@ -116,8 +116,16 @@ public class GripperSubsystem extends SubsystemBase {
     isIntaking = false;
     m_PositionDutyCycle.Position = -2;
     m_PositionDutyCycle.Velocity = 1;
-    gripperMotor.set(-0.2);
+    gripperMotor.set(-0.17);
       isMotorActive = true;
+  }
+
+  public void outtakeFast(){
+    isIntaking = false;
+    m_PositionDutyCycle.Position = -2;
+    m_PositionDutyCycle.Velocity = 1;
+    gripperMotor.set(-0.3);
+    isMotorActive = true;
   }
 
   public void stopGripper(){
@@ -143,6 +151,11 @@ public class GripperSubsystem extends SubsystemBase {
   public Command outtakeCommand() {
     
     return this.run(() -> outtake());
+  }
+
+  public Command outtakeFastCommand() {
+    
+    return this.run(() -> outtakeFast());
   }
 
   public Command intakeWhileNoCoral(){

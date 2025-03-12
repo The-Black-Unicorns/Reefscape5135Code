@@ -89,8 +89,10 @@ public class RobotContainer {
 
     operator.intakeCoralButton().onTrue(structure.IntakeCoral());
     operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
+    operator.outtakeFastCoralButton().onTrue(structure.OuttakeFast());
 
-    operator.intakeCoralButton().or(operator.outtakeCoralButton()).onFalse(structure.stopGripper());
+    operator.intakeCoralButton().or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
+      .onFalse(structure.stopGripper());
   
     // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 

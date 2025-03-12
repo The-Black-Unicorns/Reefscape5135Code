@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
+// import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -308,28 +308,28 @@ public class SwerveSubsystem extends SubsystemBase {
         
     // }
 
-    public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
-        LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
-        LimelightHelpers.PoseEstimate mt2;
-        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);
-        // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
-        doRejectUpdate = false;
-        if(Math.abs(robotYawRate.getAsDouble()) > 720) doRejectUpdate = true;
-        else if(mt2 == null) doRejectUpdate = true;
-        else if(mt2.tagCount == 0){ 
-            doRejectUpdate = true;
-            // System.out.println("found 0 tags");
-        }
-        // if(mt2 == null) System.out.println("bad");
+    // public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
+    //     LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
+    //     LimelightHelpers.PoseEstimate mt2;
+    //     mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);
+    //     // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
+    //     doRejectUpdate = false;
+    //     if(Math.abs(robotYawRate.getAsDouble()) > 720) doRejectUpdate = true;
+    //     else if(mt2 == null) doRejectUpdate = true;
+    //     else if(mt2.tagCount == 0){ 
+    //         doRejectUpdate = true;
+    //         // System.out.println("found 0 tags");
+    //     }
+    //     // if(mt2 == null) System.out.println("bad");
 
-        if(!doRejectUpdate){
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.1,0.1,9999999));
-            // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
-            // System.out.println(mt2.pose);
-            // add here putting vision measurement on dashboard
-            // System.out.println("good");
-        }
-    }
+    //     if(!doRejectUpdate){
+    //         swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.1,0.1,9999999));
+    //         // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
+    //         // System.out.println(mt2.pose);
+    //         // add here putting vision measurement on dashboard
+    //         // System.out.println("good");
+    //     }
+    // }
 
     // returns true if red alliance, false if blue alliance and if no alliance
     public boolean isRedAlliance(){

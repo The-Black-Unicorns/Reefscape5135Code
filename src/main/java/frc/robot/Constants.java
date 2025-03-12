@@ -52,9 +52,11 @@ public class Constants {
 
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
         public static final double PIVOT_TOP_ANGLE = 185;
-        public static final double PIVOT_MID_ANGLE = 87.0;
-        public static final double PIVOT_BOT_ANGLE = 102;
+        public static final double PIVOT_MID_ANGLE = 92.0; //92
+        public static final double PIVOT_BOT_ANGLE = 97.5;
+
     }
+    
     public static final class Gripper {
         public static final double GRIPPER_KP = 0.1;
         public static final double GRIPPER_KI = 0;
@@ -83,16 +85,16 @@ public class Constants {
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 258.0;
+        public static final double ARM_ENCODER_OFFSET = 265.0-16;
         public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_MID_ANGLE = 51;
+        public static final double ARM_MID_ANGLE = 47.5; //47.5
         public static final double ARM_TOP_ANGLE = 76;
-        public static final double ARM_BOT_ANGLE = 353;
+        public static final double ARM_BOT_ANGLE = 355.5;
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }
@@ -172,9 +174,9 @@ public class Constants {
 
         /* Swerve Profiling Values */
         /** Meters per Second */
-        public static final double MAX_SPEED = 4.5; // TODO: This must be tuned to specific robot
+         public static final double MAX_SPEED = 5; // TODO: This must be tuned to specific robot
         /** Radians per Second */
-        public static final double MAX_ANGULAR_VELOCITY = 8.5; // TODO: This must be tuned to specific robot
+        public static final double MAX_ANGULAR_VELOCITY = 9.5; // TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
         public static final NeutralModeValue ANGLE_NEUTRAL_MODE = NeutralModeValue.Coast;

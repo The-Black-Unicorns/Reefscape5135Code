@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cameraserver.CameraServerShared;
+import edu.wpi.first.cameraserver.CameraServerSharedStore;
+import edu.wpi.first.cscore.CameraServerJNI;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,6 +35,7 @@ private DoublePublisher matchtime;
 
     // SmartDashboard.putNumber("My Field", 3.14);
     // CameraServer.startAutomaticCapture();
+    
     matchtime = NetworkTableInstance.getDefault()
       .getDoubleTopic("CurrentMatchTime").publish();
   }

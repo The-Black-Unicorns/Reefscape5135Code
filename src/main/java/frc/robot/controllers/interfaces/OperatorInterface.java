@@ -18,4 +18,7 @@ public interface OperatorInterface {
     public Trigger intakeCoralButton();
 
     public Trigger isGripperActiveButton();
+
+    public Trigger outtakeFastCoralButton();
 }
+
