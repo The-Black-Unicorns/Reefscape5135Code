@@ -54,6 +54,12 @@ public class XboxOperatorController implements OperatorInterface {
         return new Trigger(() -> controller.getRawButton(5));
     }
 
+    @Override
+    public DoubleSupplier moveArmManually(){
+        return ()-> controller.getRawAxis(5);
+
+    }
+
 //     @Override
 //     public Trigger setArmTopAngleOuttake() {
 //         return new Trigger(() -> controller.getRawButton(1));

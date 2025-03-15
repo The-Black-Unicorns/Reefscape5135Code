@@ -22,8 +22,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class SuperStructure {
 
     private final GripperSubsystem gripper;
-    private final ArmSubsystem arm;
-    private final PivotSubsystem pivot;
+    public final ArmSubsystem arm;
+    public final PivotSubsystem pivot;
     
     private armStates lastpose;
 
@@ -178,23 +178,25 @@ public class SuperStructure {
         
     }
     public Command getAutonomousCommand() {
-        return new WaitCommand(1).andThen(this.moveArmForAuto().andThen(
-         Commands.sequence(
-            new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+        // return new WaitCommand(1).andThen(this.moveArmForAuto().andThen(
+        //  Commands.sequence(
+        //     new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
             
 
-            swerve.driveConstantSpeed(-1, 0, 0,7, true),
+        //     swerve.driveConstantSpeed(-1, 0, 0,7, true),
             
 
-            // new WaitCommand(1),
-            // this.OuttakeCoral(),
-            // new WaitCommand(1),
-            // this.StopGripper()
+        //     // new WaitCommand(1),
+        //     // this.OuttakeCoral(),
+        //     // new WaitCommand(1),
+        //     // this.StopGripper()
 
-            this.outtakeCoral().withTimeout(1),
-            this.stopGripper()
-            // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
-        ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+        //     this.outtakeCoral().withTimeout(1),
+        //     this.stopGripper()
+        //     // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+        // ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+
+        return auto.getSelected();
     }
 
     public Command moveArmToPos(){
