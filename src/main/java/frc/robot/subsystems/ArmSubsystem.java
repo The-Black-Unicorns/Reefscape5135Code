@@ -147,6 +147,10 @@ public class ArmSubsystem extends SubsystemBase  {
         return runOnce(()->setArmTargetAngle(desiredAngleDeg));
     }
 
+    public Command setArmAngleToClimb(){
+        return runOnce(()->setArmTargetAngle(ARM_CLIMB_ANGLE));
+    }
+
     public Command setArmAngleUp(){
         return runOnce(()->setArmTargetAngle(ARM_TOP_ANGLE));
     }

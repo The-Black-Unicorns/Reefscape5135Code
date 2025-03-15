@@ -92,9 +92,12 @@ public class Constants {
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_MID_ANGLE = 47.5; //47.5
+        public static final double ARM_CLIMB_ANGLE = 60;
+
         public static final double ARM_TOP_ANGLE = 76;
+        public static final double ARM_MID_ANGLE = 47.5; //47.5
         public static final double ARM_BOT_ANGLE = 355.5;
+
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);
     }

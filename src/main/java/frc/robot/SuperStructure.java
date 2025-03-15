@@ -37,8 +37,11 @@ public class SuperStructure {
         INTAKE_UP,
         OUTTAKE_UP,
         OUTTAKE_MIDDLE,
-        INTAKE_DOWN
+        INTAKE_DOWN,
+        CLIMB_UP,
+        CLIMB_DOWN
     }
+
     public armStates curArmState;
     private armStates curIntakeMode;
     
@@ -168,9 +171,16 @@ public class SuperStructure {
             pivot.setPivotAngleUpOuttake()
         );
     }
+    
+    public Command moveArmToClimb(){
+        return Commands.parallel(
+            changeArmState(armStates.CLIMB_UP),
+            arm.setArmAngleToClimb(),
+            pivot.setPivotAngleUpOuttake()
+        );
+    }
 
     public Command moveArmForAuto(){
-        
             return Commands.parallel(
                 changeArmState(armStates.OUTTAKE_MIDDLE),
                 arm.setDesiredAngleDeg(36),
