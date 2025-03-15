@@ -312,7 +312,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
         LimelightHelpers.PoseEstimate mt2;
-        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LIMELIGHT_NAME);
+        mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
         // LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
         doRejectUpdate = false;
         if(Math.abs(robotYawRate.getAsDouble()) > 720) doRejectUpdate = true;
