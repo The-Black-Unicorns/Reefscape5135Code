@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
@@ -8,6 +10,8 @@ import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class Autonomous {
@@ -50,27 +54,101 @@ public class Autonomous {
     public AutoRoutine followPathAuto(){
         AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
         AutoTrajectory follow = routine.trajectory("New Path");
+        AutoTrajectory follow1 = routine.trajectory("New Path1");
+        AutoTrajectory follow2 = routine.trajectory("New Path2");
         
 
         routine.active().onTrue(
 
             
                 autoStructure.moveArmMiddleOuttake().andThen(
+
                     Commands.parallel(
                     autoStructure.arm.setDesiredAngle(),
                     autoStructure.pivot.setDesiredAngle(),
                 
                 Commands.sequence(
+
+
                 
                 follow.resetOdometry(),
+                new InstantCommand(() -> autoStructure.swerve.zeroGyroWithAlliance(), autoStructure.swerve),
+                
                 follow.cmd(),
-                autoStructure.OuttakeFast().withTimeout(5)
+                autoStructure.OuttakeFast().withTimeout(1)
+                    .andThen(autoStructure.stopGripper())
+                
                  
                 )
             )
+                )
+        );
+
+            follow.done().onTrue(
+
+                autoStructure.moveArmUpIntake().andThen(
+                    Commands.parallel(
+                        autoStructure.arm.setDesiredAngle(),
+                        autoStructure.pivot.setDesiredAngle(),
+
+                        Commands.sequence(
+                            follow1.cmd(),
+                            autoStructure.IntakeCoral().withTimeout(1)
+                            // autoStructure.intakeUntilCoral()
+                                .andThen(autoStructure.stopGripper())
+                        )
+                    )
+                )
+                // Commands.sequence(
+                //     new WaitCommand(1),
+                //     autoStructure.moveArmUpIntake(),
+                //     Commands.parallel(
+                //         autoStructure.arm.setDesiredAngle(),
+                //         autoStructure.pivot.setDesiredAngle()
+                //     ).withTimeout(0.2),
+                //     follow1.cmd(),
+                //     autoStructure.IntakeCoral().withTimeout(1.5)
+                //         .andThen(autoStructure.stopGripper())
+                    
+
+                // )
+        );
+
+        follow1.done().onTrue(
+            // Commands.sequence(
+            //     new WaitCommand(1),
+            //     autoStructure.moveArmMiddleOuttake(),
+            //     Commands.parallel(
+            //         autoStructure.arm.setDesiredAngle(),
+            //         autoStructure.pivot.setDesiredAngle()
+            //     ).withTimeout(0.1),
+            //     follow2.cmd(),
+            //     autoStructure.OuttakeFast().withTimeout(1)
+            //         .andThen(autoStructure.stopGripper())
+            // )
+            new WaitCommand(1).andThen(
+                autoStructure.moveArmMiddleOuttake().andThen(
+                
+            Commands.parallel(
+                autoStructure.arm.setDesiredAngle(),
+                autoStructure.pivot.setDesiredAngle(),
+            
+            Commands.sequence(
+            
+            follow2.cmd(),
+            autoStructure.OuttakeFast().withTimeout(1)
+                .andThen(autoStructure.stopGripper())
+            
+             
+            )
+        )
+            )
             )
             
+            
         );
+            
+        
 
         return routine;
 

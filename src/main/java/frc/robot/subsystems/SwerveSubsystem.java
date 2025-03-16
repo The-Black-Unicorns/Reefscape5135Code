@@ -43,8 +43,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // private ChassisSpeeds currChassisSpeeds;
     private final PIDController xController = new PIDController(0.5, 0, 0.0);
-    private final PIDController yController = new PIDController(0.5, 0, 0.0);
-    private final PIDController headingController = new PIDController(7, 0.0, 0.0);
+    private final PIDController yController = new PIDController(0.5 , 0, 0.0);
+    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
     private boolean doRejectUpdate;
 
     private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
@@ -312,7 +312,7 @@ public class SwerveSubsystem extends SubsystemBase {
         ChassisSpeeds speeds = new ChassisSpeeds(
             sample.vx + xController.calculate(pose.getX(), sample.x),
             sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega + xController.calculate(pose.getRotation().getRadians(), sample.heading)
+            sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
         autoPose.set(new Pose2d(sample.x, sample.y, new Rotation2d( sample.heading)));

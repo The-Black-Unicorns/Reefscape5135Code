@@ -40,7 +40,7 @@ public class Constants {
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 207.2;
+        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5;
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
