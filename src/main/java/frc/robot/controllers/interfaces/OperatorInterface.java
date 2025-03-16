@@ -13,6 +13,8 @@ public interface OperatorInterface {
 
     public Trigger setArmTopAngleButton();
 
+    public Trigger setArmClimbingAngleButton();
+
     // public Trigger setArmTopAngleOuttake();
 
     public Trigger outtakeCoralButton();
