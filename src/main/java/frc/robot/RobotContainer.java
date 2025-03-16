@@ -86,6 +86,7 @@ public class RobotContainer {
       .alongWith(structure.setDesiredState(armStates.INTAKE_UP))
       // .alongWith(structure.IntakeCoral())
       );
+    operator.setArmClimbingAngleButton().onTrue(structure.moveArmToClimb());
 
     operator.intakeCoralButton().onTrue(structure.IntakeCoral());
     operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
