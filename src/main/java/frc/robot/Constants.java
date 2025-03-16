@@ -28,7 +28,7 @@ public class Constants {
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 0.15;
+        public static final double PIVOT_MOTOR_KP = 0.16;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
         public static final double PIVOT_MOTOR_KF = 1;
@@ -44,14 +44,14 @@ public class Constants {
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
-        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 100;
+        public static final double MAX_PIVOT_DEGREES_PER_SECOND = 150;
         public static final double MAX_PIVOT_DEGREES_PER_SECOND_SQUARED = 550;
 
         public static final double PIVOT_POSITION_TOLERANCE_DEG = 1.0;
 
 
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
-        public static final double PIVOT_TOP_ANGLE = 185;
+        public static final double PIVOT_TOP_ANGLE = 185; //185
         public static final double PIVOT_MID_ANGLE = 92.0; //92
         public static final double PIVOT_BOT_ANGLE = 97.5;
 
@@ -80,23 +80,23 @@ public class Constants {
         public static final double ARM_KA = 0.0;
         public static final double ARM_KG = 0.1; //0.32
 
-        public static final double ARM_KP = 0.15;  // previus was 0.13
-        public static final double ARM_KI = 0.005; // previus was 0.0
+        public static final double ARM_KP = 0.26;  // previus was 0.13
+        public static final double ARM_KI = 0; // previus was 0.0
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 265.0-16;
+        public static final double ARM_ENCODER_OFFSET = 55.0-16 - 40+74;
         public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_CLIMB_ANGLE = 60;
-
-        public static final double ARM_TOP_ANGLE = 76;
         public static final double ARM_MID_ANGLE = 47.5; //47.5
-        public static final double ARM_BOT_ANGLE = 355.5;
+        public static final double ARM_TOP_ANGLE = 85;  //76
+        public static final double ARM_BOT_ANGLE = 355.5; //355.5
+        public static final double ARM_CLIMB_ANGLE = 345;
+
 
 
         // public static final TrapezoidProfile.Constraints ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(360, 720);

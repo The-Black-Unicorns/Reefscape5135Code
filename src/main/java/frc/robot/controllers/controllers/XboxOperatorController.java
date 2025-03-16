@@ -57,6 +57,7 @@ public class XboxOperatorController implements OperatorInterface {
     @Override
     public Trigger setArmClimbingAngleButton() {
         return new Trigger(() -> controller.getRawButton(7) && controller.getRawButton(8));
+
     }
 
 //     @Override

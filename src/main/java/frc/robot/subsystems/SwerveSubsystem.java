@@ -16,8 +16,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -41,14 +44,19 @@ public class SwerveSubsystem extends SubsystemBase {
     // private ChassisSpeeds currChassisSpeeds;
     private final PIDController xController = new PIDController(0.5, 0, 0.0);
     private final PIDController yController = new PIDController(0.5, 0, 0.0);
-    private final PIDController headingController = new PIDController(0.3, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(7, 0.0, 0.0);
     private boolean doRejectUpdate;
 
     private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
     private SlewRateLimiter yLimiter = new SlewRateLimiter(10);
 
+    private StructPublisher<Pose2d> autoPose;
+
   Field2d field;
     public SwerveSubsystem(File directory) {
+
+        autoPose = NetworkTableInstance.getDefault()
+        .getStructTopic("Auto Pose", Pose2d.struct).publish();
         // gyro = new AHRS(NavXComType.kMXP_SPI);
         field = new Field2d();
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -90,6 +98,9 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.stopOdometryThread();
     }
 
+    private StructPublisher<Pose2d> curPosePublisher = 
+    NetworkTableInstance.getDefault()
+    .getStructTopic("Current Pose", Pose2d.struct).publish();
     @Override
     public void periodic() {
         // System.out.println(isRedAlliance());
@@ -101,8 +112,11 @@ public class SwerveSubsystem extends SubsystemBase {
     //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getAbsoluteEncoder().getAbsolutePosition());
     //       SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getAbsoluteEncoder().getAbsolutePosition());
     //   }
+
+    curPosePublisher.set(getPose());
+    
     swerveDrive.updateOdometry();
-      updateLimelightReading(() -> swerveDrive.getYaw().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
+      updateLimelightReading(() -> swerveDrive.getPose().getRotation().getDegrees(),()->  (swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180.0 / Math.PI));
     //   System.out.println(gyro.getYaw());
         // publisher.set(getModuleStates());
         // chpublisher.set(getCurrentSpeeds());
@@ -301,6 +315,11 @@ public class SwerveSubsystem extends SubsystemBase {
             sample.omega + xController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
+        autoPose.set(new Pose2d(sample.x, sample.y, new Rotation2d( sample.heading)));
+        
+
+
+
         // Apply the generated speeds
         swerveDrive.driveFieldOriented(speeds);
     }
@@ -324,7 +343,8 @@ public class SwerveSubsystem extends SubsystemBase {
         // if(mt2 == null) System.out.println("bad");
 
         if(!doRejectUpdate){
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.1,0.1,9999999));
+            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.3,0.3,9999999));
+            System.out.println(mt2.pose);
             // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
             // System.out.println(mt2.pose);
             // add here putting vision measurement on dashboard

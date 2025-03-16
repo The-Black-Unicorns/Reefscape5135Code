@@ -28,8 +28,8 @@
    }
   },
   "mass":{
-   "exp":"30 kg",
-   "val":30.0
+   "exp":"45 kg",
+   "val":45.0
   },
   "inertia":{
    "exp":"3 kg m ^ 2",
