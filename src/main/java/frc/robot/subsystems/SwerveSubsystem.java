@@ -42,9 +42,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
 
     // private ChassisSpeeds currChassisSpeeds;
-    private final PIDController xController = new PIDController(0.5, 0, 0.0);
-    private final PIDController yController = new PIDController(0.5 , 0, 0.0);
-    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
+    private final PIDController xController = new PIDController(0.83, 0, 0.0);
+    private final PIDController yController = new PIDController(0.83 , 0, 0.0);
+    private final PIDController headingController = new PIDController(1.03, 0.0, 0.0);
     private boolean doRejectUpdate;
 
     private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
@@ -344,7 +344,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if(!doRejectUpdate){
             swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.3,0.3,9999999));
-            System.out.println(mt2.pose);
+            // System.out.println(mt2.pose);
             // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
             // System.out.println(mt2.pose);
             // add here putting vision measurement on dashboard

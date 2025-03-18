@@ -56,6 +56,10 @@ public class Autonomous {
         AutoTrajectory follow = routine.trajectory("New Path");
         AutoTrajectory follow1 = routine.trajectory("New Path1");
         AutoTrajectory follow2 = routine.trajectory("New Path2");
+        AutoTrajectory follow3 = routine.trajectory("New Path3");
+        AutoTrajectory follow4 = routine.trajectory("New Path4");
+        AutoTrajectory follow5 = routine.trajectory("New Path5");
+        AutoTrajectory follow6 = routine.trajectory("New Path6");
         
 
         routine.active().onTrue(
@@ -93,7 +97,7 @@ public class Autonomous {
 
                         Commands.sequence(
                             follow1.cmd(),
-                            autoStructure.IntakeCoral().withTimeout(1)
+                            autoStructure.IntakeCoral().withTimeout(0.7)
                             // autoStructure.intakeUntilCoral()
                                 .andThen(autoStructure.stopGripper())
                         )
@@ -126,7 +130,7 @@ public class Autonomous {
             //     autoStructure.OuttakeFast().withTimeout(1)
             //         .andThen(autoStructure.stopGripper())
             // )
-            new WaitCommand(1).andThen(
+            new WaitCommand(0.7).andThen(
                 autoStructure.moveArmMiddleOuttake().andThen(
                 
             Commands.parallel(
@@ -143,10 +147,93 @@ public class Autonomous {
             )
         )
             )
-            )
-            
-            
+        )
         );
+
+        follow2.done().onTrue(
+            
+
+            autoStructure.moveArmUpIntake().andThen(
+                Commands.parallel(
+                    autoStructure.arm.setDesiredAngle(),
+                    autoStructure.pivot.setDesiredAngle(),
+
+                    Commands.sequence(
+                        follow3.cmd(),
+                        autoStructure.IntakeCoral().withTimeout(0.7)
+                        // autoStructure.intakeUntilCoral()
+                            .andThen(autoStructure.stopGripper())
+                    )
+                )
+            )
+        );
+        follow3.done().onTrue(
+            new WaitCommand(0.7).andThen(
+                autoStructure.moveArmMiddleOuttake().andThen(
+                
+            Commands.parallel(
+                autoStructure.arm.setDesiredAngle(),
+                autoStructure.pivot.setDesiredAngle(),
+            
+            Commands.sequence(
+            
+            follow4.cmd(),
+            autoStructure.OuttakeFast().withTimeout(1)
+                .andThen(autoStructure.stopGripper())
+            
+            
+             
+            )
+        )
+            )
+        )
+        );
+
+        follow4.done().onTrue(
+            autoStructure.moveArmUpIntake().andThen(
+                Commands.parallel(
+                    autoStructure.arm.setDesiredAngle(),
+                    autoStructure.pivot.setDesiredAngle(),
+
+                    Commands.sequence(
+                        follow5.cmd(),
+                        autoStructure.IntakeCoral().withTimeout(0.7)
+                        // autoStructure.intakeUntilCoral()
+                            .andThen(autoStructure.stopGripper())
+                    )
+                )
+            )
+        );
+
+        follow5.done().onTrue(
+            new WaitCommand(0.7).andThen(
+                autoStructure.moveArmMiddleOuttake().andThen(
+                
+            Commands.parallel(
+                autoStructure.arm.setDesiredAngle(),
+                autoStructure.pivot.setDesiredAngle(),
+            
+            Commands.sequence(
+            
+            follow6.cmd(),
+            autoStructure.OuttakeFast().withTimeout(1)
+                .andThen(autoStructure.stopGripper())
+            
+            
+             
+            )
+        )
+            )
+        )
+        );
+        
+
+        
+            
+        
+            
+            
+        
             
         
 

@@ -60,6 +60,12 @@ public class XboxOperatorController implements OperatorInterface {
 
     }
 
+    @Override
+    public DoubleSupplier moveArmManually() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'moveArmManually'");
+    }
+
 //     @Override
 //     public Trigger setArmTopAngleOuttake() {
 //         return new Trigger(() -> controller.getRawButton(1));
