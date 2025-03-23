@@ -42,9 +42,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
 
     // private ChassisSpeeds currChassisSpeeds;
-    private final PIDController xController = new PIDController(0.5, 0, 0.0);
-    private final PIDController yController = new PIDController(0.5 , 0, 0.0);
-    private final PIDController headingController = new PIDController(1, 0.0, 0.0);
+    private final PIDController xController = new PIDController(3, 0, 0.0);
+    private final PIDController yController = new PIDController(3 , 0, 0.0);
+    private final PIDController headingController = new PIDController(3, 0.0, 0.0);
     private boolean doRejectUpdate;
 
     private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
@@ -56,10 +56,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem(File directory) {
 
         autoPose = NetworkTableInstance.getDefault()
-        .getStructTopic("Auto Pose", Pose2d.struct).publish();
+            .getStructTopic("Auto Pose", Pose2d.struct).publish();
         // gyro = new AHRS(NavXComType.kMXP_SPI);
+
         field = new Field2d();
-      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(MAX_SPEED,

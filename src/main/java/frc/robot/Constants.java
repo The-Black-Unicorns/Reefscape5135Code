@@ -13,6 +13,11 @@ import frc.lib.util.SwerveModuleConstants;
 
 public class Constants {
 
+    public static final class AutoConstants{
+        public static final double AUTO_OUTTAKE_TIME = 0.5; //s
+        public static final double AUTO_INTAKE_TIME = 2; //s
+        public static final double AUTO_TIME_BETWEEN_AUTOS = 3; //s
+    }
     public static final class swerveMathConstants {
         public static final double MAX_SKID_ACCEL = 100; // mps2
         public static final double MAX_FORWARD_ACCEL = 5; // mps2
@@ -28,10 +33,10 @@ public class Constants {
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 0.16;
+        public static final double PIVOT_MOTOR_KP = 0.07;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
-        public static final double PIVOT_MOTOR_KF = 1;
+        public static final double PIVOT_MOTOR_KF = 0;
 
         public static final double PIVOT_MOTOR_KS = 0.01;
         public static final double PIVOT_MOTOR_KV = 0.01;
@@ -40,7 +45,7 @@ public class Constants {
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5;
+        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5 +118;
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
@@ -50,8 +55,8 @@ public class Constants {
         public static final double PIVOT_POSITION_TOLERANCE_DEG = 1.0;
 
 
-        public static final double PIVOT_TOP_OUTTAKE_ANGLE = 213.0;
-        public static final double PIVOT_TOP_ANGLE = 185; //185
+        public static final double PIVOT_TOP_OUTTAKE_ANGLE = 175;
+        public static final double PIVOT_TOP_ANGLE = 152.5; //185
         public static final double PIVOT_MID_ANGLE = 92.0; //92
         public static final double PIVOT_BOT_ANGLE = 97.5;
 
@@ -85,16 +90,16 @@ public class Constants {
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 55.0-16 - 40+74;
+        public static final double ARM_ENCODER_OFFSET = 55.0-16 - 40+74+6;
         public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
         public static final int RIGHT_ARM_MOTOR = 9;
         public static final int LEFT_ARM_MOTOR = 8;
 
-        public static final double ARM_MID_ANGLE = 47.5; //47.5
-        public static final double ARM_TOP_ANGLE = 85;  //76
-        public static final double ARM_BOT_ANGLE = 355.5; //355.5
+        public static final double ARM_MID_ANGLE = 44.5; //47.5
+        public static final double ARM_TOP_ANGLE = 58.7;  //76
+        public static final double ARM_BOT_ANGLE = 348.5; //355.5
         public static final double ARM_CLIMB_ANGLE = 345;
 
 
