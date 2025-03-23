@@ -21,7 +21,7 @@ import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
-
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -39,7 +39,7 @@ public class GripperSubsystem extends SubsystemBase {
 
 
   // DigitalInput beamBreakSensor;
-  // ColorSensorV3 colorSensor;
+  ColorSensorV3 colorSensor;
   boolean isMotorActive;
   boolean isIntaking;
 
@@ -56,7 +56,7 @@ public class GripperSubsystem extends SubsystemBase {
 
   public GripperSubsystem() {
     // beamBreakSensor = new DigitalInput(K_BEAMBREAK_ID);
-    // colorSensor = new ColorSensorV3(Port.kOnboard);
+    // colorSensor = new ColorSensorV3(Port.kOnboardCS3);
     // colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit, ProximitySensorMeasurementRate.kProxRate12ms);
     isIntaking = false;
     isMotorActive = false;
@@ -145,7 +145,7 @@ public class GripperSubsystem extends SubsystemBase {
     return Commands.sequence(
       this.runOnce(() -> stopGripper()),
       this.runOnce(() -> intakeWhileNoCoral().cancel()),
-      this.runOnce(() -> intakeCommand().cancel()) 
+      this.runOnce(() -> intakeCommand().cancel())
     );
   }
 
@@ -198,7 +198,7 @@ public class GripperSubsystem extends SubsystemBase {
       intakeCommand().cancel();
       stopGripper();
     }
-    SmartDashboard.putBoolean("Gripper/isCoral", SmartDashboard.getBoolean("Gripper/isCoral", false));
+    SmartDashboard.putBoolean("Gripper/isCoral", this.isCoral());
   }
 
 public void testPeriodic(){

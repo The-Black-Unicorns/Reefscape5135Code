@@ -345,7 +345,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if(!doRejectUpdate){
             swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.3,0.3,9999999));
-            System.out.println(mt2.pose);
+            // System.out.println(mt2.pose);
             // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
             // System.out.println(mt2.pose);
             // add here putting vision measurement on dashboard
