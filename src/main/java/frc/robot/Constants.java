@@ -33,7 +33,7 @@ public class Constants {
     public static final class PivotConstants{ //change everything!!!
         public static final int PIVOT_MOTOR_ID = 19;
 
-        public static final double PIVOT_MOTOR_KP = 0.07;
+        public static final double PIVOT_MOTOR_KP = 0.065;
         public static final double PIVOT_MOTOR_KI = 0;
         public static final double PIVOT_MOTOR_KD = 0;
         public static final double PIVOT_MOTOR_KF = 0;
@@ -45,7 +45,7 @@ public class Constants {
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5 +118;
+        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5 -4.8  +118;
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 

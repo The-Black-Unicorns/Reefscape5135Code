@@ -54,13 +54,13 @@ public class Autonomous {
 
     public AutoRoutine followPathAuto(){
         AutoRoutine routine = autoFactory.newRoutine("followPathAuto");
-        AutoTrajectory follow0 = routine.trajectory("ml to 2b");
-        AutoTrajectory follow1 = routine.trajectory("2b to source");
-        AutoTrajectory follow2 = routine.trajectory("source to 1b");
-        AutoTrajectory follow3 = routine.trajectory("1b to source");
-        AutoTrajectory follow4 = routine.trajectory("source to 1a");
-        AutoTrajectory follow5 = routine.trajectory("1a to source");
-        AutoTrajectory follow6 = routine.trajectory("source to 1a");
+        AutoTrajectory follow = routine.trajectory("New Path");
+        AutoTrajectory follow1 = routine.trajectory("New Path1");
+        AutoTrajectory follow2 = routine.trajectory("New Path2");
+        AutoTrajectory follow3 = routine.trajectory("New Path3");
+        AutoTrajectory follow4 = routine.trajectory("New Path4");
+        AutoTrajectory follow5 = routine.trajectory("New Path5");
+        AutoTrajectory follow6 = routine.trajectory("New Path6");
         
 
         routine.active().onTrue(
@@ -76,11 +76,11 @@ public class Autonomous {
 
 
                 
-                follow0.resetOdometry(),
+                follow.resetOdometry(),
                 new InstantCommand(() -> autoStructure.swerve.zeroGyroWithAlliance(), autoStructure.swerve),
                 
-                follow0.cmd(),
-                autoStructure.outtakeCoral().withTimeout(AutoConstants.AUTO_OUTTAKE_TIME)
+                follow.cmd(),
+                autoStructure.OuttakeFast().withTimeout(1)
                     .andThen(autoStructure.stopGripper())
                 
                  
@@ -89,7 +89,7 @@ public class Autonomous {
                 )
         );
 
-            follow0.done().onTrue(
+            follow.done().onTrue(
 
                 autoStructure.moveArmUpIntake().andThen(
                     Commands.parallel(
@@ -98,7 +98,7 @@ public class Autonomous {
 
                         Commands.sequence(
                             follow1.cmd(),
-                            autoStructure.IntakeCoral().withTimeout(AutoConstants.AUTO_INTAKE_TIME)
+                            autoStructure.IntakeCoral().withTimeout(0.7)
                             // autoStructure.intakeUntilCoral()
                                 .andThen(autoStructure.stopGripper())
                         )
@@ -131,7 +131,7 @@ public class Autonomous {
             //     autoStructure.OuttakeFast().withTimeout(1)
             //         .andThen(autoStructure.stopGripper())
             // )
-            new WaitCommand(AutoConstants.AUTO_TIME_BETWEEN_AUTOS).andThen(
+            new WaitCommand(0.7).andThen(
                 autoStructure.moveArmMiddleOuttake().andThen(
                 
             Commands.parallel(
@@ -141,7 +141,7 @@ public class Autonomous {
             Commands.sequence(
             
             follow2.cmd(),
-            autoStructure.outtakeCoral().withTimeout(AutoConstants.AUTO_OUTTAKE_TIME)
+            autoStructure.OuttakeFast().withTimeout(1)
                 .andThen(autoStructure.stopGripper())
             
              
@@ -161,7 +161,7 @@ public class Autonomous {
 
                     Commands.sequence(
                         follow3.cmd(),
-                        autoStructure.IntakeCoral().withTimeout(AutoConstants.AUTO_INTAKE_TIME)
+                        autoStructure.IntakeCoral().withTimeout(0.7)
                         // autoStructure.intakeUntilCoral()
                             .andThen(autoStructure.stopGripper())
                     )
@@ -169,7 +169,7 @@ public class Autonomous {
             )
         );
         follow3.done().onTrue(
-            new WaitCommand(AutoConstants.AUTO_TIME_BETWEEN_AUTOS).andThen(
+            new WaitCommand(0.7).andThen(
                 autoStructure.moveArmMiddleOuttake().andThen(
                 
             Commands.parallel(
@@ -179,7 +179,7 @@ public class Autonomous {
             Commands.sequence(
             
             follow4.cmd(),
-            autoStructure.outtakeCoral().withTimeout(AutoConstants.AUTO_OUTTAKE_TIME)
+            autoStructure.OuttakeFast().withTimeout(1)
                 .andThen(autoStructure.stopGripper())
             
             
@@ -198,7 +198,7 @@ public class Autonomous {
 
                     Commands.sequence(
                         follow5.cmd(),
-                        autoStructure.IntakeCoral().withTimeout(AutoConstants.AUTO_INTAKE_TIME)
+                        autoStructure.IntakeCoral().withTimeout(0.7)
                         // autoStructure.intakeUntilCoral()
                             .andThen(autoStructure.stopGripper())
                     )
@@ -207,7 +207,7 @@ public class Autonomous {
         );
 
         follow5.done().onTrue(
-            new WaitCommand(AutoConstants.AUTO_TIME_BETWEEN_AUTOS).andThen(
+            new WaitCommand(0.7).andThen(
                 autoStructure.moveArmMiddleOuttake().andThen(
                 
             Commands.parallel(
@@ -217,7 +217,7 @@ public class Autonomous {
             Commands.sequence(
             
             follow6.cmd(),
-            autoStructure.outtakeCoral().withTimeout(AutoConstants.AUTO_OUTTAKE_TIME)
+            autoStructure.OuttakeFast().withTimeout(1)
                 .andThen(autoStructure.stopGripper())
             
             
@@ -235,9 +235,6 @@ public class Autonomous {
             
             
         
-            
-        
-
         return routine;
 
     }
