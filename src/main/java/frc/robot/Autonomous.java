@@ -3,12 +3,22 @@ package frc.robot;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +33,8 @@ public class Autonomous {
     private final SwerveSubsystem drive;
     private final AutonomousCommands autoStructure;
     private final SendableChooser<Command> autoChooser;
+    private AutoBuilder builder;
+    private RobotConfig config;
     
 
     public Autonomous(SuperStructure structure){
@@ -41,12 +53,44 @@ public class Autonomous {
         //     drive
         // );
 
+        
+        builder = new AutoBuilder();
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        AutoBuilder.configure(
+            drive::getPose, // Robot pose supplier
+            drive::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            drive::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> drive.drive(new Translation2d(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond),speeds.omegaRadiansPerSecond, false, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            drive // Reference to this subsystem to set requirements
+    );
+        
 
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.setDefaultOption("Basic Auto", basicAuto());
-        autoChooser.addOption("2 Coral", twoCoralAuto());
-        autoChooser.addOption("3 Coral", threeCoralAuto());
-        autoChooser.addOption("4 Coral", fourCoralAuto());
+        // autoChooser.addOption("2 Coral", twoCoralAuto());
+        // autoChooser.addOption("3 Coral", threeCoralAuto());
+        // autoChooser.addOption("4 Coral", fourCoralAuto());
 
         NamedCommands.registerCommand("MoveArmScore", autoStructure.moveArmMiddleOuttakeAuto());
         NamedCommands.registerCommand("MoveArmTopIntake", autoStructure.moveArmTopIntakeAuto());
@@ -68,6 +112,9 @@ public class Autonomous {
         // autoFactory.bind("MoveArmIntakeSource", structure.moveArmUpIntake());
         // autoFactory.bind("Intake", structure.IntakeCoral());
         // autoFactory.bind("StopGripper", structure.stopGripper());
+
+    
+        
     }
     
     

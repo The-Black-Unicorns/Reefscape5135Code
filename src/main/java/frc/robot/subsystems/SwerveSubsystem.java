@@ -24,7 +24,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -55,17 +54,11 @@ public class SwerveSubsystem extends SubsystemBase {
     private SlewRateLimiter xLimiter = new SlewRateLimiter(10);
     private SlewRateLimiter yLimiter = new SlewRateLimiter(10);
 
-    private StructPublisher<Pose2d> autoPose;
-    RobotConfig PathplanenrConfig;
-
-  Field2d field;
     public SwerveSubsystem(File directory) {
 
-        autoPose = NetworkTableInstance.getDefault()
-            .getStructTopic("Auto Pose", Pose2d.struct).publish();
         // gyro = new AHRS(NavXComType.kMXP_SPI);
 
-        field = new Field2d();
+
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
@@ -78,12 +71,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     
-
-    try{
-        PathplanenrConfig = RobotConfig.fromGUISettings();
-    } catch (Exception e){
-        e.printStackTrace();
-    }
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
@@ -113,29 +100,7 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.stopOdometryThread();
 
 
-        AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> drive(new Translation2d(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond),speeds.omegaRadiansPerSecond, false, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            PathplanenrConfig, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
+        
     }
 
     private StructPublisher<Pose2d> curPosePublisher = 
@@ -355,7 +320,7 @@ public class SwerveSubsystem extends SubsystemBase {
             sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
-        autoPose.set(new Pose2d(sample.x, sample.y, new Rotation2d( sample.heading)));
+        
         
 
 

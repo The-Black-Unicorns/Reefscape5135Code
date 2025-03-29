@@ -6,7 +6,16 @@ import java.io.File;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StructArraySubscriber;
+import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -27,6 +36,8 @@ public class SuperStructure {
     private final Autonomous auto;
     
     private armStates lastpose;
+    private Field2d field;
+    private final StructSubscriber<Pose2d> desiredAutoPose;
 
 
     // private final Autonomous auto;
@@ -51,11 +62,17 @@ public class SuperStructure {
         gripper = new GripperSubsystem();
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
-        auto = new Autonomous(this);
-        swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
+        swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+        auto = new Autonomous(this);
         
         curIntakeMode = armStates.INTAKE_UP;
+
+        desiredAutoPose = NetworkTableInstance.getDefault().getStructTopic("/PathPlanner/targetPose", Pose2d.struct)
+            .subscribe(new Pose2d());
+
+        field = new Field2d();
+        SmartDashboard.putData("field", field);
 
         
 
@@ -70,7 +87,7 @@ public class SuperStructure {
         curArmState = armStates.OUTTAKE_MIDDLE;
 
     }
-
+    
     // public Command ToggleGripper(){
 
         
@@ -302,6 +319,8 @@ public class SuperStructure {
         }
     }
 
+    
+
 
 
     public void enabledInit(){
@@ -326,9 +345,9 @@ public class SuperStructure {
     }
 
     public void periodic(){
-        // if(curArmState == armStates.UP) System.out.println("bad");
-        // else if(curArmState == armStates.MIDDLE) System.out.println("fine");
-        // else System.out.println("greate");
-        // SmartDashboard.putString("armState", curArmState.name());
+
+        field.getObject("Autonomous Pose").setPose(desiredAutoPose.get());
+        
+        field.setRobotPose(swerve.getPose());
     }
 }

@@ -21,7 +21,6 @@ import frc.robot.controllers.controllers.XboxOperatorController;
 
 public class RobotContainer {
   private SuperStructure structure;
-  private Field2d field;
   private QxDriveController controller;
   private XboxOperatorController operator;
   // private SwerveSubsystem swerve;
@@ -40,9 +39,9 @@ public class RobotContainer {
     
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
-    field = new Field2d();
+
     structure = new SuperStructure();
-    SmartDashboard.putData("field", field);
+
 
   
     structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
