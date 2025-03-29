@@ -6,6 +6,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import java.io.File;
 import java.util.function.*;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -51,6 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private SlewRateLimiter yLimiter = new SlewRateLimiter(10);
 
     private StructPublisher<Pose2d> autoPose;
+    RobotConfig PathplanenrConfig;
 
   Field2d field;
     public SwerveSubsystem(File directory) {
@@ -69,6 +75,14 @@ public class SwerveSubsystem extends SubsystemBase {
     } catch (Exception e)
     {
       throw new RuntimeException(e);
+    }
+
+    
+
+    try{
+        PathplanenrConfig = RobotConfig.fromGUISettings();
+    } catch (Exception e){
+        e.printStackTrace();
     }
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
@@ -97,6 +111,31 @@ public class SwerveSubsystem extends SubsystemBase {
 
         //disable this if no vision
         swerveDrive.stopOdometryThread();
+
+
+        AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> drive(new Translation2d(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond),speeds.omegaRadiansPerSecond, false, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            PathplanenrConfig, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
     }
 
     private StructPublisher<Pose2d> curPosePublisher = 
@@ -377,5 +416,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveDrive getSwerveDriveObject(){
         return swerveDrive;
     }
+
+    public ChassisSpeeds getRobotRelativeSpeeds(){
+        return swerveDrive.getRobotVelocity();
+    }
+
+
 }
 

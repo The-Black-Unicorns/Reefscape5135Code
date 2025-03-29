@@ -24,6 +24,7 @@ public class SuperStructure {
     private final GripperSubsystem gripper;
     public final ArmSubsystem arm;
     public final PivotSubsystem pivot;
+    private final Autonomous auto;
     
     private armStates lastpose;
 
@@ -50,12 +51,11 @@ public class SuperStructure {
         gripper = new GripperSubsystem();
         arm = new ArmSubsystem();
         pivot = new PivotSubsystem();
-        // auto = new Autonomous();
+        auto = new Autonomous(this);
         swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
         
         
         curIntakeMode = armStates.INTAKE_UP;
-        // auto = new Autonomous(this);
 
         
 
@@ -188,26 +188,26 @@ public class SuperStructure {
         
     }
     public Command getAutonomousCommand() {
-        return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
-         Commands.sequence(
-            new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+        // return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+        //  Commands.sequence(
+        //     new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
             
 
-            swerve.driveConstantSpeed(-1, 0, 0,7, true),
+        //     swerve.driveConstantSpeed(-1, 0, 0,7, true),
             
 
-            // new WaitCommand(1),
-            // this.OuttakeCoral(),
-            // new WaitCommand(1),
-            // this.StopGripper()
+        //     // new WaitCommand(1),
+        //     // this.OuttakeCoral(),
+        //     // new WaitCommand(1),
+        //     // this.StopGripper()
 
-            this.outtakeCoral().withTimeout(1),
-            this.OuttakeFast().withTimeout(1),
-            this.stopGripper()
-            // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
-        ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+        //     this.outtakeCoral().withTimeout(1),
+        //     this.OuttakeFast().withTimeout(1),
+        //     this.stopGripper()
+        //     // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+        // ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
 
-        // return auto.getSelected();
+        return auto.getSelected();
     }
 
     public Command moveArmToPos(){
@@ -254,6 +254,54 @@ public class SuperStructure {
     public Command OuttakeFast(){
         return gripper.outtakeFastCommand();
     }
+
+
+    public class AutonomousCommands{
+
+        public Command moveArmMiddleOuttakeAuto(){
+            return moveArmMiddleOuttake().andThen(
+                Commands.parallel(
+                    arm.setDesiredAngle(),
+                    pivot.setDesiredAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command moveArmTopIntakeAuto(){
+            return moveArmUpIntake().andThen(
+                Commands.parallel(
+                    arm.setDesiredAngle(),
+                    pivot.setDesiredAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command moveArmBottomIntakeAuto(){
+            return moveArmDownIntake().andThen(
+                Commands.parallel(
+                    arm.setDesiredAngle(),
+                    pivot.setDesiredAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command stopGripperAuto(){
+            return stopGripper();
+        }
+
+        public Command intakeCoralAuto(){
+            return IntakeCoral();
+        }
+
+        public Command outtakeCoralAuto(){
+            return outtakeCoral();
+        }
+
+        public Command outtakeFastAuto(){
+            return OuttakeFast();
+        }
+    }
+
 
 
     public void enabledInit(){
