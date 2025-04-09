@@ -188,27 +188,60 @@ public class SuperStructure {
         
     }
     public Command getAutonomousCommand() {
-        return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
-         Commands.sequence(
-            new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+
+        return Commands.sequence(
+            new WaitCommand(0.2),
+            moveArmMiddleOuttake(),
+            Commands.sequence(
             
-
-            swerve.driveConstantSpeed(-1, 0, 0,7, true),
+                new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+                    
+        
+                swerve.driveConstantSpeed(-1, 0, 0,7, true),
+        
+                this.outtakeCoral().withTimeout(1),
+                this.OuttakeFast().withTimeout(0.7),
+                this.stopGripper()
+            ).alongWith(
+                arm.setDesiredAngle(),
+                pivot.setDesiredAngle()
+            ).withTimeout(9.5),
             
+            moveArmUpIntake(),
+            swerve.driveConstantSpeed(1, 0, 0, 0.5, true),
+            
+            Commands.parallel(
+                arm.setDesiredAngle(),
+                pivot.setDesiredAngle()
+            )
 
-            // new WaitCommand(1),
-            // this.OuttakeCoral(),
-            // new WaitCommand(1),
-            // this.StopGripper()
-
-            this.outtakeCoral().withTimeout(1),
-            this.OuttakeFast().withTimeout(1),
-            this.stopGripper()
-            // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
-        ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+        );
 
         // return auto.getSelected();
     }
+
+    // public Command getAutonomousCommand() {
+    //     return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+    //      Commands.sequence(
+    //         new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+            
+
+    //         swerve.driveConstantSpeed(-1, 0, 0,7, true),
+            
+
+    //         // new WaitCommand(1),
+    //         // this.OuttakeCoral(),
+    //         // new WaitCommand(1),
+    //         // this.StopGripper()
+
+    //         this.outtakeCoral().withTimeout(1.5),
+    //         this.OuttakeFast().withTimeout(0.7),
+    //         this.stopGripper()
+    //         // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+    //     ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+
+    //     // return auto.getSelected();
+    // }
 
     public Command moveArmToPos(){
         return Commands.either(

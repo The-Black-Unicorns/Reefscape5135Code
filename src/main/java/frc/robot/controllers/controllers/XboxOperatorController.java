@@ -60,6 +60,12 @@ public class XboxOperatorController implements OperatorInterface {
 
     }
 
+    @Override
+    public Trigger setArmAlgaeAngleButton() {
+        
+        return null;
+    }
+
 //     @Override
 //     public Trigger setArmTopAngleOuttake() {
 //         return new Trigger(() -> controller.getRawButton(1));
