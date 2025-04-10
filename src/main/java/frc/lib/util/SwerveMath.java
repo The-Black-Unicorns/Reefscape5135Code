@@ -8,11 +8,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class SwerveMath {
-    public static Translation2d normalizeWheelAccel(Translation2d curTranslationSpeeds, Translation2d lastTranslationSpeeds){
+    public static Translation2d normalizeWheelAccel(Translation2d curTranslationSpeeds, Translation2d lastTranslationSpeeds, Rotation2d robotAngle){
         Translation2d normalizedSpeeds;
 
         Translation2d forwardLimit = forwardAccelLimit(curTranslationSpeeds, lastTranslationSpeeds);
         Translation2d skidLimit = skidAccelLimit(curTranslationSpeeds, lastTranslationSpeeds);
+        Translation2d robotSidesLimit = robotSidesAccelLimit(curTranslationSpeeds, lastTranslationSpeeds, robotAngle);
         
         normalizedSpeeds = new Translation2d(Math.min(forwardLimit.getX(), skidLimit.getX()), Math.min(forwardLimit.getY(), skidLimit.getY()));
         return normalizedSpeeds;
@@ -20,11 +21,11 @@ public class SwerveMath {
 
     private static Translation2d forwardAccelLimit(Translation2d curSpeeds, Translation2d lastSpeeds){
         Rotation2d forwardAngle;
-        if(lastSpeeds.getX() == 0 && lastSpeeds.getY() == 0) forwardAngle = new Rotation2d();
+        if(lastSpeeds.getX() == 0 && lastSpeeds.getY() == 0) forwardAngle = new Rotation2d(); // problem here, angle = 0
         else forwardAngle = lastSpeeds.getAngle();
 
         Rotation2d curAngle;
-        if(curSpeeds.getX() == 0 && curSpeeds.getY() == 0) curAngle = new Rotation2d();
+        if(curSpeeds.getX() == 0 && curSpeeds.getY() == 0) curAngle = new Rotation2d(); // problem here, angle = 0
         else curAngle = lastSpeeds.getAngle();
         Rotation2d angleDiff = forwardAngle.minus(curAngle);
 
@@ -62,5 +63,10 @@ public class SwerveMath {
             return lastSpeeds.plus(fSpeeds);
         }
         return curSpeeds;
+    }
+
+    private static Translation2d robotSidesAccelLimit(Translation2d curSpeeds, Translation2d lastSpeeds, Rotation2d curRobotAngle){
+
+        return null;
     }
 }
