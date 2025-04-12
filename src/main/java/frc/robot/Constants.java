@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -69,8 +70,17 @@ public class Constants {
         public static final double KMAX_ACCEL = 0.5;
         public static final double KMAX_SPEED = 1;
 
+        public static final double GRIPPER_OUTTAKE_SPEED = -0.24;
+        public static final double GRIPPER_OUTTAKEFAST_SPEED = -0.37;
+        public static final double GRIPPER_INTAKE_SPEED = 0.85;
+
         public static final int K_SPARK_ID = 18; 
         public static final int K_BEAMBREAK_ID = 1;
+        public static final int K_CURRENT_LIMIT = 15; //amps
+
+        public static final boolean K_INVERTED = false;
+        public static final boolean K_BRAKE = true;
+
     }
 
         /* Arm constants */

@@ -89,7 +89,7 @@ public class RobotContainer {
 
     operator.intakeCoralButton().onTrue(structure.IntakeCoral());
     operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
-    operator.outtakeFastCoralButton().onTrue(structure.OuttakeFast());
+    operator.outtakeFastCoralButton().onTrue(structure.OuttakeCoralFast());
 
     operator.intakeCoralButton().or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
       .onFalse(structure.stopGripper());
@@ -97,6 +97,10 @@ public class RobotContainer {
     // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
+
+    if (!Robot.isReal()){
+      operator.setArmLowAngleButton().onTrue(structure.hpDropCoralSim());
+    }
 
   }
 

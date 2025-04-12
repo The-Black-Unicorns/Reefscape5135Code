@@ -26,7 +26,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.SuperStructure.AutonomousCommands;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystemTalonFX;
 
 import static frc.robot.Constants.AutoConstants;
 public class Autonomous {
@@ -67,8 +68,8 @@ public class Autonomous {
             drive::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> drive.drive(new Translation2d(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond),speeds.omegaRadiansPerSecond, false, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(9.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.5, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -100,8 +101,7 @@ public class Autonomous {
         NamedCommands.registerCommand("OuttakeFast", autoStructure.outtakeFastAuto());
         NamedCommands.registerCommand("StopGripper", autoStructure.stopGripperAuto());
         
-        
-        
+    
         SmartDashboard.putData("AutoChooser", autoChooser);
         // autoChooser.addRoutine("aaa", this::followPathAuto);
         // autoChooser.select("aaa");
@@ -117,11 +117,6 @@ public class Autonomous {
         
     }
     
-    
-    
-
-
-
     public Command basicAuto(){
         return AutoBuilder.buildAuto("Basic Auto");
     }
@@ -319,7 +314,6 @@ public class Autonomous {
     // }
 
 
-    
     public Command getSelected(){
        return autoChooser.getSelected();
     }
