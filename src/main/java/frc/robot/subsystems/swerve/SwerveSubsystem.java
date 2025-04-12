@@ -102,10 +102,21 @@ public class SwerveSubsystem extends SubsystemBase {
     NetworkTableInstance.getDefault()
     .getStructTopic("Current Pose", Pose2d.struct).publish();
 
+    private StructPublisher<Pose2d> curActualPosePublisher = 
+    NetworkTableInstance.getDefault()
+    .getStructTopic("Current Actual Pose (Sim)", Pose2d.struct).publish();
+
     @Override
     public void periodic() {
-        updateOdometry();
+        io.periodic();
+
         curPosePublisher.set(getPose());
+        curActualPosePublisher.set(getActualPoseSim());
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        io.simulationPeriodic();
     }
 
     public AbstractDriveTrainSimulation getSimDrive() {
@@ -120,8 +131,32 @@ public class SwerveSubsystem extends SubsystemBase {
         io.hpDropCoralSimulation();
     }
 
+    public Pose2d getActualPoseSim() {
+        return io.getActualPoseSim();
+    }
 
-    
-    
+    public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate) {
+        io.updateVisionReading(robotYaw, robotYawRate);
+    }
+
+    public void updateLimelightReading() {
+        io.updateVisionReading();
+    }
+
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+        return io.getFieldRelativeSpeeds();
+    }
+
+    public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop) {
+        io.setModuleStates(states);
+    }
+
+    public SwerveSubsystemIO getIO() {
+        return io;
+    }
+
+    public void setIO(SwerveSubsystemIO io) {
+        this.io = io;
+    }
 
 }

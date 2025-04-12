@@ -6,11 +6,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import java.io.File;
 import java.util.function.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -21,14 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 // import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
@@ -136,6 +124,7 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     // //   System.out.println(swerveDrive.getYaw());
     //   }    
 
+    @Override
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         // Translation2d lastSpeeds = 
         // new Translation2d(swerveDrive.getFieldVelocity().vxMetersPerSecond, swerveDrive.getFieldVelocity().vyMetersPerSecond);
@@ -194,19 +183,23 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     //     }
     // }
 
+    @Override
     public SwerveModuleState[] getModuleStates() {
         return swerveDrive.getStates();
 
     }
 
+    @Override
     public SwerveModulePosition[] getModulePositions() {
         return swerveDrive.getModulePositions();
     }
 
+    @Override
     public Pose2d getPose() {
         return swerveDrive.getPose();
     }
 
+    @Override
     public void setPose(Pose2d pose) {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
         swerveDrive.resetOdometry(pose);
@@ -214,11 +207,13 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
 
     //Gets the current yaw angle of the robot, as reported by the swerve pose estimator in the underlying drivebase.
     //Note, this is not the raw gyro reading, this may be corrected from calls to resetOdometry().
+    @Override
     public Rotation2d getHeading() {
         return getPose().getRotation();
     }
 
     // doesnt set the gyro yaw only the heading!!!
+    @Override
     public void setHeading(Rotation2d heading) {
         // swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
         //         new Pose2d(getPose().getTranslation(), heading));
@@ -226,11 +221,13 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     }
 
     // makes robot face towards 0, red alliance wall
+    
     public void zeroGyro() {
 
         swerveDrive.zeroGyro();
     }
 
+    @Override
     public void zeroGyroWithAlliance()
     {
     //   if (!
@@ -268,6 +265,7 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     //   }
     }
 
+    @Override
     public Rotation2d getGyroYaw() {
         return swerveDrive.getYaw(); // changed from getyaw to fused heading
         //why is this (double)?
@@ -281,13 +279,6 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     //     // }
     //     swerveDrive.
     // }
-
-
-   
-
-    public ChassisSpeeds getCurrentSpeeds() {
-        return swerveDrive.getFieldVelocity();
-    }
 
     public double getRobotOrientationForSpeaker(){
         double robotsOrientation = Math.signum(
@@ -306,13 +297,7 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
                 true);
     }
 
-    // private void setPIDRotation(double distanceFromAprilTagAngle){
-    //     rotateRobot(aprilTagPIDController.calculate(distanceFromAprilTagAngle, 0));
-    // }
 
-    // public Command alignRobotToAprilTag(DoubleSupplier angleRelativeToAprilTag){
-    //     return new RunCommand(() -> setPIDRotation(angleRelativeToAprilTag.getAsDouble()), this);
-    // }
     public void followTrajectory(SwerveSample sample) {
         // Get the current pose of the robot
         Pose2d pose = getPose();
@@ -324,11 +309,6 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
             sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
-        
-        
-
-
-
         // Apply the generated speeds
         swerveDrive.driveFieldOriented(speeds);
     }
@@ -336,8 +316,8 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     // public double getLimelightMegatag1AngleDeg(){
         
     // }
-
-    public void updateLimelightReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
+    @Override
+    public void updateVisionReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate){
         LimelightHelpers.SetRobotOrientation(LIMELIGHT_NAME, robotYaw.getAsDouble(), robotYawRate.getAsDouble(), 0,0,0,0);
         LimelightHelpers.PoseEstimate mt2;
         mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
@@ -347,17 +327,11 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
         else if(mt2 == null) doRejectUpdate = true;
         else if(mt2.tagCount == 0){ 
             doRejectUpdate = true;
-            // System.out.println("found 0 tags");
         }
-        // if(mt2 == null) System.out.println("bad");
 
         if(!doRejectUpdate){
             swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.3,0.3,9999999));
-            // System.out.println(mt2.pose);
-            // swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds,  VecBuilder.fill(0.7,0.7,9999999));
-            // System.out.println(mt2.pose);
-            // add here putting vision measurement on dashboard
-            // System.out.println("good");
+
         }
     }
 
@@ -377,15 +351,13 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
     public void setMotorsBrake(boolean isBrake){
         swerveDrive.setMotorIdleMode(isBrake);
     }
-
-    public ChassisSpeeds getFieldVelocity(){
-        return swerveDrive.getFieldVelocity();
-    }
+    
     
     public SwerveDrive getSwerveDriveObject(){
         return swerveDrive;
     }
 
+    @Override
     public ChassisSpeeds getRobotRelativeSpeeds(){
         return swerveDrive.getRobotVelocity();
     }

@@ -72,7 +72,7 @@ public class SuperStructure {
         realRobot = Robot.isReal();
         swerve = realRobot ? 
             new SwerveSubsystem(new SwerveSubsystemTalonFX(new File(Filesystem.getDeployDirectory(), "swerve"))) :
-            new SwerveSubsystem(new SwerveSubsystemSim());
+            new SwerveSubsystem(new SwerveSubsystemSim(new File(Filesystem.getDeployDirectory(), "swerve")));
 
         gripper = new GripperSubsystem(
             realRobot ? new GripperSubsystemIOTalonFX(Gripper.K_SPARK_ID, Gripper.K_CURRENT_LIMIT, Gripper.K_INVERTED, Gripper.K_BRAKE)

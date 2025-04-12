@@ -1,23 +1,15 @@
 package frc.robot.subsystems.swerve;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public interface SwerveSubsystemIO {
 
@@ -60,23 +52,23 @@ public interface SwerveSubsystemIO {
 
     ChassisSpeeds getFieldRelativeSpeeds();
 
-    // public default Command driveCommandForDriver(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier angularSpeed,
-    //             BooleanSupplier isFieldOriented, DoubleSupplier speedExponent)
-    //     {
-    //         return new InstantCommand();
-    //     }
-
     default void updateOdometry() {}
 
-    public default AbstractDriveTrainSimulation getSimDrive() {
-        return null;
-    }
+    default void periodic() {}
+
+    public default void updateVisionReading(DoubleSupplier robotYaw, DoubleSupplier robotYawRate) {updateVisionReading();}
+    
+    public default void updateVisionReading() {}
+
+    public default Pose2d getActualPoseSim() {return getPose();}
+
+    public default AbstractDriveTrainSimulation getSimDrive() {return null;}
 
     public default void scoreL1Simulation() {}
 
     public default void hpDropCoralSimulation() {}
 
-    
+    public default void simulationPeriodic() {}
 
 
 
