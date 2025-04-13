@@ -25,7 +25,7 @@ public class GripperSubsystemIOTalonFX implements GripperSubsystemIO {
     
     
     public GripperSubsystemIOTalonFX(int deviceID, int currentLimitAmps, boolean invert, boolean brake) {
-        gripperMotor = new TalonFX(0);
+        gripperMotor = new TalonFX(deviceID);
         gripperMotor.clearStickyFaults();
         configs = new TalonFXConfiguration();
         configs.withCurrentLimits(new CurrentLimitsConfigs().withStatorCurrentLimit(currentLimitAmps)

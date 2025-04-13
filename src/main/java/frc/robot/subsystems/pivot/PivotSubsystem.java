@@ -649,6 +649,7 @@ import static frc.robot.Constants.PivotConstants.PIVOT_MOTOR_KP;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.GenericPresicionSystemIO.Goal;;
@@ -665,7 +666,7 @@ public class PivotSubsystem extends SubsystemBase{
         this.io = io;
 
         this.inputs = new PivotSubsystemIO.GenericPresicionSystemIOInputs();
-        goal = Goal.SCORE_MIDDLE;
+        goal = Goal.IDLE;
         KP = PIVOT_MOTOR_KP;
         KI = PIVOT_MOTOR_KI;
         KD = PIVOT_MOTOR_KD;
@@ -741,21 +742,28 @@ public class PivotSubsystem extends SubsystemBase{
 
         switch(goal){
             case CLIMB:
-                setTargetAngle(PivotConstants.PIVOT_BOT_ANGLE);
+                io.setTargetAngle(PivotConstants.PIVOT_BOT_ANGLE);
                 break;
             case SCORE_MIDDLE:
-                setTargetAngle(PivotConstants.PIVOT_MID_ANGLE);
+                io.setTargetAngle(PivotConstants.PIVOT_MID_ANGLE);
                 break;
             case INTAKE_DOWN:
-                setTargetAngle(PivotConstants.PIVOT_BOT_ANGLE);
+                io.setTargetAngle(PivotConstants.PIVOT_BOT_ANGLE);
                 break;
             case INTAKE_UP:
-                setTargetAngle(PivotConstants.PIVOT_TOP_ANGLE);
+                io.setTargetAngle(PivotConstants.PIVOT_TOP_ANGLE);
                 break;
             case SCORE_UP:
-                setTargetAngle(PivotConstants.PIVOT_TOP_ANGLE);
+                io.setTargetAngle(PivotConstants.PIVOT_TOP_ANGLE);
+                break;
+            case IDLE:
+                io.setTargetAngle(inputs.TargetAngle);
+                break;
+            default:
+                io.setTargetAngle(inputs.TargetAngle);
                 break;
         }
+    // System.out.println(goal.name());
             
 
     }
@@ -793,5 +801,7 @@ public class PivotSubsystem extends SubsystemBase{
     }
 
 }
+
+
 
 

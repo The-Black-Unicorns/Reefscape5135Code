@@ -30,8 +30,8 @@ public class ArmSubsystemIOSparkMax implements ArmSubsystemIO {
         armConfigL = new SparkMaxConfig();
         armConfigR = new SparkMaxConfig();
          
-        armMotorR = new SparkMax(armL_ID, MotorType.kBrushless);
-        armMotorL = new SparkMax(armR_ID, MotorType.kBrushless);
+        armMotorR = new SparkMax(armR_ID, MotorType.kBrushless);
+        armMotorL = new SparkMax(armL_ID, MotorType.kBrushless);
         armMotorR.clearFaults();
         armMotorL.clearFaults();
          
@@ -96,6 +96,7 @@ public class ArmSubsystemIOSparkMax implements ArmSubsystemIO {
 
     @Override
     public void setTargetAngle(double position) {
+        System.out.println("oihtethhtjrr");
         currentArmTargetAngle = position;
     }
 

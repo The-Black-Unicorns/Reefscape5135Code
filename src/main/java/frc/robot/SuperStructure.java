@@ -36,6 +36,7 @@ import frc.robot.subsystems.arm.ArmSubsystemIOSparkMax;
 import frc.robot.subsystems.gripper.GripperSubsystem;
 import frc.robot.subsystems.gripper.GripperSubsystemIO;
 import frc.robot.subsystems.gripper.GripperSubsystemIOSim;
+import frc.robot.subsystems.gripper.GripperSubsystemIOSparkMax;
 import frc.robot.subsystems.gripper.GripperSubsystemIOTalonFX;
 import frc.robot.subsystems.pivot.PivotSubsystem;
 import frc.robot.subsystems.pivot.PivotSubsystemIO;
@@ -82,7 +83,7 @@ public class SuperStructure {
             new SwerveSubsystem(new SwerveSubsystemSim(new File(Filesystem.getDeployDirectory(), "swerve")));
 
         gripper = new GripperSubsystem(
-            realRobot ? new GripperSubsystemIOTalonFX(Gripper.K_SPARK_ID, Gripper.K_CURRENT_LIMIT, Gripper.K_INVERTED, Gripper.K_BRAKE)
+            realRobot ? new GripperSubsystemIOSparkMax(Gripper.K_SPARK_ID, Gripper.K_CURRENT_LIMIT, Gripper.K_INVERTED, Gripper.K_BRAKE)
             : new GripperSubsystemIOSim(this)
         );
 
@@ -128,10 +129,10 @@ public class SuperStructure {
     }
 
     public Command setGoal(Goal goal){
-        return Commands.runOnce(() -> {
-            arm.setGoal(goal);
-            pivot.setGoal(goal);
-        });
+        return Commands.parallel(
+            arm.setGoal(goal),
+            pivot.setGoal(goal)
+        );
     }
 
     
@@ -156,11 +157,8 @@ public class SuperStructure {
     }
 
     public Command outtakeCoral(){
-        return realRobot 
-            ? new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKE_SPEED), gripper)
-            : new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKE_SPEED), gripper);
                 
-        // return new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKE_SPEED), gripper);
+        return new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKE_SPEED), gripper);
     }
 
     public Command OuttakeCoralFast(){
@@ -221,14 +219,14 @@ public class SuperStructure {
     public Command moveArmMiddleOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_MIDDLE),
-            arm.setGoal(Goal.SCORE_MIDDLE)
+            setGoal(Goal.SCORE_MIDDLE)
         );
     }
 
     public Command moveArmUpIntake(){
         return Commands.parallel(
             changeArmState(armStates.INTAKE_UP),
-            arm.setGoal(Goal.INTAKE_UP),
+            setGoal(Goal.INTAKE_UP),
             new InstantCommand(() -> curIntakeMode = armStates.INTAKE_UP)
             );
 
@@ -237,14 +235,14 @@ public class SuperStructure {
     public Command moveArmUpOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_UP),
-            arm.setGoal(Goal.SCORE_UP)
+            setGoal(Goal.SCORE_UP)
         );
     }
     
     public Command moveArmToClimb(){
         return Commands.parallel(
             changeArmState(armStates.CLIMB_UP),
-            arm.setGoal(Goal.CLIMB)
+            setGoal(Goal.CLIMB)
         );
     }
 

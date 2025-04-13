@@ -16,7 +16,7 @@ public class GripperSubsystemIOSparkMax implements GripperSubsystemIO {
 
     
     public GripperSubsystemIOSparkMax(int deviceID, int currentLimitAmps, boolean invert, boolean brake) {
-        gripperMotor = new SparkMax(0, MotorType.kBrushless);
+        gripperMotor = new SparkMax(deviceID, MotorType.kBrushless);
         gripperMotor.clearFaults();
         configs = new SparkMaxConfig();
         configs.smartCurrentLimit(currentLimitAmps);

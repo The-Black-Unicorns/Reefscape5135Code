@@ -18,7 +18,8 @@ public interface GenericPresicionSystemIO {
         SCORE_MIDDLE,
         SCORE_UP,
         INTAKE_DOWN,
-        INTAKE_UP
+        INTAKE_UP,
+        IDLE
     }
 
     default public void setSpeed(double speed) {}

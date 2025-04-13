@@ -112,7 +112,7 @@ public class Constants {
         public static final int LEFT_ARM_MOTOR = 8;
 
         public static final double ARM_MID_ANGLE = 44.5; //47.5
-        public static final double ARM_TOP_ANGLE = 58.7;  //76
+        public static final double ARM_TOP_ANGLE = 80.0;  //76
         public static final double ARM_BOT_ANGLE = 348.5; //355.5
         public static final double ARM_CLIMB_ANGLE = 345;
 
