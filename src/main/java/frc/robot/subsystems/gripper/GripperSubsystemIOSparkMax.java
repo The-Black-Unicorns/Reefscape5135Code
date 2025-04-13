@@ -31,7 +31,7 @@ public class GripperSubsystemIOSparkMax implements GripperSubsystemIO {
 
     @Override
     public void setGripperMotorSpeed(double speed) {
-        gripperMotor.set(speed);
+        gripperMotor.set(speed);;
     }
 
     @Override

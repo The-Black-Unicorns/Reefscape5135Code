@@ -5,7 +5,7 @@
 package frc.robot.subsystems.gripper;
 
 import edu.wpi.first.math.controller.PIDController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // import com.ctre.phoenix6.controls.PositionDutyCycle;
 // import com.ctre.phoenix6.controls.VelocityDutyCycle;
@@ -278,6 +278,11 @@ public class GripperSubsystem extends SubsystemBase {
     public void periodic() {
         
         updateInputs();
+
+        SmartDashboard.putNumber("Gripper/GripperSpeed", inputs.gripperMotorSpeed);
+
+        SmartDashboard.putNumber("Gripper/GripperVoltage", inputs.gripperMotorVoltage);
+        SmartDashboard.putNumber("Gripper/GripperTemp", inputs.gripperMotorTemp);
     }
 
     public void testPeriodic(){
