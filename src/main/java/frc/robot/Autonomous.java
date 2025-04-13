@@ -85,13 +85,6 @@ public class Autonomous {
             },
             drive // Reference to this subsystem to set requirements
     );
-        
-
-        autoChooser = AutoBuilder.buildAutoChooser();
-        autoChooser.setDefaultOption("Basic Auto", basicAuto());
-        // autoChooser.addOption("2 Coral", twoCoralAuto());
-        // autoChooser.addOption("3 Coral", threeCoralAuto());
-        // autoChooser.addOption("4 Coral", fourCoralAuto());
 
         NamedCommands.registerCommand("MoveArmScore", autoStructure.moveArmMiddleOuttakeAuto());
         NamedCommands.registerCommand("MoveArmTopIntake", autoStructure.moveArmTopIntakeAuto());
@@ -100,6 +93,14 @@ public class Autonomous {
         NamedCommands.registerCommand("Outtake", autoStructure.outtakeCoralAuto());
         NamedCommands.registerCommand("OuttakeFast", autoStructure.outtakeFastAuto());
         NamedCommands.registerCommand("StopGripper", autoStructure.stopGripperAuto());
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.setDefaultOption("Basic Auto", basicAuto());
+        // autoChooser.addOption("2 Coral", twoCoralAuto());
+        // autoChooser.addOption("3 Coral", threeCoralAuto());
+        // autoChooser.addOption("4 Coral", fourCoralAuto());
+
+        
         
     
         SmartDashboard.putData("AutoChooser", autoChooser);

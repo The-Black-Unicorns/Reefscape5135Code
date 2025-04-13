@@ -12,6 +12,8 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -101,13 +103,14 @@ StructArrayPublisher<Pose3d> coralPoses = NetworkTableInstance.getDefault()
 
             aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
             if (Robot.isSimulation()){
-                visionSim = new VisionSystemSim("VisionSim");
+                visionSim = new VisionSystemSim("main");
                 visionSim.addAprilTags(aprilTagFieldLayout);
 
                 cameraProps = new SimCameraProperties();
                 cameraProps.setCalibError(0.25, 0.08);
                 cameraProps.setAvgLatencyMs(35);
                 cameraProps.setLatencyStdDevMs(5);
+                cameraProps.setFPS(30);
 
                 camera = new PhotonCamera("Cam1");
                 cameraSim = new PhotonCameraSim(camera, cameraProps);
@@ -127,8 +130,11 @@ StructArrayPublisher<Pose3d> coralPoses = NetworkTableInstance.getDefault()
         //     fieldRelative,
         //     true);
         //     DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(DriverStation.Alliance.Red);
+        
         swerveDrive.drive(translation,rotation,fieldRelative,isOpenLoop);
     }
+
+    
 
     @Override
     public void setModuleStates(SwerveModuleState[] states) {
@@ -302,4 +308,7 @@ StructArrayPublisher<Pose3d> coralPoses = NetworkTableInstance.getDefault()
         // simulatedDrive.updateLimelightReading(robotYaw, robotYawRate);
         swerveDrive.addVisionMeasurement(visionSim.getRobotPose().toPose2d(), Timer.getFPGATimestamp());
     }
+
+
+
 }

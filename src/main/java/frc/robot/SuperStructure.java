@@ -26,13 +26,20 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.Arm;
 import frc.robot.Constants.Gripper;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.subsystems.GenericPresicionSystemIO.Goal;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystemIO;
+import frc.robot.subsystems.arm.ArmSubsystemIOSparkMax;
 import frc.robot.subsystems.gripper.GripperSubsystem;
 import frc.robot.subsystems.gripper.GripperSubsystemIO;
 import frc.robot.subsystems.gripper.GripperSubsystemIOSim;
 import frc.robot.subsystems.gripper.GripperSubsystemIOTalonFX;
+import frc.robot.subsystems.pivot.PivotSubsystem;
+import frc.robot.subsystems.pivot.PivotSubsystemIO;
+import frc.robot.subsystems.pivot.PivotSubsystemIOSparkMax;
 import frc.robot.subsystems.swerve.SwerveSubsystemTalonFX;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystemSim;
@@ -79,9 +86,20 @@ public class SuperStructure {
             : new GripperSubsystemIOSim(this)
         );
 
-        arm = new ArmSubsystem();
-        pivot = new PivotSubsystem();
+        arm = realRobot? 
+            new ArmSubsystem(new ArmSubsystemIOSparkMax(Arm.LEFT_ARM_MOTOR, Arm.RIGHT_ARM_MOTOR, Arm.ARM_CURRENT_LIMIT, Arm.ARM_INVERTED, Arm.ARM_BRAKE))
+            : new ArmSubsystem(new ArmSubsystemIO() {});
+
+        // arm = new ArmSubsystem(new ArmSubsystemIOSparkMax(Arm.LEFT_ARM_MOTOR, Arm.RIGHT_ARM_MOTOR, Arm.ARM_CURRENT_LIMIT, Arm.ARM_INVERTED, Arm.ARM_BRAKE));
+
         
+        pivot = realRobot ?
+            new PivotSubsystem(new PivotSubsystemIOSparkMax(PivotConstants.PIVOT_MOTOR_ID, PivotConstants.PIVOT_CURRENT_LIMIT,
+                PivotConstants.PIVOT_MOTOR_INVERTED, PivotConstants.PIVOT_MOTOR_BRAKE)) 
+
+            : new PivotSubsystem(new PivotSubsystemIO() {});
+
+            
 
         
         
@@ -102,11 +120,18 @@ public class SuperStructure {
         //     arm.setDesiredAngle()))
         //                     .schedule();
 
-        arm.setDefaultCommand(arm.setDesiredAngle());
-        pivot.setDefaultCommand(pivot.setDesiredAngle());
+        arm.setDefaultCommand(arm.moveArmTargetAngle());
+        pivot.setDefaultCommand(pivot.movePivotTargetAngle());
 
         curArmState = armStates.OUTTAKE_MIDDLE;
 
+    }
+
+    public Command setGoal(Goal goal){
+        return Commands.runOnce(() -> {
+            arm.setGoal(goal);
+            pivot.setGoal(goal);
+        });
     }
 
     
@@ -187,8 +212,7 @@ public class SuperStructure {
     public Command moveArmDownIntake(){
         return Commands.parallel(
             changeArmState(armStates.INTAKE_DOWN),
-            arm.setArmAngleDown(),
-            pivot.setPivotAngleDown(),
+            setGoal(Goal.INTAKE_DOWN),
             new InstantCommand(() -> curIntakeMode = armStates.INTAKE_DOWN)
             );
             
@@ -197,15 +221,14 @@ public class SuperStructure {
     public Command moveArmMiddleOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_MIDDLE),
-            arm.setArmAngleMiddle(),
-            pivot.setPivotAngleMiddle());
+            arm.setGoal(Goal.SCORE_MIDDLE)
+        );
     }
 
     public Command moveArmUpIntake(){
         return Commands.parallel(
             changeArmState(armStates.INTAKE_UP),
-            arm.setArmAngleUp(),
-            pivot.setPivotAngleUp(),
+            arm.setGoal(Goal.INTAKE_UP),
             new InstantCommand(() -> curIntakeMode = armStates.INTAKE_UP)
             );
 
@@ -214,24 +237,22 @@ public class SuperStructure {
     public Command moveArmUpOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_UP),
-            arm.setArmAngleUp(),
-            pivot.setPivotAngleUpOuttake()
+            arm.setGoal(Goal.SCORE_UP)
         );
     }
     
     public Command moveArmToClimb(){
         return Commands.parallel(
             changeArmState(armStates.CLIMB_UP),
-            arm.setArmAngleToClimb(),
-            pivot.setPivotAngleUpOuttake()
+            arm.setGoal(Goal.CLIMB)
         );
     }
 
     public Command moveArmForAuto(){
             return Commands.parallel(
                 changeArmState(armStates.OUTTAKE_MIDDLE),
-                arm.setDesiredAngleDeg(36),
-                pivot.setDesiredAngleDeg(83));
+                arm.setTargetAngle(36),
+                pivot.setTargetAngle(83));
         
     }
     public Command getAutonomousCommand() {
@@ -313,8 +334,8 @@ public class SuperStructure {
         public Command moveArmMiddleOuttakeAuto(){
             return moveArmMiddleOuttake().andThen(
                 Commands.parallel(
-                    arm.setDesiredAngle(),
-                    pivot.setDesiredAngle()
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
                 ).withTimeout(0.5)
             );
         }
@@ -322,8 +343,8 @@ public class SuperStructure {
         public Command moveArmTopIntakeAuto(){
             return moveArmUpIntake().andThen(
                 Commands.parallel(
-                    arm.setDesiredAngle(),
-                    pivot.setDesiredAngle()
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
                 ).withTimeout(0.5)
             );
         }
@@ -331,8 +352,8 @@ public class SuperStructure {
         public Command moveArmBottomIntakeAuto(){
             return moveArmDownIntake().andThen(
                 Commands.parallel(
-                    arm.setDesiredAngle(),
-                    pivot.setDesiredAngle()
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
                 ).withTimeout(0.5)
             );
         }

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cameraserver.CameraServerShared;
 import edu.wpi.first.cameraserver.CameraServerSharedStore;
@@ -35,6 +37,8 @@ private DoublePublisher matchtime;
 
     // SmartDashboard.putNumber("My Field", 3.14);
     // CameraServer.startAutomaticCapture();
+
+    PathfindingCommand.warmupCommand().schedule();
     
     matchtime = NetworkTableInstance.getDefault()
       .getDoubleTopic("CurrentMatchTime").publish();

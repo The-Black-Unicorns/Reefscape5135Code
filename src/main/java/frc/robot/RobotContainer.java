@@ -7,6 +7,8 @@ package frc.robot;
 import java.util.ResourceBundle.Control;
 
 import edu.wpi.first.hal.util.UncleanStatusException;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -100,6 +102,7 @@ public class RobotContainer {
 
     if (!Robot.isReal()){
       operator.setArmLowAngleButton().onTrue(structure.hpDropCoralSim());
+      operator.setArmMidAngleButton().onTrue(structure.swerve.driveToPose(new Pose2d(3.2, 4, new Rotation2d(0))));
     }
 
   }

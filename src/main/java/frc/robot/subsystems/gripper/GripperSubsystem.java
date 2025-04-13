@@ -6,6 +6,7 @@ package frc.robot.subsystems.gripper;
 
 import edu.wpi.first.math.controller.PIDController;
 
+
 // import com.ctre.phoenix6.controls.PositionDutyCycle;
 // import com.ctre.phoenix6.controls.VelocityDutyCycle;
 // import com.revrobotics.spark.SparkClosedLoopController;
@@ -282,6 +283,9 @@ public class GripperSubsystem extends SubsystemBase {
     public void testPeriodic(){
 
     }
+
+    
+
 }
 
 

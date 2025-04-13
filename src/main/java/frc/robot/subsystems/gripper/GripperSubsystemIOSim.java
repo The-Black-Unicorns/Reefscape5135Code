@@ -4,8 +4,6 @@ import static edu.wpi.first.units.Units.Centimeter;
 
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.SuperStructure;
 

@@ -352,7 +352,6 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
         swerveDrive.setMotorIdleMode(isBrake);
     }
     
-    
     public SwerveDrive getSwerveDriveObject(){
         return swerveDrive;
     }

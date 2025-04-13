@@ -5,6 +5,9 @@ import java.util.function.DoubleSupplier;
 
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -89,9 +92,16 @@ public class SwerveSubsystem extends SubsystemBase {
             MathUtil.applyDeadband(angularSpeed.getAsDouble(), STICK_DEADBAND)  * MAX_ANGULAR_VELOCITY
             ,
             isFieldOriented.getAsBoolean(),
-            true),//check if closed loop is better then open loop
+            false),//check if closed loop is better then open loop
 
         this);
+    }
+
+    public Command driveToPose(Pose2d pose){
+        PathConstraints constraints = new PathConstraints(
+            4, 7, 5, 6);
+
+            return AutoBuilder.pathfindToPose(pose, constraints, 0);
     }
 
     public void updateOdometry() {
