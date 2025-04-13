@@ -23,7 +23,7 @@ public interface GripperSubsystemIO {
     
     default public void setPID(PIDController pid) {}
     
-
+    default public void gripperAutonInit() {}
 
 } 
     

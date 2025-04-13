@@ -6,11 +6,14 @@ import java.io.File;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.optimization.SimulatedAnnealing;
 import edu.wpi.first.networktables.GenericSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -78,13 +81,15 @@ public class SuperStructure {
     public SuperStructure(){
 
         realRobot = Robot.isReal();
+
+
         swerve = realRobot ? 
             new SwerveSubsystem(new SwerveSubsystemTalonFX(new File(Filesystem.getDeployDirectory(), "swerve"))) :
             new SwerveSubsystem(new SwerveSubsystemSim(new File(Filesystem.getDeployDirectory(), "swerve")));
 
         gripper = new GripperSubsystem(
             realRobot ? new GripperSubsystemIOSparkMax(Gripper.K_SPARK_ID, Gripper.K_CURRENT_LIMIT, Gripper.K_INVERTED, Gripper.K_BRAKE)
-            : new GripperSubsystemIOSim(this)
+            : new  GripperSubsystemIOSim(this)
         );
 
         arm = realRobot? 
@@ -384,7 +389,6 @@ public class SuperStructure {
         pivot.pivotEnabledInit();
         gripper.stopGripperMotor();
 
-
     }
 
     public void testPeriodic(){
@@ -411,5 +415,10 @@ public class SuperStructure {
         field.getObject("Autonomous Pose").setPose(desiredAutoPose.get());
         
         field.setRobotPose(swerve.getPose());
+    }
+
+    public void autonomousInit(){
+        gripper.gripperAutonInit();
+        SimulatedArena.getInstance().resetFieldForAuto();
     }
 }

@@ -22,25 +22,18 @@ import frc.robot.controllers.controllers.QxDriveController;
 import frc.robot.controllers.controllers.XboxOperatorController;
 
 public class RobotContainer {
-  private SuperStructure structure;
+  public SuperStructure structure;
+
   private QxDriveController controller;
   private XboxOperatorController operator;
-  // private SwerveSubsystem swerve;
-  
-  // private DigitalInput unlockMotorsDIO;
-  // private Trigger unlockMotorsTrigger;
 
-
-  private Trigger moveArmDown;
-  private Trigger moveArmMid;
-  private Trigger moveArmTop;
 
   public RobotContainer() {
+
+
     controller = new QxDriveController(0);
     operator = new XboxOperatorController(1);
     
-    // autonomous = new Autonomous();
-    // swerve = new SwerveSubsystem();
 
     structure = new SuperStructure();
 
@@ -63,13 +56,6 @@ public class RobotContainer {
 
     controller.isGripperActive().whileFalse(structure.stopGripper());
     controller.isGripperActive().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
-
-    // controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
-    // controller.raiseArmOne().onTrue(structure.stopGripper());
-
-    // controller.lowerArmOne().onTrue((structure.moveArmToPos()));
-    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
-    // controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
 
     controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
     controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
@@ -95,8 +81,6 @@ public class RobotContainer {
 
     operator.intakeCoralButton().or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
       .onFalse(structure.stopGripper());
-  
-    // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
 
@@ -120,6 +104,10 @@ public class RobotContainer {
   }
   public void enabledInit(){
     structure.enabledInit();
+  }
+
+  public void autonomousInit(){
+    structure.autonomousInit();
   }
   
 }

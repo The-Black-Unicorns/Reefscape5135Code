@@ -346,19 +346,15 @@ public class ArmSubsystem extends SubsystemBase{
         switch(goal){
             case CLIMB:
                 io.setTargetAngle(Arm.ARM_CLIMB_ANGLE);
-                System.out.println("goal = climb");
                 break;
             case SCORE_MIDDLE:
                 io.setTargetAngle(Arm.ARM_MID_ANGLE);
-                System.out.println("scodemid");
                 break;
             case INTAKE_DOWN:
                 io.setTargetAngle(Arm.ARM_BOT_ANGLE);
-                System.out.println("intakedown");
                 break;
             case INTAKE_UP:
                 io.setTargetAngle(Arm.ARM_TOP_ANGLE);
-                System.out.println("intake up");
                 break;
             case SCORE_UP:
                 io.setTargetAngle(Arm.ARM_TOP_ANGLE);

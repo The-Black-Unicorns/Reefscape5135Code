@@ -289,6 +289,10 @@ public class GripperSubsystem extends SubsystemBase {
 
     }
 
+    public void gripperAutonInit() {
+        io.gripperAutonInit();
+    }
+
     
 
 }

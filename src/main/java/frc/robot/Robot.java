@@ -6,15 +6,9 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cameraserver.CameraServerShared;
-import edu.wpi.first.cameraserver.CameraServerSharedStore;
-import edu.wpi.first.cscore.CameraServerJNI;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -41,7 +35,7 @@ private DoublePublisher matchtime;
     PathfindingCommand.warmupCommand().schedule();
     
     matchtime = NetworkTableInstance.getDefault()
-      .getDoubleTopic("CurrentMatchTime").publish();
+      .getDoubleTopic("CurrentMatchTime").publish();  
   }
 
   @Override
@@ -75,6 +69,8 @@ private DoublePublisher matchtime;
       m_autonomousCommand.schedule();
     }
     m_robotContainer.enabledInit();
+    m_robotContainer.autonomousInit();
+    
   }
 
   @Override

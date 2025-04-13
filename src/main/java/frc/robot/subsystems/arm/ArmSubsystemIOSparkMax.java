@@ -96,7 +96,6 @@ public class ArmSubsystemIOSparkMax implements ArmSubsystemIO {
 
     @Override
     public void setTargetAngle(double position) {
-        System.out.println("oihtethhtjrr");
         currentArmTargetAngle = position;
     }
 

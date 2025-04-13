@@ -28,15 +28,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]
@@ -85,15 +85,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.6
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
                 }
               }
             ]
@@ -142,15 +142,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]
@@ -199,15 +199,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.6
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
                 }
               }
             ]
@@ -256,15 +256,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]
@@ -313,15 +313,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.6
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
                 }
               }
             ]
@@ -370,15 +370,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]

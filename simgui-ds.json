@@ -1,9 +1,4 @@
 {
-  "Keyboard 0 Settings": {
-    "window": {
-      "visible": true
-    }
-  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
@@ -27,7 +22,7 @@
         }
       ],
       "axisCount": 5,
-      "buttonCount": 1,
+      "buttonCount": 4,
       "buttonKeys": [
         -1,
         -1,
@@ -63,7 +58,7 @@
       "axisCount": 4,
       "buttonCount": 6,
       "buttonKeys": [
-        80,
+        -1,
         44,
         47,
         -1,
@@ -108,8 +103,9 @@
     {
       "guid": "Keyboard1"
     },
+    {},
     {
-      "guid": "030000004c050000cc09000000000000"
+      "guid": "Keyboard2"
     }
   ]
 }

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Centimeter;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.SuperStructure;
 
 public class GripperSubsystemIOSim implements GripperSubsystemIO {
@@ -20,6 +21,7 @@ public class GripperSubsystemIOSim implements GripperSubsystemIO {
             IntakeSide.FRONT,
             1
         );
+
     }
 
     @Override
@@ -30,17 +32,26 @@ public class GripperSubsystemIOSim implements GripperSubsystemIO {
         } else if (speed > 0 && !isNoteInsideIntake()) {
             System.out.println("Starting intake");
             intakeSimulation.startIntake();
+            if (DriverStation.isAutonomous()) {
+                intakeSimulation.addGamePieceToIntake();
+            }
         } else if (speed < 0 && isNoteInsideIntake()) {
             System.out.println("Ejecting coral");
             intakeSimulation.obtainGamePieceFromIntake();
             intakeSimulation.stopIntake();
             superStructure.swerve.scoreL1Simulation();
             
+            
         }
     }
 
     public boolean isNoteInsideIntake() {
         return intakeSimulation.getGamePiecesAmount() != 0; // True if there is a game piece in the intake
+    }
+
+    @Override
+    public void gripperAutonInit() {
+        intakeSimulation.addGamePieceToIntake();
     }
 
 

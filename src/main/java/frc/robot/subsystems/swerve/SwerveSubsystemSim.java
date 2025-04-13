@@ -185,6 +185,7 @@ StructArrayPublisher<Pose3d> coralPoses = NetworkTableInstance.getDefault()
         // simulatedDrive.setSimulationWorldPose(pose);
         // simulatedDrive.resetOdometry(pose);
         swerveDrive.resetOdometry(pose);
+        
     }
 
     @Override
@@ -259,7 +260,7 @@ StructArrayPublisher<Pose3d> coralPoses = NetworkTableInstance.getDefault()
                 // Obtain robot facing from drive simulation
                 new Rotation2d(58),
                 // The height at which the coral is ejected
-                Distance.ofRelativeUnits(1.5, Meter),
+                Distance.ofRelativeUnits(2, Meter),
                 // The initial speed ofzz the coral
                 LinearVelocity.ofRelativeUnits(1.5, MetersPerSecond),
                 // The coral is ejected at a 35-degree slope
