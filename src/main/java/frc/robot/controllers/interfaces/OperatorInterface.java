@@ -24,5 +24,7 @@ public interface OperatorInterface {
     public Trigger isGripperActiveButton();
 
     public Trigger outtakeFastCoralButton();
+
+    public Trigger setArmAlgaeAngleButton();
 }
 

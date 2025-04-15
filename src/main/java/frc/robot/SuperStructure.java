@@ -262,10 +262,8 @@ public class SuperStructure {
         // return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
         //  Commands.sequence(
         //     new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
-            
 
         //     swerve.driveConstantSpeed(-1, 0, 0,7, true),
-            
 
         //     // new WaitCommand(1),
         //     // this.OuttakeCoral(),
@@ -280,6 +278,29 @@ public class SuperStructure {
 
         return auto.getSelected();
     }
+
+    // public Command getAutonomousCommand() {
+    //     return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+    //      Commands.sequence(
+    //         new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
+            
+
+    //         swerve.driveConstantSpeed(-1, 0, 0,7, true),
+            
+
+    //         // new WaitCommand(1),
+    //         // this.OuttakeCoral(),
+    //         // new WaitCommand(1),
+    //         // this.StopGripper()
+
+    //         this.outtakeCoral().withTimeout(1.5),
+    //         this.OuttakeFast().withTimeout(0.7),
+    //         this.stopGripper()
+    //         // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+    //     ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+
+    //     // return auto.getSelected();
+    // }
 
     public Command moveArmToPos(){
         return Commands.either(
