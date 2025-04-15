@@ -6,7 +6,22 @@ import java.io.File;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.optimization.SimulatedAnnealing;
+import edu.wpi.first.networktables.GenericSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StructArraySubscriber;
+import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,18 +29,35 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.GripperSubsystem;
-import frc.robot.subsystems.PivotSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Constants.Arm;
+import frc.robot.Constants.Gripper;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.subsystems.GenericPresicionSystemIO.Goal;
+import frc.robot.subsystems.arm.ArmSubsystem;
+import frc.robot.subsystems.arm.ArmSubsystemIO;
+import frc.robot.subsystems.arm.ArmSubsystemIOSparkMax;
+import frc.robot.subsystems.gripper.GripperSubsystem;
+import frc.robot.subsystems.gripper.GripperSubsystemIO;
+import frc.robot.subsystems.gripper.GripperSubsystemIOSim;
+import frc.robot.subsystems.gripper.GripperSubsystemIOSparkMax;
+import frc.robot.subsystems.gripper.GripperSubsystemIOTalonFX;
+import frc.robot.subsystems.pivot.PivotSubsystem;
+import frc.robot.subsystems.pivot.PivotSubsystemIO;
+import frc.robot.subsystems.pivot.PivotSubsystemIOSparkMax;
+import frc.robot.subsystems.swerve.SwerveSubsystemTalonFX;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystemSim;
 
 public class SuperStructure {
 
     private final GripperSubsystem gripper;
     public final ArmSubsystem arm;
     public final PivotSubsystem pivot;
+    private final Autonomous auto;
     
     private armStates lastpose;
+    private Field2d field;
+    private final StructSubscriber<Pose2d> desiredAutoPose;
 
 
     // private final Autonomous auto;
@@ -44,18 +76,48 @@ public class SuperStructure {
 
     public armStates curArmState;
     private armStates curIntakeMode;
+    private boolean realRobot;
     
     public SuperStructure(){
 
-        gripper = new GripperSubsystem();
-        arm = new ArmSubsystem();
-        pivot = new PivotSubsystem();
-        // auto = new Autonomous();
-        swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+        realRobot = Robot.isReal();
+
+
+        swerve = realRobot ? 
+            new SwerveSubsystem(new SwerveSubsystemTalonFX(new File(Filesystem.getDeployDirectory(), "swerve"))) :
+            new SwerveSubsystem(new SwerveSubsystemSim(new File(Filesystem.getDeployDirectory(), "swerve")));
+
+        gripper = new GripperSubsystem(
+            realRobot ? new GripperSubsystemIOSparkMax(Gripper.K_SPARK_ID, Gripper.K_CURRENT_LIMIT, Gripper.K_INVERTED, Gripper.K_BRAKE)
+            : new  GripperSubsystemIOSim(this)
+        );
+
+        arm = realRobot? 
+            new ArmSubsystem(new ArmSubsystemIOSparkMax(Arm.LEFT_ARM_MOTOR, Arm.RIGHT_ARM_MOTOR, Arm.ARM_CURRENT_LIMIT, Arm.ARM_INVERTED, Arm.ARM_BRAKE))
+            : new ArmSubsystem(new ArmSubsystemIO() {});
+
+        // arm = new ArmSubsystem(new ArmSubsystemIOSparkMax(Arm.LEFT_ARM_MOTOR, Arm.RIGHT_ARM_MOTOR, Arm.ARM_CURRENT_LIMIT, Arm.ARM_INVERTED, Arm.ARM_BRAKE));
+
         
+        pivot = realRobot ?
+            new PivotSubsystem(new PivotSubsystemIOSparkMax(PivotConstants.PIVOT_MOTOR_ID, PivotConstants.PIVOT_CURRENT_LIMIT,
+                PivotConstants.PIVOT_MOTOR_INVERTED, PivotConstants.PIVOT_MOTOR_BRAKE)) 
+
+            : new PivotSubsystem(new PivotSubsystemIO() {});
+
+            
+
+        
+        
+        auto = new Autonomous(this);
         
         curIntakeMode = armStates.INTAKE_UP;
-        // auto = new Autonomous(this);
+
+        desiredAutoPose = NetworkTableInstance.getDefault().getStructTopic("/PathPlanner/targetPose", Pose2d.struct)
+            .subscribe(new Pose2d());
+
+        field = new Field2d();
+        SmartDashboard.putData("field", field);
 
         
 
@@ -64,13 +126,21 @@ public class SuperStructure {
         //     arm.setDesiredAngle()))
         //                     .schedule();
 
-        arm.setDefaultCommand(arm.setDesiredAngle());
-        pivot.setDefaultCommand(pivot.setDesiredAngle());
+        arm.setDefaultCommand(arm.moveArmTargetAngle());
+        pivot.setDefaultCommand(pivot.movePivotTargetAngle());
 
         curArmState = armStates.OUTTAKE_MIDDLE;
 
     }
 
+    public Command setGoal(Goal goal){
+        return Commands.parallel(
+            arm.setGoal(goal),
+            pivot.setGoal(goal)
+        );
+    }
+
+    
     // public Command ToggleGripper(){
 
         
@@ -88,15 +158,20 @@ public class SuperStructure {
     // }
 
     public Command IntakeCoral(){
-        return gripper.intakeCommand();
+        return new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_INTAKE_SPEED), gripper);
     }
 
     public Command outtakeCoral(){
-        return gripper.outtakeCommand();
+                
+        return new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKE_SPEED), gripper);
+    }
+
+    public Command OuttakeCoralFast(){
+        return new RunCommand(() -> gripper.setGripperMotorSpeed(Gripper.GRIPPER_OUTTAKEFAST_SPEED), gripper);
     }
 
     public Command stopGripper() {
-        return gripper.stopGripperCommand();
+        return new InstantCommand(() -> gripper.stopGripperMotor(), gripper);
     }
     public Command actovateGripperCommand(){
         return Commands.either(IntakeCoral(), outtakeCoral(),
@@ -140,8 +215,7 @@ public class SuperStructure {
     public Command moveArmDownIntake(){
         return Commands.parallel(
             changeArmState(armStates.INTAKE_DOWN),
-            arm.setArmAngleDown(),
-            pivot.setPivotAngleDown(),
+            setGoal(Goal.INTAKE_DOWN),
             new InstantCommand(() -> curIntakeMode = armStates.INTAKE_DOWN)
             );
             
@@ -150,15 +224,14 @@ public class SuperStructure {
     public Command moveArmMiddleOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_MIDDLE),
-            arm.setArmAngleMiddle(),
-            pivot.setPivotAngleMiddle());
+            setGoal(Goal.SCORE_MIDDLE)
+        );
     }
 
     public Command moveArmUpIntake(){
         return Commands.parallel(
             changeArmState(armStates.INTAKE_UP),
-            arm.setArmAngleUp(),
-            pivot.setPivotAngleUp(),
+            setGoal(Goal.INTAKE_UP),
             new InstantCommand(() -> curIntakeMode = armStates.INTAKE_UP)
             );
 
@@ -167,57 +240,43 @@ public class SuperStructure {
     public Command moveArmUpOuttake(){
         return Commands.parallel(
             changeArmState(armStates.OUTTAKE_UP),
-            arm.setArmAngleUp(),
-            pivot.setPivotAngleUpOuttake()
+            setGoal(Goal.SCORE_UP)
         );
     }
     
     public Command moveArmToClimb(){
         return Commands.parallel(
             changeArmState(armStates.CLIMB_UP),
-            arm.setArmAngleToClimb(),
-            pivot.setPivotAngleUpOuttake()
+            setGoal(Goal.CLIMB)
         );
     }
 
     public Command moveArmForAuto(){
             return Commands.parallel(
                 changeArmState(armStates.OUTTAKE_MIDDLE),
-                arm.setDesiredAngleDeg(36),
-                pivot.setDesiredAngleDeg(83));
+                arm.setTargetAngle(36),
+                pivot.setTargetAngle(83));
         
     }
     public Command getAutonomousCommand() {
+        // return new WaitCommand(1).andThen(this.moveArmMiddleOuttake().andThen(
+        //  Commands.sequence(
+        //     new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
 
-        return Commands.sequence(
-            new WaitCommand(0.2),
-            moveArmMiddleOuttake(),
-            Commands.sequence(
-            
-                new InstantCommand(() ->swerve.zeroGyroWithAlliance() , swerve),
-                    
-        
-                swerve.driveConstantSpeed(-1, 0, 0,7, true),
-        
-                this.outtakeCoral().withTimeout(1),
-                this.OuttakeFast().withTimeout(0.7),
-                this.stopGripper()
-            ).alongWith(
-                arm.setDesiredAngle(),
-                pivot.setDesiredAngle()
-            ).withTimeout(9.5),
-            
-            moveArmUpIntake(),
-            swerve.driveConstantSpeed(1, 0, 0, 0.5, true),
-            
-            Commands.parallel(
-                arm.setDesiredAngle(),
-                pivot.setDesiredAngle()
-            )
+        //     swerve.driveConstantSpeed(-1, 0, 0,7, true),
 
-        );
+        //     // new WaitCommand(1),
+        //     // this.OuttakeCoral(),
+        //     // new WaitCommand(1),
+        //     // this.StopGripper()
 
-        // return auto.getSelected();
+        //     this.outtakeCoral().withTimeout(1),
+        //     this.OuttakeFast().withTimeout(1),
+        //     this.stopGripper()
+        //     // new InstantCommand(() ->swerve.zeroGyroAutonomous() , swerve)
+        // ).alongWith(arm.setDesiredAngle().alongWith(pivot.setDesiredAngle()))));
+
+        return auto.getSelected();
     }
 
     // public Command getAutonomousCommand() {
@@ -280,20 +339,76 @@ public class SuperStructure {
         return () -> !(curArmState == armStates.OUTTAKE_MIDDLE);
     }
 
-    public Command intakeUntilCoral(){
-        return gripper.intakeWhileNoCoral();
+    // public Command intakeUntilCoral(){
+    //     return gripper.intakeWhileNoCoral();
+    // }
+
+    // public Command OuttakeFast(){
+    //     return gripper.outtakeFastCommand();
+    // }
+
+    public Command hpDropCoralSim(){
+        return new InstantCommand(
+            () -> swerve.hpDropCoralSimulation(), swerve);
     }
 
-    public Command OuttakeFast(){
-        return gripper.outtakeFastCommand();
+
+    public class AutonomousCommands{
+
+        public Command moveArmMiddleOuttakeAuto(){
+            return moveArmMiddleOuttake().andThen(
+                Commands.parallel(
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command moveArmTopIntakeAuto(){
+            return moveArmUpIntake().andThen(
+                Commands.parallel(
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command moveArmBottomIntakeAuto(){
+            return moveArmDownIntake().andThen(
+                Commands.parallel(
+                    arm.moveArmTargetAngle(),
+                    pivot.movePivotTargetAngle()
+                ).withTimeout(0.5)
+            );
+        }
+
+        public Command stopGripperAuto(){
+            return stopGripper();
+        }
+
+        public Command intakeCoralAuto(){
+            return IntakeCoral();
+        }
+
+        public Command outtakeCoralAuto(){
+            return outtakeCoral();
+        }
+
+        public Command outtakeFastAuto(){
+            return OuttakeCoralFast();
+        }
     }
+
+    
+
+    
+
 
 
     public void enabledInit(){
         arm.armEnabledInit();
         pivot.pivotEnabledInit();
-        gripper.stopGripper();
-
+        gripper.stopGripperMotor();
 
     }
 
@@ -301,6 +416,12 @@ public class SuperStructure {
         gripper.testPeriodic();
         arm.testPeriodic();
         pivot.testPeriodic();
+    }
+
+    public void simulationPeriodic(){
+        swerve.simulationPeriodic();
+        arm.simulationPeriodic();
+        pivot.simulationPeriodic();
     }
 
     public void setIdleModeBreak(){
@@ -311,9 +432,14 @@ public class SuperStructure {
     }
 
     public void periodic(){
-        // if(curArmState == armStates.UP) System.out.println("bad");
-        // else if(curArmState == armStates.MIDDLE) System.out.println("fine");
-        // else System.out.println("greate");
-        // SmartDashboard.putString("armState", curArmState.name());
+
+        field.getObject("Autonomous Pose").setPose(desiredAutoPose.get());
+        
+        field.setRobotPose(swerve.getPose());
+    }
+
+    public void autonomousInit(){
+        gripper.gripperAutonInit();
+        SimulatedArena.getInstance().resetFieldForAuto();
     }
 }

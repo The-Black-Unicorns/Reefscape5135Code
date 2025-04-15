@@ -7,6 +7,8 @@ package frc.robot;
 import java.util.ResourceBundle.Control;
 
 import edu.wpi.first.hal.util.UncleanStatusException;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,29 +22,21 @@ import frc.robot.controllers.controllers.QxDriveController;
 import frc.robot.controllers.controllers.XboxOperatorController;
 
 public class RobotContainer {
-  private SuperStructure structure;
-  private Field2d field;
+  public SuperStructure structure;
+
   private QxDriveController controller;
   private XboxOperatorController operator;
-  // private SwerveSubsystem swerve;
-  
-  // private DigitalInput unlockMotorsDIO;
-  // private Trigger unlockMotorsTrigger;
 
-
-  private Trigger moveArmDown;
-  private Trigger moveArmMid;
-  private Trigger moveArmTop;
 
   public RobotContainer() {
+
+
     controller = new QxDriveController(0);
     operator = new XboxOperatorController(1);
     
-    // autonomous = new Autonomous();
-    // swerve = new SwerveSubsystem();
-    field = new Field2d();
+
     structure = new SuperStructure();
-    SmartDashboard.putData("field", field);
+
 
   
     structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
@@ -62,13 +56,6 @@ public class RobotContainer {
 
     controller.isGripperActive().whileFalse(structure.stopGripper());
     controller.isGripperActive().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
-
-    // controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
-    // controller.raiseArmOne().onTrue(structure.stopGripper());
-
-    // controller.lowerArmOne().onTrue((structure.moveArmToPos()));
-    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
-    // controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
 
     controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
     controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
@@ -90,14 +77,17 @@ public class RobotContainer {
 
     operator.intakeCoralButton().onTrue(structure.IntakeCoral());
     operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
-    operator.outtakeFastCoralButton().onTrue(structure.OuttakeFast());
+    operator.outtakeFastCoralButton().onTrue(structure.OuttakeCoralFast());
 
     operator.intakeCoralButton().or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
       .onFalse(structure.stopGripper());
-  
-    // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
     controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
+
+    if (!Robot.isReal()){
+      operator.setArmLowAngleButton().onTrue(structure.hpDropCoralSim());
+      operator.setArmMidAngleButton().onTrue(structure.swerve.driveToPose(new Pose2d(3.2, 4, new Rotation2d(0))));
+    }
 
   }
 
@@ -114,6 +104,10 @@ public class RobotContainer {
   }
   public void enabledInit(){
     structure.enabledInit();
+  }
+
+  public void autonomousInit(){
+    structure.autonomousInit();
   }
   
 }
