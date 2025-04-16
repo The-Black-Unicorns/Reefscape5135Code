@@ -85,7 +85,7 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
         doRejectUpdate = false;
 
         //disable this if no vision
-        swerveDrive.stopOdometryThread();
+        // swerveDrive.stopOdometryThread();
 
 
         
@@ -97,6 +97,12 @@ public class SwerveSubsystemTalonFX /*extends SubsystemBase*/ implements SwerveS
         swerveDrive.updateOdometry();
     }
 
+
+    @Override
+    public void periodic(){
+        swerveDrive.updateOdometry();
+        // updateVisionReading(() -> getHeading().getDegrees(),() -> swerveDrive.getFieldVelocity().omegaRadiansPerSecond * 180 / Math.PI);
+    }
 
     // @Override
     // public void periodic() {

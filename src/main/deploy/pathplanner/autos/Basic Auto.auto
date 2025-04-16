@@ -24,19 +24,19 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Outtake"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Outtake"
                 }
               }
             ]

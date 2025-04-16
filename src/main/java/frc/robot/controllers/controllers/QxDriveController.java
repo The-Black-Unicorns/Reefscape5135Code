@@ -47,7 +47,8 @@ public class QxDriveController implements DriverInterface{
 
     @Override
     public Trigger resetGyroButton(){
-        return new Trigger(()->controller.getRawButton(2));
+        // return new Trigger(()->controller.getRawButton(2));
+        return new Trigger(() -> controller.getRawAxis(6) > 0);
     }
 
 

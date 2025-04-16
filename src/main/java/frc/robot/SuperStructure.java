@@ -431,6 +431,7 @@ public class SuperStructure {
         arm.setIdleModeCoast();
     }
 
+    
     public void periodic(){
 
         field.getObject("Autonomous Pose").setPose(desiredAutoPose.get());
@@ -439,7 +440,11 @@ public class SuperStructure {
     }
 
     public void autonomousInit(){
-        gripper.gripperAutonInit();
-        SimulatedArena.getInstance().resetFieldForAuto();
+       
+        if (Robot.isSimulation()){
+            SimulatedArena.getInstance().resetFieldForAuto();
+             gripper.gripperAutonInit();
+        }
+        
     }
 }
