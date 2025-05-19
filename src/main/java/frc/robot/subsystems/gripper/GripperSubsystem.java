@@ -229,8 +229,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GripperSubsystem extends SubsystemBase {
     // Add your code here
-    private GripperSubsystemIO io;
-    protected final GripperSubsystemIO.GripperIOInputs inputs;
+    private final GripperSubsystemIO io;
+    final final GripperIOInputs inputs;
 
     public GripperSubsystem(GripperSubsystemIO io) {
         this.io = io;

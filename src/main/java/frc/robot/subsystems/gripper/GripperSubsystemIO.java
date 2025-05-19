@@ -1,10 +1,12 @@
 package frc.robot.subsystems.gripper;
 
+import org.littletonrobotics.junction.AutoLog;
+
 import edu.wpi.first.math.controller.PIDController;
 
 public interface GripperSubsystemIO {
 
-    
+    @AutoLog
     public static class GripperIOInputs {
         public double gripperMotorSpeed = 0; //rots/s
         public double gripperMotorVoltage = 0; //volts
