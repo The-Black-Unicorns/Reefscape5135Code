@@ -45,7 +45,7 @@ public class Constants {
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
 
-        public static final double PIVOT_ENCODER_OFFSET = 207.2-1.5 -4.8  +118;
+        public static final double PIVOT_ENCODER_OFFSET = -25.0;
         public static final double PIVOT_NORMALIZE_OFFSET = 0;
         public static final double POSITION_CONVERSION_FACTOR = 360;
 
@@ -90,7 +90,7 @@ public class Constants {
         public static final double ARM_KD = 0.01;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 55.0-16 - 40+74+6;
+        public static final double ARM_ENCODER_OFFSET = -80;
         public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
