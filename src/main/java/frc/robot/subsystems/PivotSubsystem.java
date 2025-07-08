@@ -224,7 +224,7 @@ public class PivotSubsystem extends SubsystemBase  {
         //  .maxMotion.maxVelocity(Arm.ARM_MAX_VELOCITY);
         //  armConfigR.closedLoop.maxMotion.maxAcceleration(Arm.ARM_MAX_ACCELARATION);
       
-         pivotConfig.absoluteEncoder.zeroOffset(PIVOT_ENCODER_OFFSET/360.0);
+         pivotConfig.absoluteEncoder.zeroOffset((25+297)/360.0);
          pivotMotor.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          
         //  armController = armMotorR.getClosedLoopController();
