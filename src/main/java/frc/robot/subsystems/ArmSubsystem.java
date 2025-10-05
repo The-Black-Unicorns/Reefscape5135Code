@@ -55,12 +55,12 @@ public class ArmSubsystem extends SubsystemBase  {
         //  armConfigR.closedLoop.maxMotion.maxAcceleration(Arm.ARM_MAX_ACCELARATION);
          armConfigL.apply(armConfigR);
          armConfigR.follow(armMotorL, true);
-         armConfigL.absoluteEncoder.zeroOffset(Arm.ARM_ENCODER_OFFSET/360.0);
+         armConfigR.absoluteEncoder.zeroOffset(Arm.ARM_ENCODER_OFFSET/360.0);
          armMotorR.configure(armConfigR, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
          armMotorL.configure(armConfigL, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         //  armController = armMotorR.getClosedLoopController();
          armFeedforward = new ArmFeedforward(Arm.ARM_KS,Arm.ARM_KG,Arm.ARM_KV);
-         armEncoder = armMotorL.getAbsoluteEncoder();
+         armEncoder = armMotorR.getAbsoluteEncoder();
         armPIDController = new ProfiledPIDController(ARM_KP, ARM_KI, ARM_KD, 
             new TrapezoidProfile.Constraints(ARM_MAX_VELOCITY, ARM_MAX_ACCELARATION));
         armPIDController.setTolerance(Arm.ARM_POSITION_TOLERANCE_DEG);

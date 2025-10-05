@@ -58,7 +58,7 @@ public class Constants {
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 175;
         public static final double PIVOT_TOP_ANGLE = 152.5; //185
         public static final double PIVOT_MID_ANGLE = 92.0; //92
-        public static final double PIVOT_BOT_ANGLE = 97.5;
+        public static final double PIVOT_BOT_ANGLE = 124-4; //97.5
 
     }
     
@@ -77,7 +77,7 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
 
-        public static final double ARM_MAX_VELOCITY = 800, ARM_MAX_ACCELARATION = 1000; // deg/s, deg/s2
+        public static final double ARM_MAX_VELOCITY = 1000, ARM_MAX_ACCELARATION = 1100; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
 
         public static final double ARM_KS = 0.01;
@@ -85,12 +85,12 @@ public class Constants {
         public static final double ARM_KA = 0.0;
         public static final double ARM_KG = 0.1; //0.32
 
-        public static final double ARM_KP = 0.26;  // previus was 0.13
+        public static final double ARM_KP = 0.27;  // previus was 0.13
         public static final double ARM_KI = 0; // previus was 0.0
-        public static final double ARM_KD = 0.01;  // previus was 0.02
+        public static final double ARM_KD = 0.03;  // previus was 0.02
 
         public static final int ARM_CURRENT_LIMIT = 12;
-        public static final double ARM_ENCODER_OFFSET = 80;
+        public static final double ARM_ENCODER_OFFSET = 205;
         public static final double ARM_NORMALIZE_OFFSET = 0;
         public static final double ARM_POSITION_TOLERANCE_DEG = 1.0;
         
@@ -98,7 +98,7 @@ public class Constants {
         public static final int LEFT_ARM_MOTOR = 8;
 
         public static final double ARM_MID_ANGLE = 44.5; //47.5
-        public static final double ARM_TOP_ANGLE = 58.7;  //76
+        public static final double ARM_TOP_ANGLE = 53.7;  //76
         public static final double ARM_BOT_ANGLE = 351.5; //355.5
         public static final double ARM_CLIMB_ANGLE = 345;
 
