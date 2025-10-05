@@ -77,7 +77,7 @@ public class Constants {
     /* FF constants calculated from Recalc - not final */
     public class Arm{
 
-        public static final double ARM_MAX_VELOCITY = 1000, ARM_MAX_ACCELARATION = 1100; // deg/s, deg/s2
+        public static final double ARM_MAX_VELOCITY = 1000, ARM_MAX_ACCELARATION = 800; // deg/s, deg/s2
         // public static final double ARM_KS = 0.1,ARM_KV = 2.94,ARM_KA = 0.01,ARM_KG = 0.57; 
 
         public static final double ARM_KS = 0.01;
@@ -85,7 +85,7 @@ public class Constants {
         public static final double ARM_KA = 0.0;
         public static final double ARM_KG = 0.1; //0.32
 
-        public static final double ARM_KP = 0.27;  // previus was 0.13
+        public static final double ARM_KP = 0.25;  // previus was 0.13
         public static final double ARM_KI = 0; // previus was 0.0
         public static final double ARM_KD = 0.03;  // previus was 0.02
 
