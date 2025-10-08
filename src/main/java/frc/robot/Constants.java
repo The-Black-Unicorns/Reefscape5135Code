@@ -56,7 +56,7 @@ public class Constants {
 
 
         public static final double PIVOT_TOP_OUTTAKE_ANGLE = 175;
-        public static final double PIVOT_TOP_ANGLE = 152.5; //185
+        public static final double PIVOT_TOP_ANGLE = 140; //185
         public static final double PIVOT_MID_ANGLE = 92.0; //92
         public static final double PIVOT_BOT_ANGLE = 124-4; //97.5
 
@@ -99,7 +99,7 @@ public class Constants {
 
         public static final double ARM_MID_ANGLE = 44.5; //47.5
         public static final double ARM_TOP_ANGLE = 53.7;  //76
-        public static final double ARM_BOT_ANGLE = 351.5; //355.5
+        public static final double ARM_BOT_ANGLE = 351.5; //351.5
         public static final double ARM_CLIMB_ANGLE = 345;
 
 

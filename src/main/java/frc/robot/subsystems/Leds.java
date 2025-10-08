@@ -50,7 +50,7 @@ public class Leds extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(currentState);
+    // System.out.println(currentState);
     switch (currentState) {
       case OFF -> ledsStates.OFF.pattern().applyTo(ledBuffer);
       case ALGAE -> ledsStates.ALGAE.pattern().applyTo(ledBuffer);
