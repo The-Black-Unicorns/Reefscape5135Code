@@ -4,7 +4,6 @@
 
 // package frc.robot.subsystems;
 
-
 // import static edu.wpi.first.units.Units.Centimeters;
 // import static edu.wpi.first.units.Units.MetersPerSecond;
 // import static edu.wpi.first.units.Units.Seconds;
@@ -36,7 +35,6 @@
 
 //     }
 
-    
 //     public void setColor(Color color) {
 //         LEDPattern pattern = LEDPattern.solid(color);
 //         pattern.applyTo(ledBuffer);
@@ -64,12 +62,12 @@
 
 //     public void rainbowPattern(){
 //         LEDPattern pattern = LEDPattern.rainbow(255, 128);
-//         LEDPattern rainbowScroller = pattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.1), ledSpacing);
+//         LEDPattern rainbowScroller = pattern.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.1),
+// ledSpacing);
 //         rainbowScroller.applyTo(ledBuffer);
 //         ledStrip.setData(ledBuffer);
 //         ledStrip.start();
 //     }
-
 
 //     @Override
 //     public void periodic() {

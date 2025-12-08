@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -12,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import org.littletonrobotics.junction.AutoLogOutput;
+import java.util.function.Supplier;
 
 public class Leds extends SubsystemBase {
   public enum ledsStates {
@@ -60,7 +59,6 @@ public class Leds extends SubsystemBase {
       case FINISH_SCORE -> ledsStates.FINISH_SCORE.pattern().applyTo(ledBuffer);
       case BLUE -> ledsStates.BLUE.pattern().applyTo(ledBuffer);
       default -> ledsStates.OFF.pattern().applyTo(ledBuffer);
-
     }
     // System.out.println("got here");
     addressableLEDs.setData(ledBuffer);

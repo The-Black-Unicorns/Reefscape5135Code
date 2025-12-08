@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import java.util.ResourceBundle.Control;
-
-import edu.wpi.first.hal.util.UncleanStatusException;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +14,7 @@ import frc.robot.SuperStructure.armStates;
 import frc.robot.controllers.controllers.QxDriveController;
 // import frc.robot.controllers.controllers.XboxDriveController;
 import frc.robot.controllers.controllers.XboxOperatorController;
+import frc.robot.subsystems.arm.Arm.ArmStates;
 
 public class RobotContainer {
   private SuperStructure structure;
@@ -25,10 +22,9 @@ public class RobotContainer {
   private QxDriveController controller;
   private XboxOperatorController operator;
   // private SwerveSubsystem swerve;
-  
+
   // private DigitalInput unlockMotorsDIO;
   // private Trigger unlockMotorsTrigger;
-
 
   private Trigger moveArmDown;
   private Trigger moveArmMid;
@@ -37,83 +33,90 @@ public class RobotContainer {
   public RobotContainer() {
     controller = new QxDriveController(0);
     operator = new XboxOperatorController(1);
-    
+
     // autonomous = new Autonomous();
     // swerve = new SwerveSubsystem();
     field = new Field2d();
     structure = new SuperStructure();
     SmartDashboard.putData("field", field);
 
-  
-    structure.swerve.setDefaultCommand(structure.swerve.driveCommandForDriver(
-    controller.getXSpeed(),
-    controller.getYSpeed(),
-    controller.getRotationSpeed(),
-    () -> true,
-    controller.getSpeedPotentiometer() )
-  );
+    structure.swerve.setDefaultCommand(
+        structure.swerve.driveCommandForDriver(
+            controller.getXSpeed(),
+            controller.getYSpeed(),
+            controller.getRotationSpeed(),
+            () -> true,
+            controller.getSpeedPotentiometer()));
 
-  // check if works
-    
+    // check if works
+
     configureBindings();
   }
 
   private void configureBindings() {
 
-    controller.isGripperActive().whileFalse(structure.stopGripper());
-    controller.isGripperActive().whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
+    // controller.isGripperActive().whileFalse(structure.stopGripper());
+    // controller
+    //     .isGripperActive()
+    //     .whileTrue(structure.actovateGripperCommand().andThen(Commands.print("wtf")));
 
-    // controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
-    // controller.raiseArmOne().onTrue(structure.stopGripper());
+    // // controller.raiseArmOne().onTrue(structure.moveArmMiddleOuttake());
+    // // controller.raiseArmOne().onTrue(structure.stopGripper());
 
-    // controller.lowerArmOne().onTrue((structure.moveArmToPos()));
-    // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
-    // controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
+    // // controller.lowerArmOne().onTrue((structure.moveArmToPos()));
+    // // controller.lowerArmOne().onTrue(structure.moveArmUpIntake());
+    // // controller.lowerArmOne().and(structure.isArmNotMid()).onTrue(structure.IntakeCoral());
 
-    controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
-    controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
+    // controller.getIntakeMode().onFalse(structure.setDesiredState(armStates.INTAKE_UP));
+    // controller.getIntakeMode().onTrue(structure.setDesiredState(armStates.INTAKE_DOWN));
 
+    operator
+        .setArmLowAngleButton()
+        .onTrue(
+            Commands.runOnce(()->structure.setArmState(ArmStates.BOT)))
+            /* .alongWith(structure.IntakeCoral())*/ ;
 
+    operator
+        .setArmMidAngleButton()
+        .onTrue(Commands.runOnce(()->structure.setArmState(ArmStates.MID))); /* .alongWith(structure.stopGripper())*/;
 
-    operator.setArmLowAngleButton().onTrue(structure.moveArmDownIntake()
-      .alongWith(structure.setDesiredState(armStates.INTAKE_DOWN))
-      /* .alongWith(structure.IntakeCoral())*/);
+    // operator
+    //     .setArmTopAngleButton()
+    //     .onTrue(
+    //         structure.moveArmUpIntake().alongWith(structure.setDesiredState(armStates.INTAKE_UP))
+    //         // .alongWith(structure.IntakeCoral())
+    //         );
+    // operator.setArmClimbingAngleButton().onTrue(structure.moveArmToClimb());
 
-    operator.setArmMidAngleButton().onTrue(structure.moveArmMiddleOuttake()
-     /* .alongWith(structure.stopGripper())*/);
+    // operator.intakeCoralButton().onTrue(structure.IntakeCoral());
+    // operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
+    // operator.outtakeFastCoralButton().onTrue(structure.OuttakeFast());
 
-    operator.setArmTopAngleButton().onTrue(structure.moveArmUpIntake()
-      .alongWith(structure.setDesiredState(armStates.INTAKE_UP))
-      // .alongWith(structure.IntakeCoral())
-      );
-    operator.setArmClimbingAngleButton().onTrue(structure.moveArmToClimb());
+    // operator
+    //     .intakeCoralButton()
+    //     .or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
+    //     .onFalse(structure.stopGripper());
 
-    operator.intakeCoralButton().onTrue(structure.IntakeCoral());
-    operator.outtakeCoralButton().onTrue(structure.outtakeCoral());
-    operator.outtakeFastCoralButton().onTrue(structure.OuttakeFast());
+    // // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
 
-    operator.intakeCoralButton().or(operator.outtakeCoralButton().or(operator.outtakeFastCoralButton()))
-      .onFalse(structure.stopGripper());
-  
-    // controller.getIntakeMode().onTrue(structure.moveArmDownIntake());
-
-    controller.resetGyroButton().onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
-
+    // controller
+    //     .resetGyroButton()
+    //     .onTrue(new InstantCommand(() -> structure.swerve.zeroGyroWithAlliance()));
   }
 
   public Command getAutonomousCommand() {
     return structure.getAutonomousCommand();
   }
-  
-  public void periodic(){
+
+  public void periodic() {
     structure.periodic();
   }
 
-  public void testPeriodic(){
+  public void testPeriodic() {
     structure.testPeriodic();
   }
-  public void enabledInit(){
+
+  public void enabledInit() {
     structure.enabledInit();
   }
-  
 }

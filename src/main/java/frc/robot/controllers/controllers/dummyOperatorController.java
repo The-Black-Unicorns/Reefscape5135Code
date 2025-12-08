@@ -5,52 +5,52 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.interfaces.OperatorInterface;
 
 public class dummyOperatorController implements OperatorInterface {
-    private GenericHID controller;
-    
-    public dummyOperatorController(int id) {
-        controller = new GenericHID(id);
-    } //add stick deadband
+  private GenericHID controller;
 
-    @Override
-    public Trigger isGripperActiveButton() {
-        return new Trigger(() -> (intakeCoralButton().getAsBoolean() || outtakeCoralButton().getAsBoolean()));
-    }
+  public dummyOperatorController(int id) {
+    controller = new GenericHID(id);
+  } // add stick deadband
 
-    @Override
-    public Trigger outtakeCoralButton(){
-        return new Trigger(()->controller.getRawButton(8));
-    }
+  @Override
+  public Trigger isGripperActiveButton() {
+    return new Trigger(
+        () -> (intakeCoralButton().getAsBoolean() || outtakeCoralButton().getAsBoolean()));
+  }
 
-    @Override
-    public Trigger intakeCoralButton(){
-        return new Trigger(() -> controller.getRawButton(6));
-    }
+  @Override
+  public Trigger outtakeCoralButton() {
+    return new Trigger(() -> controller.getRawButton(8));
+  }
 
-    @Override
-    public Trigger setArmLowAngleButton() {
-        
-        return new Trigger(() -> controller.getRawButton(3));
-    }
+  @Override
+  public Trigger intakeCoralButton() {
+    return new Trigger(() -> controller.getRawButton(6));
+  }
 
-    @Override
-    public Trigger setArmMidAngleButton() {
-        return new Trigger(() -> controller.getRawButton(4));
-    }
+  @Override
+  public Trigger setArmLowAngleButton() {
 
-    @Override
-    public Trigger setArmTopAngleButton() {
-        return new Trigger(() -> controller.getRawButton(1));
-    }
+    return new Trigger(() -> controller.getRawButton(3));
+  }
 
-    @Override
-    public Trigger outtakeFastCoralButton() {
-        
-        return new Trigger(() -> controller.getRawButton(7));
-    }
+  @Override
+  public Trigger setArmMidAngleButton() {
+    return new Trigger(() -> controller.getRawButton(4));
+  }
 
-    @Override
-    public Trigger setArmClimbingAngleButton() {
-        return new Trigger(() -> controller.getRawButton(9) && controller.getRawButton(10));
+  @Override
+  public Trigger setArmTopAngleButton() {
+    return new Trigger(() -> controller.getRawButton(1));
+  }
 
-    }
+  @Override
+  public Trigger outtakeFastCoralButton() {
+
+    return new Trigger(() -> controller.getRawButton(7));
+  }
+
+  @Override
+  public Trigger setArmClimbingAngleButton() {
+    return new Trigger(() -> controller.getRawButton(9) && controller.getRawButton(10));
+  }
 }

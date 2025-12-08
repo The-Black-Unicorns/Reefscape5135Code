@@ -4,48 +4,25 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.ColorSensorV3;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.Gripper.*;
 
-public class GripperSubsystem extends SubsystemBase {
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.subsystems.MotorIO;
+import frc.lib.subsystems.MotorInputsAutoLogged;
+import frc.lib.subsystems.MotorSubsystem;
 
+public class GripperSubsystem extends MotorSubsystem<MotorInputsAutoLogged, MotorIO> {
 
-  // DigitalInput beamBreakSensor;
-  ColorSensorV3 colorSensor;
   boolean isMotorActive;
   boolean isIntaking;
 
-  private SparkMax gripperMotor;
-  private SparkClosedLoopController closedLoopController;
-  private SparkBaseConfig configs;
   private VelocityDutyCycle m_VelocityDutyCycle;
   private PositionDutyCycle m_PositionDutyCycle;
 
@@ -54,146 +31,104 @@ public class GripperSubsystem extends SubsystemBase {
   SysIdRoutine routine;
   SysIdRoutineLog logger;
 
-  public GripperSubsystem() {
+  public GripperSubsystem(MotorIO io) {
     // beamBreakSensor = new DigitalInput(K_BEAMBREAK_ID);
     // colorSensor = new ColorSensorV3(Port.kOnboardCS3);
-    // colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit, ProximitySensorMeasurementRate.kProxRate12ms);
+    // colorSensor.configureProximitySensor(ProximitySensorResolution.kProxRes9bit,
+    // ProximitySensorMeasurementRate.kProxRate12ms);
+    super(new MotorInputsAutoLogged(), io, gripperConfig);
     isIntaking = false;
     isMotorActive = false;
 
     m_VelocityDutyCycle = new VelocityDutyCycle(0);
     m_PositionDutyCycle = new PositionDutyCycle(0);
-
-    gripperMotor = new SparkMax(K_SPARK_ID, MotorType.kBrushless);
-    configs = new SparkMaxConfig();
-    configs.idleMode(IdleMode.kBrake);
-    configs.closedLoop.pid(GRIPPER_KP, GRIPPER_KI, GRIPPER_KD);
-    configs.inverted(true);
-
-    gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    closedLoopController = gripperMotor.getClosedLoopController();
-    
-
-    MutVoltage appliedVoltage = Volts.mutable(0);
-    MutAngle m_angle = Radians.mutable(0);
-    MutAngularVelocity m_velocity = RadiansPerSecond.mutable(0);
-
-    routine = new SysIdRoutine(
-      new Config(),
-      new Mechanism(this::setMotorVoltage, log -> {
-        log.motor("GripperMotor")
-          .voltage(appliedVoltage.mut_replace(
-            gripperMotor.get() * RobotController.getBatteryVoltage(), Volts))
-            .angularPosition(m_angle.mut_replace(gripperMotor.getAbsoluteEncoder().getPosition(), Rotations))
-            .angularVelocity(m_velocity.mut_replace(gripperMotor.getAbsoluteEncoder().getVelocity()*60, RotationsPerSecond));
-      },
-       this));
-
-       KP = GRIPPER_KP;
-       KI = GRIPPER_KI;
-       KD = GRIPPER_KD;
   }
 
+  private void intake() {
+    super.setVoltageOutput(0.85);
+    // if (isCoral()) {
+    //   isIntaking = false;
+    //   m_VelocityDutyCycle.Velocity = 0;
+    //   m_PositionDutyCycle.Position = 0;
+    //   super.setVoltageOutput(0);
+    //   ;
+    //   isMotorActive = false;
+    // } else {
+    //   isIntaking = true;
+    //   m_VelocityDutyCycle.Velocity = 0.1;
 
-  private void intake(){
-
-    if(isCoral()){
-      isIntaking = false;
-      m_VelocityDutyCycle.Velocity = 0;
-      m_PositionDutyCycle.Position = 0;
-      gripperMotor.set(0);
-      isMotorActive = false;
-    }
-    else{
-      isIntaking = true;
-      m_VelocityDutyCycle.Velocity = 0.1;
-      
-      gripperMotor.set(0.85);
-      isMotorActive = true;
-    }
+    //   super.setVoltageOutput(0.85);
+    //   isMotorActive = true;
+    // }
   }
 
-  public void outtake(){
-    isIntaking = false;
-    m_PositionDutyCycle.Position = -2;
-    m_PositionDutyCycle.Velocity = 1;
-    gripperMotor.set(-0.24);
-      isMotorActive = true;
+  public void outtake() {
+    super.setVoltageOutput(-0.24);
+    // isIntaking = false;
+    // m_PositionDutyCycle.Position = -2;
+    // m_PositionDutyCycle.Velocity = 1;
+    // isMotorActive = true;
   }
 
-  public void outtakeFast(){
-    isIntaking = false;
-    m_PositionDutyCycle.Position = -2;
-    m_PositionDutyCycle.Velocity = 1;
-    gripperMotor.set(-0.37);
-    isMotorActive = true;
+  public void outtakeFast() {
+    super.setVoltageOutput(-0.37 * 12);
+    // isIntaking = false;
+    // m_PositionDutyCycle.Position = -2;
+    // m_PositionDutyCycle.Velocity = 1;
+    // isMotorActive = true;
   }
 
-  public void stopGripper(){
-    isIntaking = false;
-    m_VelocityDutyCycle.Velocity = 0;
-    m_PositionDutyCycle.Position = 0;
-    gripperMotor.set(0);
-    isMotorActive = false;
+  public void stopGripper() {
+    super.setVoltageOutput(0);
+    // isIntaking = false;
+    // m_VelocityDutyCycle.Velocity = 0;
+    // m_PositionDutyCycle.Position = 0;
+    // isMotorActive = false;
   }
 
-  public Command intakeCommand(){
+  public Command intakeCommand() {
     return this.run(() -> intake());
   }
 
-  public Command stopGripperCommand(){
+  public Command stopGripperCommand() {
     return Commands.sequence(
-      this.runOnce(() -> stopGripper()),
-      this.runOnce(() -> intakeWhileNoCoral().cancel()),
-      this.runOnce(() -> intakeCommand().cancel())
-    );
+        this.runOnce(() -> stopGripper()),
+        this.runOnce(() -> intakeWhileNoCoral().cancel()),
+        this.runOnce(() -> intakeCommand().cancel()));
   }
 
   public Command outtakeCommand() {
-    
+
     return this.run(() -> outtake());
   }
 
   public Command outtakeFastCommand() {
-    
+
     return this.run(() -> outtakeFast());
   }
 
-  public Command intakeWhileNoCoral(){
+  public Command intakeWhileNoCoral() {
 
     return this.run(() -> intake()).until(this::isCoral);
   }
-  
-  public boolean isMotorRunning(){
+
+  public boolean isMotorRunning() {
     return isMotorActive;
   }
 
-  public boolean isCoral(){
+  public boolean isCoral() {
 
     // return colorSensor.getProximity() > 1000;
     return false;
   }
 
-  public boolean isNotCoral(){
+  public boolean isNotCoral() {
     return !isCoral();
-
   }
 
-  private void setMotorVoltage(Voltage v){
-    gripperMotor.setVoltage(v);
-  }
-
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return routine.quasistatic(direction);
-  }
-
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return routine.dynamic(direction);
-  }
-
-  
   @Override
   public void periodic() {
+    super.periodic();
     if (isCoral() && isIntaking) {
       intakeCommand().cancel();
       stopGripper();
@@ -201,23 +136,24 @@ public class GripperSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Gripper/isCoral", this.isCoral());
   }
 
-public void testPeriodic(){
-  SmartDashboard.putNumber("Gripper/gripperKp", SmartDashboard.getNumber("Gripper/gripperKp", 0));
-  SmartDashboard.putNumber("Gripper/gripperKi", SmartDashboard.getNumber("Gripper/gripperKi", 0));
-  SmartDashboard.putNumber("Gripper/gripperKd", SmartDashboard.getNumber("Gripper/gripperKd", 0));
-  double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
-  double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
-  double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
-  if(newKP != KP || newKI != KI || newKD != KD){
-    KP = newKP;
-    KI = newKI;
-    KD = newKD;
+  public void testPeriodic() {
+    // SmartDashboard.putNumber("Gripper/gripperKp", SmartDashboard.getNumber("Gripper/gripperKp",
+    // 0));
+    // SmartDashboard.putNumber("Gripper/gripperKi", SmartDashboard.getNumber("Gripper/gripperKi",
+    // 0));
+    // SmartDashboard.putNumber("Gripper/gripperKd", SmartDashboard.getNumber("Gripper/gripperKd",
+    // 0));
+    // double newKP = SmartDashboard.getNumber("Gripper/gripperKp", KP);
+    // double newKI = SmartDashboard.getNumber("Gripper/gripperKi", KI);
+    // double newKD = SmartDashboard.getNumber("Gripper/gripperKd", KD);
+    // if(newKP != KP || newKI != KI || newKD != KD){
+    //   KP = newKP;
+    //   KI = newKI;
+    //   KD = newKD;
 
-    configs.closedLoop.pid(KP, KI, KD);
+    //   configs.closedLoop.pid(KP, KI, KD);
 
-    gripperMotor.configure(configs, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    }
+    //   gripperMotor.configure(configs, ResetMode.kResetSafeParameters,
+    // PersistMode.kNoPersistParameters);
   }
-
-
 }
