@@ -40,6 +40,7 @@ public class ArmConstants {
         ArmConfig.name = "Arm";
         ArmConfig.id = 9;
         ArmConfig.sparkConfig = new SparkMaxConfig();
+        
 
         ArmConfig.sparkConfig.inverted(true)
             .idleMode(IdleMode.kBrake)
@@ -50,7 +51,7 @@ public class ArmConstants {
 
         ArmConfig.sparkConfig.closedLoop.pid(0.01, 0, 0);
                 
-        ArmConfig.sparkConfig.absoluteEncoder.zeroOffset(ARM_ENCODER_OFFSET);
+        ArmConfig.sparkConfig.absoluteEncoder.zeroOffset(ARM_ENCODER_OFFSET/360.0);
 
         ArmConfig.unitToRotorRatio = 7.0/3.0;
         ArmConfig.absoluteEncoderToRotorRatio = 7.0/3.0;
@@ -60,7 +61,8 @@ public class ArmConstants {
         ArmConfig.usingAbsoluteEncoder = true;
         ArmConfig.momentOfInertia = 2.0;
 
-        followerLeftConfig.config = ArmConfig;
+        followerLeftConfig.config.sparkConfig.apply(ArmConfig.sparkConfig);
+        followerLeftConfig.config.sparkConfig.follow(ArmConfig.id, true);
         followerLeftConfig.config.name = "ArmLeftMotor";
         followerLeftConfig.config.id = 8;
         followerLeftConfig.config.usingAbsoluteEncoder = false;

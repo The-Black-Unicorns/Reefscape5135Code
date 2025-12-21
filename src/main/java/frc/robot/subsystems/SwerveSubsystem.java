@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.accelLimitsLib;
 import frc.robot.LimelightHelpers;
 // import frc.robot.LimelightHelpers;
 import java.io.File;
@@ -150,7 +152,23 @@ public class SwerveSubsystem extends SubsystemBase {
     // translation = new Translation2d(x, y);
 
     int invertInputs = isRedAlliance() ? -1 : 1;
-    swerveDrive.drive(translation.times(invertInputs), rotation, fieldRelative, isOpenLoop);
+    System.out.println(rotation);
+    ChassisSpeeds robotRelative = 
+      new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
+    if(fieldRelative){
+      translation = translation.times(invertInputs);
+      robotRelative =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+          translation.getX(),
+          translation.getY(),
+          rotation,
+          swerveDrive.getOdometryHeading()
+    );
+    }
+    robotRelative = accelLimitsLib.applyAccLimits(
+        robotRelative, swerveDrive.getRobotVelocity());
+    System.out.println(robotRelative);
+    swerveDrive.drive(translation.times(invertInputs), rotation, false, isOpenLoop);
     // swerveDrive.driveFieldOriented(getCurrentSpeeds());
   }
 

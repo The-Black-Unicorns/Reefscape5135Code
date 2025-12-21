@@ -15,6 +15,10 @@ import frc.lib.util.SwerveModuleConstants;
 public class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final double CYCLE_TIME = 0.02; // s
+  public static final double MAX_SPEED_METERS_PER_SEC = 5.0; // m/s
+
+  
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -137,6 +141,10 @@ public class Constants {
   }
 
   public static final class Swerve {
+    public static final double MAX_SKID_ACCEL = 500.0; // m/s2
+    public static final double MAX_ACCELERATION = 10.0; // m/s2
+    public static final double MAX_FRONT_ACCEL = 200.0; // m/s2
+    public static final double MAX_SIDE_ACCEL = 200.0; // m/s2
 
     public static final String LIMELIGHT_NAME = "limelight-tsachi";
     // public static final double MAX_FORWARD_ACCEL = 5; // MPS^2

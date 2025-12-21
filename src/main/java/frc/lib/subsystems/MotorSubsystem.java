@@ -60,7 +60,6 @@ public class MotorSubsystem<T extends MotorInputsAutoLogged, U extends MotorIO>
   }
 
   public void setVoltageOutput(double voltage) {
-    System.out.println("got here");
     Logger.recordOutput(getName() + "/Requested/VoltageOutputVolts", voltage);
     io.setVoltageOutput(voltage);
   }
